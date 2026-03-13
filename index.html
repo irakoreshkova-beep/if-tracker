@@ -2,7 +2,14 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, standalone=yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ИГ Трекер">
+<meta name="theme-color" content="#f5f5f0">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
 <title>Интервальное голодание</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -116,6 +123,8 @@
     <button class="tab" onclick="showTab('menu',this)">Меню</button>
     <button class="tab" onclick="showTab('workout',this)">Тренировки</button>
     <button class="tab" onclick="showTab('results',this)">Результаты</button>
+    <button class="tab" onclick="showTab('body',this)">Организм</button>
+    <button class="tab" onclick="showTab('alcohol',this)">Алкоголь</button>
     <button class="tab" onclick="showTab('tips',this)">Не сорваться</button>
   </div>
 
@@ -156,11 +165,12 @@
         <li class="check-item" onclick="toggle(this,'nolate')"><div class="checkbox" id="cb-nolate"></div><span class="check-text">После 20:00 — только вода, чай, кофе без молока</span></li>
         <li class="check-item" onclick="toggle(this,'wtot')"><div class="checkbox" id="cb-wtot"></div><span class="check-text">Выпил 2–2.5 л воды за день</span></li>
         <li class="check-item" onclick="toggle(this,'nosnk')"><div class="checkbox" id="cb-nosnk"></div><span class="check-text">Не ел вместе с ребёнком вне своего окна</span></li>
+        <li class="check-item" onclick="toggle(this,'noalc')"><div class="checkbox" id="cb-noalc"></div><span class="check-text">Не пил алкоголь сегодня</span></li>
         <li class="check-item" onclick="toggle(this,'jrnl')"><div class="checkbox" id="cb-jrnl"></div><span class="check-text">Отметил самочувствие и энергию (1–10)</span></li>
       </ul>
       <div style="margin-top:12px;">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:4px;">
-          <span>Прогресс дня</span><span id="progLabel">0 / 10</span>
+          <span>Прогресс дня</span><span id="progLabel">0 / 11</span>
         </div>
         <div class="progress-bar-wrap"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
       </div>
@@ -296,7 +306,147 @@
     </div>
   </div>
 
-  <div id="tips" class="section">
+  <div id="body" class="section">
+    <div class="card">
+      <div class="sec-title">Что происходит с телом по часам голодания</div>
+      <div class="sec-sub">Твой режим: голодание с 20:00. Ниже — что именно происходит внутри.</div>
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+          <button onclick="setBodyMode('fasting')" id="btnFasting" style="padding:6px 14px;border-radius:8px;border:1px solid #1a1a1a;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;">По часам голодания</button>
+          <button onclick="setBodyMode('clock')" id="btnClock" style="padding:6px 14px;border-radius:8px;border:1px solid #ccc;background:transparent;color:#555;font-size:12px;cursor:pointer;">По времени суток</button>
+        </div>
+      </div>
+      <div id="bodyFasting">
+        <div class="body-phase" style="border-left:3px solid #97C459;padding:10px 12px;margin-bottom:10px;background:#f9fcf5;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#639922;margin-bottom:3px;">0–4 часа · Переваривание</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Тело переваривает последний приём пищи. Инсулин повышен, жиросжигание заблокировано. Это нормально — просто переходный период.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #5DCAA5;padding:10px 12px;margin-bottom:10px;background:#f5fdfb;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#0F6E56;margin-bottom:3px;">4–8 часов · Снижение инсулина</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Инсулин падает. Тело переключается с глюкозы на жировые запасы. Начинается лёгкое жиросжигание. Ты в это время обычно спишь — бесплатные часы.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #AFA9EC;padding:10px 12px;margin-bottom:10px;background:#f8f8fe;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#534AB7;margin-bottom:3px;">8–12 часов · Жиросжигание</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Запасы гликогена в печени истощаются. Тело активно переходит на жирные кислоты как основное топливо. Именно сейчас происходит основное похудение.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #EF9F27;padding:10px 12px;margin-bottom:10px;background:#fffbf5;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#854F0B;margin-bottom:3px;">12–14 часов · Начало кетоза</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Печень начинает производить кетоновые тела — альтернативное топливо для мозга. Энергия становится стабильнее, без резких спадов. Это твой текущий режим 14/10.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #E24B4A;padding:10px 12px;margin-bottom:10px;background:#fff8f8;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#A32D2D;margin-bottom:3px;">16+ часов · Активный кетоз + аутофагия</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Цель режима 16/8. Аутофагия — процесс «самоочищения» клеток, утилизация повреждённых белков. Противовоспалительный эффект, улучшение работы мозга, замедление старения.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #3C3489;padding:10px 12px;background:#f5f4ff;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#3C3489;margin-bottom:3px;">24+ часов · Глубокая аутофагия</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Максимальный уровень аутофагии. Используется в терапевтических протоколах. Для ежедневной практики не нужно — достаточно 16 часов.</div>
+        </div>
+      </div>
+      <div id="bodyClock" style="display:none;">
+        <div style="font-size:12px;color:#888;margin-bottom:12px;">Твой режим: последняя еда в 20:00, первая в 10:00–12:00</div>
+        <div class="body-phase" style="border-left:3px solid #5DCAA5;padding:10px 12px;margin-bottom:10px;background:#f5fdfb;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#0F6E56;margin-bottom:3px;">20:00 — закрытие окна</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Последний приём пищи. Начинается отсчёт голодания. Дай себе 2–3 часа до сна — пища переварится и сон будет глубже.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #97C459;padding:10px 12px;margin-bottom:10px;background:#f9fcf5;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#639922;margin-bottom:3px;">00:00–01:00 — отбой (4–5 ч голодания)</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Переваривание завершается. Инсулин снижается. Во время сна запускается выработка гормона роста — он помогает сжигать жир и восстанавливать мышцы.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #AFA9EC;padding:10px 12px;margin-bottom:10px;background:#f8f8fe;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#534AB7;margin-bottom:3px;">04:00–06:00 — пик жиросжигания (8–10 ч)</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Ты спишь — тело активно сжигает жир. Гликоген почти исчерпан. Именно ночью происходит большая часть метаболических изменений.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #EF9F27;padding:10px 12px;margin-bottom:10px;background:#fffbf5;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#854F0B;margin-bottom:3px;">09:00 — подъём (13 ч голодания)</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Просыпаешься уже с 13 часами голодания позади! Лёгкий голод — нормально. Кофе/чай без молока, стакан воды. Осталось 1–3 часа.</div>
+        </div>
+        <div class="body-phase" style="border-left:3px solid #E24B4A;padding:10px 12px;background:#fff8f8;border-radius:0 8px 8px 0;">
+          <div style="font-size:12px;font-weight:500;color:#A32D2D;margin-bottom:3px;">10:00–12:00 — открытие окна (14–16 ч)</div>
+          <div style="font-size:13px;color:#444;line-height:1.5;">Первый приём пищи. К этому моменту активен кетоз и аутофагия. Разбивай голодание лёгкой едой: белок + жиры, не сахар.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">Что меняется в теле за 3 месяца</div>
+      <div class="rp"><div class="rp-header"><span class="badge bg">Месяц 1</span></div><div class="rp-body g">Нормализация инсулина и сахара в крови. Снижение воспалений. Стабилизация энергии без резких спадов. Улучшение качества сна. Первое заметное снижение веса.</div></div>
+      <div class="rp" style="margin-top:10px;"><div class="rp-header"><span class="badge bt">Месяц 2</span></div><div class="rp-body t">Активное жиросжигание. Улучшение чувствительности к инсулину. Снижение тяги к сладкому. Улучшение кожи. Рост концентрации и когнитивных функций.</div></div>
+      <div class="rp" style="margin-top:10px;"><div class="rp-header"><span class="badge bp">Месяц 3</span></div><div class="rp-body p">Аутофагия на регулярной основе. Противовоспалительный эффект. Улучшение микробиома кишечника. Стабильный вес и энергия. Это уже образ жизни, а не диета.</div></div>
+    </div>
+  </div>
+
+  <div id="alcohol" class="section">
+    <div class="card">
+      <div class="sec-title">Алкоголь и жиросжигание — факты</div>
+      <div style="padding:12px;background:#FCEBEB;border-radius:8px;margin-bottom:14px;border-left:3px solid #E24B4A;">
+        <div style="font-size:13px;color:#A32D2D;line-height:1.5;font-weight:500;">Алкоголь — приоритетное топливо для печени. Пока печень перерабатывает алкоголь, жиросжигание полностью останавливается.</div>
+      </div>
+      <div class="stat-row"><span class="stat-label">Остановка жиросжигания</span><span class="stat-val" style="color:#A32D2D;">на 12–36 ч</span></div>
+      <div class="stat-row"><span class="stat-label">1 бокал вина (150 мл)</span><span class="stat-val">~120 ккал + блокировка</span></div>
+      <div class="stat-row"><span class="stat-label">1 бокал пива (330 мл)</span><span class="stat-val">~150 ккал + блокировка</span></div>
+      <div class="stat-row"><span class="stat-label">50 мл водки/виски</span><span class="stat-val">~115 ккал + блокировка</span></div>
+      <div class="stat-row"><span class="stat-label">Алкоголь натощак</span><span class="stat-val" style="color:#A32D2D;">в 2× сильнее бьёт</span></div>
+      <div class="stat-row"><span class="stat-label">Влияние на сон</span><span class="stat-val" style="color:#A32D2D;">нарушает фазы сна</span></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">Лучшее и худшее время для приёма</div>
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#EAF3DE;border-radius:8px;margin-bottom:8px;">
+          <div style="font-size:18px;">✓</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:#3B6D11;">Лучшее время: 14:00–18:00</div>
+            <div style="font-size:12px;color:#639922;margin-top:2px;">В середине окна питания. Максимум времени чтобы переработать до сна. Ешь плотно до и после — алкоголь не натощак.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#FAEEDA;border-radius:8px;margin-bottom:8px;">
+          <div style="font-size:18px;">~</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:#854F0B;">Так себе: 18:00–20:00</div>
+            <div style="font-size:12px;color:#BA7517;margin-top:2px;">Близко к закрытию окна. Алкоголь нарушит сон, жиросжигание ночью заблокируется. Если пьёшь — только 1 бокал, с едой.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#FCEBEB;border-radius:8px;">
+          <div style="font-size:18px;">✗</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:#A32D2D;">Худшее: после 20:00 и натощак</div>
+            <div style="font-size:12px;color:#E24B4A;margin-top:2px;">После закрытия окна — нарушает голодание. Натощак (до первой еды) — удар по желудку и быстрое опьянение. Оба варианта максимально вредят прогрессу.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">Сравнение напитков</div>
+      <div class="meal-card">
+        <div class="meal-name">Сухое вино (красное/белое)</div>
+        <div class="meal-items">Меньше сахара, меньше всплеск инсулина. Содержит ресвератрол (антиоксидант). Относительно лучший выбор — 1 бокал 150 мл.</div>
+        <div class="meal-cal" style="color:#854F0B;">~120 ккал · умеренный инсулиновый ответ</div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-name">Пиво</div>
+        <div class="meal-items">Много быстрых углеводов. Сильный инсулиновый всплеск. Хуже всего для ИГ — даже безалкогольное пиво содержит углеводы.</div>
+        <div class="meal-cal" style="color:#A32D2D;">~150–200 ккал · высокий инсулиновый ответ</div>
+      </div>
+      <div class="meal-card">
+        <div class="meal-name">Крепкий алкоголь (водка, виски, джин)</div>
+        <div class="meal-items">Нет углеводов — нет инсулинового всплеска от самого напитка. Но смешивать с соком/колой = катастрофа. Чистый или с водой — меньший вред.</div>
+        <div class="meal-cal" style="color:#854F0B;">~115 ккал · низкий инсулиновый ответ (без миксеров!)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">Как восстановиться после алкоголя</div>
+      <div class="tip" style="border-left-color:#E24B4A;">Не продлевай голодание «чтобы компенсировать» — организм после алкоголя ослаблен, нужны питательные вещества, а не стресс.</div>
+      <div class="tip">Сразу после пробуждения: большой стакан воды + электролиты (щепотка соли + лимон, или кокосовая вода).</div>
+      <div class="tip">Первая еда: яйца + авокадо + овощи. Цистеин в яйцах помогает перерабатывать ацетальдегид — главный виновник похмелья.</div>
+      <div class="tip">Сдвинь окно питания на 1–2 часа раньше если плохо — это не срыв, это разумная адаптация.</div>
+      <div class="tip">Тренировку отмени или замени лёгкой растяжкой — алкоголь обезвоживает, силовая нагрузка усилит стресс для организма.</div>
+      <div class="tip">День после алкоголя — просто держи окно питания. Без самобичевания. Один день не обнулит прогресс.</div>
+    </div>
+  </div>
+
+  
     <div class="card">
       <div class="sec-title">Главная ловушка — ребёнок ест, ты тянешься</div>
       <div class="tip par">Ребёнок ест — рука автоматически тянется попробовать. Это самый частый срыв с маленькими детьми. Решение: жуй жвачку или пей воду когда кормишь его.</div>
@@ -385,8 +535,8 @@ function toggle(item, id) {
   else { cb.classList.remove('checked'); txt.classList.remove('done'); }
   var done = Object.values(S.checks).filter(Boolean).length;
   document.getElementById('checksDone').textContent = done;
-  document.getElementById('progLabel').textContent = done + ' / 10';
-  document.getElementById('progFill').style.width = Math.round(done / 10 * 100) + '%';
+  document.getElementById('progLabel').textContent = done + ' / 11';
+  document.getElementById('progFill').style.width = Math.round(done / 11 * 100) + '%';
   save();
 }
 
@@ -415,6 +565,17 @@ function saveMeasurements() {
   setTimeout(function() { btn.textContent = 'Сохранить замеры'; btn.style.color = '#555'; btn.style.borderColor = '#ccc'; }, 2000);
 }
 
+function setBodyMode(mode) {
+  document.getElementById('bodyFasting').style.display = mode === 'fasting' ? 'block' : 'none';
+  document.getElementById('bodyClock').style.display = mode === 'clock' ? 'block' : 'none';
+  document.getElementById('btnFasting').style.background = mode === 'fasting' ? '#1a1a1a' : 'transparent';
+  document.getElementById('btnFasting').style.color = mode === 'fasting' ? '#fff' : '#555';
+  document.getElementById('btnFasting').style.borderColor = mode === 'fasting' ? '#1a1a1a' : '#ccc';
+  document.getElementById('btnClock').style.background = mode === 'clock' ? '#1a1a1a' : 'transparent';
+  document.getElementById('btnClock').style.color = mode === 'clock' ? '#fff' : '#555';
+  document.getElementById('btnClock').style.borderColor = mode === 'clock' ? '#1a1a1a' : '#ccc';
+}
+
 function showTab(id, btn) {
   document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
@@ -423,6 +584,47 @@ function showTab(id, btn) {
 }
 
 load();
+
+var deferredPrompt = null;
+var installBanner = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBanner) installBanner.style.display = 'flex';
+});
+
+window.addEventListener('appinstalled', function() {
+  if (installBanner) installBanner.style.display = 'none';
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  installBanner = document.getElementById('installBanner');
+  document.getElementById('installBtn').addEventListener('click', function() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function() { deferredPrompt = null; installBanner.style.display = 'none'; });
+    }
+  });
+  document.getElementById('installClose').addEventListener('click', function() {
+    installBanner.style.display = 'none';
+  });
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
 </script>
+
+<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e5;padding:14px 16px;align-items:center;gap:12px;z-index:999;box-shadow:0 -2px 12px rgba(0,0,0,0.08);">
+  <div style="width:40px;height:40px;border-radius:10px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🥗</div>
+  <div style="flex:1;">
+    <div style="font-size:14px;font-weight:500;color:#1a1a1a;">Добавить на главный экран</div>
+    <div style="font-size:12px;color:#888;margin-top:2px;">Работает как приложение, без браузера</div>
+  </div>
+  <button id="installBtn" style="padding:8px 16px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;flex-shrink:0;">Добавить</button>
+  <button id="installClose" style="background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;padding:4px;flex-shrink:0;">×</button>
+</div>
+
 </body>
 </html>
