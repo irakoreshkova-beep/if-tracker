@@ -7,22 +7,73 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ИГ Трекер">
-<meta name="theme-color" content="#f5f5f0">
+<meta name="theme-color" content="#0d0d14">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Интервальное голодание</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+  :root {
+    --bg: #08080d;
+    --bg-soft: #11121a;
+    --surface: rgba(255, 255, 255, 0.08);
+    --surface-strong: rgba(255, 255, 255, 0.12);
+    --line: rgba(255, 255, 255, 0.12);
+    --text: #f8f7fb;
+    --muted: rgba(244, 241, 250, 0.68);
+    --glow-pink: #ff7cc8;
+    --glow-mint: #9effdd;
+    --glow-blue: #6488ff;
+    --glow-gold: #ffe27a;
+    --glow-violet: #b290ff;
+    --ok: #a8ff8b;
+    --shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 1.5rem; }
-  .app { max-width: 700px; margin: 0 auto; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-  .tab { padding: 8px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; cursor: pointer; background: transparent; color: #555; transition: all 0.15s; }
-  .tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
-  .tab:hover:not(.active) { background: #eee; }
+  body {
+    font-family: "Avenir Next", "SF Pro Display", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at 22% 16%, rgba(255, 124, 200, 0.28), transparent 20%),
+      radial-gradient(circle at 82% 12%, rgba(158, 255, 221, 0.22), transparent 18%),
+      radial-gradient(circle at 52% 70%, rgba(100, 136, 255, 0.22), transparent 24%),
+      linear-gradient(180deg, #05050a 0%, #0c0d14 46%, #040408 100%);
+    color: var(--text);
+    padding: 1.25rem;
+    min-height: 100vh;
+  }
+  .app { max-width: 760px; margin: 0 auto; position: relative; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab {
+    padding: 10px 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    background: rgba(10,10,16,0.48);
+    color: rgba(255,255,255,0.82);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(18px);
+  }
+  .tab.active {
+    background: rgba(255,255,255,0.94);
+    color: #fff;
+    color: #11111a;
+    border-color: rgba(255,255,255,0.55);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.22);
+  }
+  .tab:hover:not(.active) { background: rgba(255,255,255,0.12); color: #fff; }
   .section { display: none; }
   .section.active { display: block; }
-  .card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.88));
+    border: 1px solid rgba(255,255,255,0.42);
+    border-radius: 28px;
+    padding: 1.15rem 1.25rem;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(24px);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.18);
+  }
   .phase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1rem; }
   .phase-card { border-radius: 8px; padding: 1rem; text-align: center; }
   .phase-card.ap { background: #EAF3DE; border: 1px solid #97C459; }
@@ -51,10 +102,10 @@
   .check-text.done { text-decoration: line-through; color: #aaa; }
   .progress-bar-wrap { background: #f0f0f0; border-radius: 100px; height: 8px; margin: 8px 0; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 100px; background: #639922; transition: width 0.4s ease; }
-  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; }
   .stat-row:last-child { border-bottom: none; }
-  .stat-label { color: #666; }
-  .stat-val { font-weight: 500; }
+  .stat-label { color: #6d6b76; }
+  .stat-val { font-weight: 500; color: #17141f; }
   .badge { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 100px; font-weight: 500; }
   .bg { background: #EAF3DE; color: #3B6D11; }
   .bt { background: #E1F5EE; color: #0F6E56; }
@@ -83,88 +134,497 @@
   .rp-body.g { border-color: #97C459; }
   .rp-body.t { border-color: #5DCAA5; }
   .rp-body.p { border-color: #AFA9EC; }
-  .tip { padding: 10px 12px; background: #f5f5f0; border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; border-left: 3px solid #5DCAA5; }
+  .tip { padding: 10px 12px; background: rgba(16,18,26,0.04); border-radius: 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; border-left: 3px solid #5DCAA5; color: #4c4754; }
   .tip.par { border-left-color: #AFA9EC; }
   .tip.sleep { border-left-color: #6366f1; }
-  .sec-title { font-size: 15px; font-weight: 500; margin-bottom: 10px; }
-  .sec-sub { font-size: 13px; color: #666; margin-bottom: 14px; line-height: 1.5; }
+  .sec-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #18151f; }
+  .sec-sub { font-size: 13px; color: #6c6875; margin-bottom: 14px; line-height: 1.6; }
   .today-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
-  .ts-card { background: #fff; border-radius: 8px; padding: 12px; text-align: center; }
-  .ts-num { font-size: 22px; font-weight: 500; }
-  .ts-label { font-size: 11px; color: #888; margin-top: 2px; }
-  .sync-bar { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f5f5f0; border-radius: 8px; font-size: 12px; color: #888; }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; }
+  .ts-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.72));
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 24px;
+    padding: 14px 12px;
+    text-align: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.32);
+  }
+  .ts-num { font-size: 24px; font-weight: 600; color: #17141f; }
+  .ts-label { font-size: 11px; color: #6d6b76; margin-top: 4px; line-height: 1.4; }
+  .sync-bar { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.10); border-radius: 999px; font-size: 12px; color: var(--muted); backdrop-filter: blur(16px); }
+  .sync-bar {
+    background: rgba(7,7,12,0.56);
+    border-color: rgba(255,255,255,0.16);
+    color: rgba(255,255,255,0.88);
+  }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; box-shadow: 0 0 14px currentColor; }
   .sync-dot.ok { background: #639922; }
   .sync-dot.pend { background: #EF9F27; }
   .sync-dot.err { background: #E24B4A; }
   .week-labels { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .wl-day-label { font-size: 10px; color: #aaa; text-align: center; margin-bottom: 4px; }
+  .wl-day-label { font-size: 10px; color: rgba(255,255,255,0.42); text-align: center; margin-bottom: 4px; }
   .week-log { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .wl-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid #e5e5e5; background: #fff; color: #aaa; transition: all 0.15s; }
-  .wl-day.done { background: #EAF3DE; border-color: #97C459; color: #3B6D11; }
-  .wl-day.today { border-color: #3C3489; color: #3C3489; font-weight: 700; }
+  .wl-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.42); transition: all 0.15s; }
+  .wl-day.done { background: rgba(168,255,139,0.18); border-color: rgba(168,255,139,0.34); color: #c7ffb7; }
+  .wl-day.today { border-color: rgba(178,144,255,0.8); color: #d7c4ff; font-weight: 700; box-shadow: 0 0 0 1px rgba(178,144,255,0.24) inset; }
   .sleep-phase { border-left: 3px solid #6366f1; padding: 10px 12px; margin-bottom: 10px; background: #f5f4ff; border-radius: 0 8px 8px 0; }
   .sleep-phase .sp-title { font-size: 12px; font-weight: 500; color: #4338ca; margin-bottom: 3px; }
   .sleep-phase .sp-body { font-size: 13px; color: #444; line-height: 1.5; }
 
   /* Timer styles */
-  .timer-card { background: #fff; border: 2px solid #e5e5e5; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; text-align: center; }
-  .timer-card.fasting { border-color: #AFA9EC; background: linear-gradient(135deg, #f8f7ff 0%, #EEEDFE 100%); }
-  .timer-card.eating { border-color: #97C459; background: linear-gradient(135deg, #fbfdf7 0%, #EAF3DE 100%); }
-  .timer-status { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .timer-card.fasting .timer-status { color: #534AB7; }
-  .timer-card.eating .timer-status { color: #3B6D11; }
-  .timer-display { font-size: 42px; font-weight: 600; font-variant-numeric: tabular-nums; margin-bottom: 4px; }
-  .timer-card.fasting .timer-display { color: #3C3489; }
-  .timer-card.eating .timer-display { color: #639922; }
-  .timer-sub { font-size: 12px; color: #888; margin-bottom: 14px; }
-  .timer-btn { padding: 12px 28px; border-radius: 10px; border: none; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-  .timer-btn.start-fast { background: #3C3489; color: #fff; }
-  .timer-btn.start-fast:active { background: #2d2766; }
-  .timer-btn.start-eat { background: #639922; color: #fff; }
-  .timer-btn.start-eat:active { background: #4d7a1a; }
-  .timer-history { font-size: 12px; color: #888; margin-top: 10px; }
-  .timer-ring { width: 160px; height: 160px; margin: 0 auto 12px; position: relative; }
-  .timer-ring svg { transform: rotate(-90deg); }
-  .timer-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .timer-card {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 18% 24%, rgba(255,124,200,0.34), transparent 22%),
+      radial-gradient(circle at 82% 26%, rgba(158,255,221,0.22), transparent 20%),
+      radial-gradient(circle at 50% 82%, rgba(100,136,255,0.28), transparent 24%),
+      linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)),
+      #04050a;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 34px;
+    padding: 1.35rem;
+    margin-bottom: 1rem;
+    text-align: left;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(26px);
+  }
+  .timer-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06), transparent 28%),
+      linear-gradient(180deg, rgba(5,5,10,0.18), rgba(5,5,10,0.12));
+    pointer-events: none;
+  }
+  .timer-card.fasting { border-color: rgba(178,144,255,0.32); }
+  .timer-card.eating { border-color: rgba(168,255,139,0.24); }
+  .timer-shell { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 14px; align-items: center; }
+  .timer-copy { position: relative; z-index: 1; }
+  .timer-kicker { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.42); margin-bottom: 6px; }
+  .timer-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .timer-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(8,8,14,0.58);
+    color: rgba(255,255,255,0.94);
+    font-size: 12px;
+    backdrop-filter: blur(14px);
+  }
+  .timer-status { font-size: 34px; font-weight: 500; letter-spacing: -0.05em; margin-bottom: 8px; color: #fff; text-transform: none; }
+  .timer-card.fasting .timer-status { color: #f3e9ff; }
+  .timer-card.eating .timer-status { color: #efffe6; }
+  .timer-support { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 18px; max-width: 320px; }
+  .timer-display { font-size: 50px; font-weight: 600; font-variant-numeric: tabular-nums; margin-bottom: 4px; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.14); }
+  .timer-sub { font-size: 12px; color: rgba(255,255,255,0.72); margin-bottom: 0; }
+  .timer-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .timer-btn {
+    padding: 14px 20px;
+    border-radius: 18px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 18px 34px rgba(0,0,0,0.22);
+  }
+  .timer-btn.start-fast { background: linear-gradient(135deg, #a486ff, #6488ff); color: #fff; }
+  .timer-btn.start-fast:active { background: linear-gradient(135deg, #8f70ef, #5779e5); }
+  .timer-btn.start-eat { background: linear-gradient(135deg, #a8ff8b, #61d199); color: #0d2411; }
+  .timer-btn.start-eat:active { background: linear-gradient(135deg, #90ef72, #57c188); }
+  .manual-toggle-btn {
+    padding: 14px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(8,8,14,0.54);
+    color: rgba(255,255,255,0.96);
+    font-size: 13px;
+    cursor: pointer;
+    backdrop-filter: blur(14px);
+  }
+  .timer-history { font-size: 12px; color: rgba(255,255,255,0.82); margin-top: 12px; }
+  .timer-ring {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .timer-ring::before {
+    content: "";
+    position: absolute;
+    inset: 20px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,0.22), transparent 32%),
+      radial-gradient(circle at 70% 75%, rgba(255,124,200,0.18), transparent 30%),
+      rgba(5,5,11,0.82);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,0.08),
+      0 0 40px rgba(0,0,0,0.24);
+  }
+  .timer-ring svg { transform: rotate(-90deg); position: relative; z-index: 1; }
+  .timer-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 2; width: 120px; }
+  .manual-panel {
+    display: none;
+    margin-top: 14px;
+    padding: 16px;
+    background: rgba(6,7,12,0.72);
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.14);
+    text-align: left;
+    backdrop-filter: blur(16px);
+  }
+  .manual-grid { display: grid; gap: 10px; margin-top: 10px; }
+  .manual-row { display: grid; grid-template-columns: 96px 1fr 1fr; gap: 8px; align-items: center; }
+  .manual-label { font-size: 12px; color: rgba(255,255,255,0.58); }
+  .manual-panel input {
+    width: 100%;
+    font-size: 13px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 14px;
+    background: rgba(0,0,0,0.34);
+    color: #fff;
+  }
+  .manual-panel input::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; }
+  .manual-panel-head { font-size: 12px; color: rgba(255,255,255,0.58); line-height: 1.5; }
+  .manual-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .manual-save, .manual-cancel {
+    min-height: 44px;
+    border-radius: 16px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .manual-save { flex: 1; border: none; background: linear-gradient(135deg, #a486ff, #6488ff); color: #fff; }
+  .manual-cancel { padding: 0 14px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: #fff; }
 
   /* Modal styles */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
   .modal-overlay.show { display: flex; }
-  .modal { background: #fff; border-radius: 16px; padding: 1.5rem; max-width: 440px; width: 100%; max-height: 85vh; overflow-y: auto; }
-  .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-  .modal-sub { font-size: 13px; color: #888; margin-bottom: 16px; }
-  .modal-stat { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .modal { background: linear-gradient(180deg, rgba(20,21,30,0.96), rgba(11,12,16,0.96)); border-radius: 28px; border: 1px solid rgba(255,255,255,0.10); padding: 1.5rem; max-width: 460px; width: 100%; max-height: 85vh; overflow-y: auto; color: #fff; backdrop-filter: blur(24px); }
+  .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .modal-stat { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; gap: 12px; }
   .modal-stat:last-child { border-bottom: none; }
-  .modal-stat-label { color: #666; }
-  .modal-stat-val { font-weight: 500; }
-  .modal-verdict { padding: 12px; border-radius: 8px; margin: 14px 0; font-size: 13px; line-height: 1.5; }
-  .modal-verdict.good { background: #EAF3DE; border-left: 3px solid #97C459; color: #3B6D11; }
-  .modal-verdict.ok { background: #FAEEDA; border-left: 3px solid #EF9F27; color: #854F0B; }
-  .modal-verdict.bad { background: #FCEBEB; border-left: 3px solid #E24B4A; color: #A32D2D; }
-  .modal-close { width: 100%; padding: 12px; border: 1px solid #e5e5e5; border-radius: 10px; background: #fff; font-size: 14px; cursor: pointer; color: #555; margin-top: 12px; }
-  .modal-close:active { background: #f5f5f0; }
+  .modal-stat-label { color: var(--muted); }
+  .modal-stat-val { font-weight: 500; text-align: right; }
+  .modal-verdict { padding: 14px; border-radius: 18px; margin: 14px 0; font-size: 13px; line-height: 1.6; border: 1px solid rgba(255,255,255,0.10); }
+  .modal-verdict.good { background: rgba(168,255,139,0.12); border-left: 3px solid #97C459; color: #e8ffd7; }
+  .modal-verdict.ok { background: rgba(255,226,122,0.10); border-left: 3px solid #EF9F27; color: #fff0bb; }
+  .modal-verdict.bad { background: rgba(255,124,124,0.10); border-left: 3px solid #E24B4A; color: #ffd7d7; }
+  .modal-close { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; background: rgba(255,255,255,0.08); font-size: 14px; cursor: pointer; color: #fff; margin-top: 12px; }
+  .modal-close:active { background: rgba(255,255,255,0.10); }
+
+  .topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 1.35rem;
+  }
+  .app-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(7,7,12,0.54);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: rgba(255,255,255,0.88);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .app-title { font-size: 34px; font-weight: 500; line-height: 1; letter-spacing: -0.05em; margin-bottom: 6px; }
+  .app-subtitle { font-size: 13px; color: rgba(255,255,255,0.62); max-width: 420px; line-height: 1.5; }
+  .header-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(7,7,12,0.54);
+    color: rgba(255,255,255,0.88);
+    font-size: 12px;
+    backdrop-filter: blur(12px);
+  }
+
+  .insight-hero {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 82% 24%, rgba(255,124,200,0.18), transparent 24%),
+      radial-gradient(circle at 18% 78%, rgba(100,136,255,0.16), transparent 26%),
+      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
+  }
+  .insight-hero::after {
+    content: "";
+    position: absolute;
+    right: -18px;
+    top: -18px;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.55), transparent 72%);
+    pointer-events: none;
+  }
+  .insight-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .insight-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(17,17,26,0.06);
+    color: #4b4660;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .insight-title {
+    font-size: 24px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: #15121d;
+    margin-top: 14px;
+    margin-bottom: 10px;
+    max-width: 420px;
+  }
+  .insight-text {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #555163;
+    max-width: 540px;
+  }
+  .insight-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .cycle-card {
+    background:
+      radial-gradient(circle at 84% 18%, rgba(178,144,255,0.16), transparent 24%),
+      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
+  }
+  .cycle-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .cycle-phase {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: rgba(17,17,26,0.06);
+    color: #403a52;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .cycle-title {
+    font-size: 24px;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: #15121d;
+    margin-bottom: 8px;
+  }
+  .cycle-copy {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #5a5567;
+    max-width: 420px;
+  }
+  .cycle-form {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(17,17,26,0.05);
+    border: 1px solid rgba(17,17,26,0.06);
+  }
+  .cycle-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #7c768c;
+    margin-bottom: 6px;
+  }
+  .cycle-form input {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,17,26,0.10);
+    background: #fff;
+    color: #1b1722;
+    font-size: 13px;
+  }
+  .cycle-form-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .cycle-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .cycle-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(17,17,26,0.05);
+    color: #4d485a;
+    font-size: 12px;
+  }
+  .cycle-history {
+    margin-top: 12px;
+    display: grid;
+    gap: 8px;
+  }
+  .cycle-entry {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(17,17,26,0.05);
+    color: #2a2533;
+    font-size: 13px;
+  }
+  .cycle-entry small {
+    color: #767083;
+  }
+  .cycle-result {
+    display: none;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .mini-btn {
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(17,17,26,0.08);
+    background: rgba(17,17,26,0.05);
+    color: #1a1623;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .mini-btn.primary {
+    border: none;
+    background: linear-gradient(135deg, #171722, #343247);
+    color: #fff;
+  }
+  .knowledge-layout {
+    display: grid;
+    gap: 14px;
+  }
+  .knowledge-card {
+    padding: 18px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.40);
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92));
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.14);
+  }
+  .knowledge-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .knowledge-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #7b748a;
+    margin-bottom: 6px;
+  }
+  .knowledge-title {
+    font-size: 20px;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #18151f;
+  }
+  .knowledge-copy {
+    font-size: 14px;
+    line-height: 1.72;
+    color: #504b5d;
+    margin-top: 8px;
+  }
+  .knowledge-note {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: rgba(17,17,26,0.05);
+    color: #373243;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .today-summary .ts-card:nth-child(1) {
+    background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(245,232,255,0.82));
+  }
+  .today-summary .ts-card:nth-child(2) {
+    background: linear-gradient(180deg, rgba(239,255,248,0.90), rgba(219,255,238,0.82));
+  }
+  .today-summary .ts-card:nth-child(3) {
+    background: linear-gradient(180deg, rgba(244,239,255,0.90), rgba(231,225,255,0.82));
+  }
 
   @media (max-width: 480px) {
     .phase-grid { grid-template-columns: 1fr; }
     .today-summary { grid-template-columns: repeat(2, 1fr); }
     body { padding: 1rem; }
     .timer-display { font-size: 36px; }
+    .app-title { font-size: 28px; }
+    .timer-shell { grid-template-columns: 1fr; }
+    .timer-ring { width: 176px; height: 176px; }
+    .manual-row { grid-template-columns: 1fr; }
+    .cycle-grid { grid-template-columns: 1fr; }
+    .insight-row { flex-direction: column; }
   }
 </style>
 </head>
 <body>
 <div class="app">
-  <div style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+  <div class="topbar">
     <div>
-      <div style="font-size: 20px; font-weight: 500; margin-bottom: 4px;">Интервальное голодание</div>
-      <div style="font-size: 13px; color: #888;">6 недель · 14/10 → 16/8 · режим совы с ребёнком</div>
+      <div class="app-kicker">if flow</div>
+      <div class="app-title">Твой fasting flow</div>
+      <div class="app-subtitle">Таймер. Окно. Аналитика.</div>
     </div>
-    <div class="sync-bar"><div class="sync-dot" id="syncDot"></div><span id="syncStatus">...</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <div class="header-chip" id="phaseChip">Фаза 14/10</div>
+      <div class="sync-bar"><div class="sync-dot" id="syncDot"></div><span id="syncStatus">...</span></div>
+    </div>
   </div>
 
   <div class="tabs">
     <button class="tab active" onclick="showTab('today',this)">Сегодня</button>
+    <button class="tab" onclick="showTab('insights',this)">Инсайты</button>
     <button class="tab" onclick="showTab('plan',this)">План</button>
     <button class="tab" onclick="showTab('menu',this)">Меню</button>
     <button class="tab" onclick="showTab('workout',this)">Тренировки</button>
@@ -178,51 +638,105 @@
   <div id="today" class="section active">
     <!-- TIMER -->
     <div class="timer-card" id="timerCard">
-      <div class="timer-status" id="timerStatus">Таймер не запущен</div>
-      <div class="timer-ring" id="timerRing">
-        <svg width="160" height="160" viewBox="0 0 160 160">
-          <circle cx="80" cy="80" r="70" fill="none" stroke="#e5e5e5" stroke-width="8"/>
-          <circle cx="80" cy="80" r="70" fill="none" stroke="#AFA9EC" stroke-width="8" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440" id="timerArc"/>
-        </svg>
-        <div class="timer-ring-text">
-          <div class="timer-display" id="timerDisplay">00:00</div>
-          <div class="timer-sub" id="timerSub">нажми кнопку ниже</div>
+      <div class="timer-shell">
+        <div class="timer-copy">
+          <div class="timer-kicker">live timer</div>
+          <div class="timer-meta"><div class="timer-chip" id="timerModeChip">Живой таймер</div></div>
+          <div class="timer-status" id="timerStatus">Таймер</div>
+          <div class="timer-actions">
+            <button class="timer-btn start-fast" id="timerBtn" onclick="toggleTimer()">Начать</button>
+            <button type="button" class="manual-toggle-btn" onclick="toggleManualInput();" id="manualToggle">Вручную</button>
+          </div>
+          <div class="timer-history" id="timerHistory"></div>
+        </div>
+        <div class="timer-visual">
+          <div class="timer-ring" id="timerRing">
+            <svg width="220" height="220" viewBox="0 0 220 220">
+              <circle cx="110" cy="110" r="92" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="8"/>
+              <circle cx="110" cy="110" r="92" fill="none" stroke="#AFA9EC" stroke-width="8" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" id="timerArc"/>
+            </svg>
+            <div class="timer-ring-text">
+              <div class="timer-display" id="timerDisplay">00:00</div>
+              <div class="timer-sub" id="timerSub">старт или ручной ввод</div>
+            </div>
+          </div>
         </div>
       </div>
-      <button class="timer-btn start-fast" id="timerBtn" onclick="toggleTimer()">Закрыла окно — голодаю</button>
-      <div style="margin-top:10px;">
-        <span style="font-size:12px;color:#888;cursor:pointer;text-decoration:underline;" onclick="toggleManualInput();" id="manualToggle">Ввести время вручную</span>
+      <div id="manualPanel" class="manual-panel">
+        <div class="manual-panel-head">Если день пошёл не по плану, просто задай интервал вручную.</div>
+        <div class="manual-grid">
+          <div class="manual-row">
+            <label class="manual-label">Закрыла окно</label>
+            <input type="date" id="manualFastDate">
+            <input type="time" id="manualFastTime" value="20:00">
+          </div>
+          <div class="manual-row">
+            <label class="manual-label">Начала есть</label>
+            <input type="date" id="manualEatDate">
+            <input type="time" id="manualEatTime" value="12:00">
+          </div>
+        </div>
+        <div class="manual-actions">
+          <button onclick="saveManualEntry()" class="manual-save">Сохранить интервал</button>
+          <button onclick="toggleManualInput()" class="manual-cancel">Отмена</button>
+        </div>
+        <div id="manualResult" style="display:none;margin-top:8px;padding:8px;border-radius:12px;font-size:12px;text-align:center;"></div>
       </div>
-      <div id="manualPanel" style="display:none;margin-top:12px;padding:12px;background:#f5f5f0;border-radius:10px;text-align:left;">
-        <div style="font-size:12px;color:#666;margin-bottom:8px;">Укажи время закрытия и открытия окна:</div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
-          <label style="font-size:12px;color:#888;min-width:90px;">Закрыла окно:</label>
-          <input type="date" id="manualFastDate" style="font-size:13px;padding:6px 8px;border:1px solid #e5e5e5;border-radius:6px;background:#fff;">
-          <input type="time" id="manualFastTime" value="20:00" style="font-size:13px;padding:6px 8px;border:1px solid #e5e5e5;border-radius:6px;background:#fff;">
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
-          <label style="font-size:12px;color:#888;min-width:90px;">Начала есть:</label>
-          <input type="date" id="manualEatDate" style="font-size:13px;padding:6px 8px;border:1px solid #e5e5e5;border-radius:6px;background:#fff;">
-          <input type="time" id="manualEatTime" value="12:00" style="font-size:13px;padding:6px 8px;border:1px solid #e5e5e5;border-radius:6px;background:#fff;">
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="saveManualEntry()" style="flex:1;padding:8px;border:none;border-radius:8px;background:#3C3489;color:#fff;font-size:13px;cursor:pointer;">Сохранить</button>
-          <button onclick="toggleManualInput()" style="padding:8px 14px;border:1px solid #ccc;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#555;">Отмена</button>
-        </div>
-        <div id="manualResult" style="display:none;margin-top:8px;padding:8px;border-radius:6px;font-size:12px;text-align:center;"></div>
-      </div>
-      <div class="timer-history" id="timerHistory"></div>
     </div>
 
     <div class="today-summary">
-      <div class="ts-card"><div class="ts-num" id="dayCnt">1</div><div class="ts-label">день подряд</div></div>
-      <div class="ts-card"><div class="ts-num" style="color:#639922" id="fastHours">—</div><div class="ts-label">часов сегодня</div></div>
-      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0</div><div class="ts-label">задач выполнено</div></div>
+      <div class="ts-card"><div class="ts-num" id="dayCnt">1</div><div class="ts-label">стрик</div></div>
+      <div class="ts-card"><div class="ts-num" style="color:#639922" id="fastHours">—</div><div class="ts-label">сегодня</div></div>
+      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0</div><div class="ts-label">чеклист</div></div>
+    </div>
+
+    <div class="card insight-hero">
+      <div class="insight-row">
+        <div>
+          <div class="insight-tag" id="dailyInsightTag">Инсайт дня</div>
+          <div class="insight-title" id="dailyInsightTitle">Сегодняшний insight</div>
+          <div class="insight-text" id="dailyInsightText">Короткий, но цепляющий блок про гормоны, сон, стресс, цикл или питание.</div>
+          <div class="insight-actions">
+            <button class="mini-btn primary" type="button" onclick="cycleInsight()">Другой инсайт</button>
+            <button class="mini-btn" type="button" onclick="openInsightsTab()">Читать глубже</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card cycle-card">
+      <div class="cycle-grid">
+        <div>
+          <div class="cycle-phase" id="cyclePhaseBadge">Цикл не указан</div>
+          <div class="cycle-title" id="cyclePhaseTitle">Добавь дни менструации</div>
+          <div class="cycle-copy" id="cyclePhaseText">Приложение сможет показывать примерную текущую фазу и лучше подстраивать полезный контент под твой цикл.</div>
+          <div class="cycle-meta">
+            <div class="cycle-chip" id="cycleDayChip">День цикла: —</div>
+            <div class="cycle-chip" id="cycleLastChip">Последняя запись: —</div>
+          </div>
+          <div class="cycle-history" id="cycleHistory"></div>
+        </div>
+        <div class="cycle-form">
+          <div>
+            <div class="cycle-label">Начало менструации</div>
+            <input type="date" id="cycleStartDate">
+          </div>
+          <div>
+            <div class="cycle-label">Конец менструации</div>
+            <input type="date" id="cycleEndDate">
+          </div>
+          <div class="cycle-form-actions">
+            <button class="mini-btn primary" type="button" onclick="saveCycleEntry()">Сохранить</button>
+            <button class="mini-btn" type="button" onclick="prefillCycleToday()">Закончилась сегодня</button>
+          </div>
+          <div class="cycle-result" id="cycleResult"></div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
-      <div class="sec-title" id="windowTitle">Окно питания (14/10) · твой режим совы</div>
-      <div style="font-size:12px;color:#888;margin-bottom:6px;">24 часа — зелёный: еда, серый: голодание</div>
+      <div class="sec-title" id="windowTitle">Окно 14/10</div>
+      <div style="font-size:12px;color:#888;margin-bottom:6px;">зелёный — еда, серый — пауза</div>
       <div class="wv-bar" id="windowBar">
         <div class="wv-fast" style="width:37.5%">01–10:00</div>
         <div class="wv-eat" style="width:41.7%">10:00–20:00</div>
@@ -377,6 +891,14 @@
         </table>
       </div>
       <button id="saveBtn" onclick="saveMeasurements()" style="margin-top:12px;width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;background:transparent;font-size:13px;cursor:pointer;color:#555;">Сохранить замеры</button>
+    </div>
+  </div>
+
+  <div id="insights" class="section">
+    <div class="card">
+      <div class="sec-title">Science feed</div>
+      <div class="sec-sub">Короткий daily hook сверху, а ниже более глубокие карточки про гормоны, физиологию, сон, стресс и женское здоровье.</div>
+      <div class="knowledge-layout" id="insightsFeed"></div>
     </div>
   </div>
 
@@ -707,11 +1229,124 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 var TOTAL_CHECKS = 9;
 var DAY_RESET_HOUR = 5;
+var INSIGHTS = [
+  {
+    id: 'cortisol_sleep',
+    label: 'Сон · кортизол',
+    title: 'Недосып часто выглядит как «слабая дисциплина», хотя это не она',
+    short: 'После плохой ночи тело чаще сильнее тянется к еде и быстрее устает от длинного окна. Иногда правильный шаг не дожать, а сначала выровнять сон.',
+    deep: 'Когда ночь рваная или короткая, нервная система просыпается уже более напряженной. На этом фоне длинное окно переносится тяжелее, а вечерняя тяга к сладкому кажется «срывом», хотя это часто просто уставшее тело, которое просит быстрый комфорт.',
+    note: 'Наблюдение на день: если плохо спала, сравни тягу к еде утром и вечером.'
+  },
+  {
+    id: 'luteal_appetite',
+    label: 'Цикл · аппетит',
+    title: 'Во второй фазе цикла голод может быть заметно сильнее',
+    short: 'Если в лютеиновую фазу длинные окна идут тяжелее, это не слабость. Для многих тел это ожидаемая часть ритма, а не провал режима.',
+    deep: 'Во второй половине цикла многие женщины ощущают более сильный аппетит, большую чувствительность к стрессу и меньшую терпимость к жестким ограничениям. Это одна из причин, почему одинаковый режим может ощущаться по-разному в разные недели месяца.',
+    note: 'Полезный вопрос: у тебя тяжелые дни чаще совпадают с конкретной фазой цикла?'
+  },
+  {
+    id: 'insulin_protein',
+    label: 'Питание · инсулин',
+    title: 'Первый прием пищи задает тон всему окну',
+    short: 'Если первым идет белок и более плотная еда, день часто проходит спокойнее, чем после сладкого или очень легкого перекуса.',
+    deep: 'Первый прием пищи после длинного окна влияет не только на сытость, но и на то, насколько ровно будет идти энергия дальше. Когда в нем есть белок и что-то более устойчивое, у многих людей меньше шансов сорваться на хаотичный вечерний доед.',
+    note: 'Эксперимент: попробуй 2-3 дня открывать окно не сладким, а белком + жиром.'
+  },
+  {
+    id: 'gh_fasting',
+    label: 'Гормоны · ГР',
+    title: 'Голодание и гормон роста интереснее, чем просто цифра часов',
+    short: 'Само по себе окно не делает чудес, но на фоне нормального сна и питания длинные интервалы могут лучше сохранять ощущение собранности и телесной легкости.',
+    deep: 'Людей часто цепляет идея гормона роста как магической кнопки. На деле важен контекст: сон, восстановление, еда в окне и общий стресс. Полезнее видеть не «вау, 16 часов», а как тело отвечает на этот режим в реальности.',
+    note: 'Наблюдай не только часы, но и энергию утром после длинных окон.'
+  },
+  {
+    id: 'stress_hunger',
+    label: 'Стресс · аппетит',
+    title: 'Стресс легко маскируется под голод',
+    short: 'Иногда после тяжелого дня хочется не еды, а снятия напряжения. Трекер может помогать замечать разницу между голодом и перегрузом.',
+    deep: 'Усталость, раздражение и сенсорный перегруз часто дают то же ощущение «мне срочно нужно что-то съесть». Если это видеть, то стратегия меняется: не только еда, но и пауза, тишина, вода, более ранний сон.',
+    note: 'Вечером спроси себя: я голодна, устала или мне нужен просто выход из перегруза?'
+  },
+  {
+    id: 'walking_sensitivity',
+    label: 'Движение · чувствительность',
+    title: 'Прогулка иногда важнее еще одного идеального правила',
+    short: 'Мягкая активность может поддерживать общее ощущение тонуса и переносимость режима лучше, чем попытка все сделать идеально.',
+    deep: 'Не каждая хорошая неделя обязана включать тяжелые тренировки. Для многих тел ходьба, короткая активность и стабильный ритм сна оказываются более полезной базой, чем редкие героические усилия.',
+    note: 'Если день плотный, прогулка тоже считается. И часто очень даже.'
+  },
+  {
+    id: 'sleep_food_timing',
+    label: 'Сон · пищевое окно',
+    title: 'Поздняя еда влияет не только на калории, но и на ощущение ночи',
+    short: 'Когда окно закрывается ближе ко сну, многим сложнее почувствовать легкость ночью и утром. Это не универсальный закон, но паттерн очень частый.',
+    deep: 'Иногда разница между «режим идет» и «режим бесит» в том, насколько поздно была последняя еда. Даже без фанатизма полезно отслеживать, как поздний ужин меняет сон, пульс, жажду и аппетит на следующий день.',
+    note: 'Посмотри, отличается ли твое утро после ужина пораньше и попозже.'
+  },
+  {
+    id: 'female_health_flexibility',
+    label: 'Женское здоровье',
+    title: 'Гибкость может быть полезнее жесткости',
+    short: 'Устойчивый ритм с небольшими откатами часто лучше, чем схема, которую можно держать только через усилие.',
+    deep: 'Женское здоровье обычно выигрывает от режима, который можно встроить в жизнь надолго. Если приложение помогает адаптировать окно под сон, цикл, стресс и самочувствие, это часто ценнее, чем постоянная гонка за более длинным интервалом.',
+    note: 'Хороший вопрос недели: какой режим мне реально хочется повторить снова?',
+    phases: ['menstruation', 'luteal']
+  },
+  {
+    id: 'cycle_menstruation_gentle',
+    label: 'Цикл · менструация',
+    title: 'В дни менструации опора важнее идеальности',
+    short: 'Если хочется больше тепла, еды понадежнее и меньше подвигов, это не откат, а часть нормальной физиологии.',
+    deep: 'Менструальные дни не обязаны выглядеть одинаково каждый цикл, но многим телам в это время правда комфортнее чуть больше мягкости. Иногда лучший трек дня это не длина окна, а то, как ты поддержала себя без давления.',
+    note: 'Мягкий вопрос на сегодня: что сейчас даст телу больше устойчивости?',
+    phases: ['menstruation']
+  },
+  {
+    id: 'cycle_follicular_capacity',
+    label: 'Цикл · фолликулярная',
+    title: 'После менструации структура часто ощущается легче',
+    short: 'Если в этой фазе хочется больше собранности, планов и ритма, это частый и очень понятный паттерн.',
+    deep: 'Фолликулярная фаза часто воспринимается как более ресурсная, поэтому именно здесь многим проще держать рутину, тренировки и более чёткое пищевое окно. Но важно не превращать это в новый стандарт для всех дней месяца.',
+    note: 'Хороший момент заметить, какие привычки реально легче даются именно сейчас.',
+    phases: ['follicular']
+  },
+  {
+    id: 'cycle_ovulation_observe',
+    label: 'Цикл · овуляция',
+    title: 'Овуляторное окно лучше чувствовать, чем угадывать',
+    short: 'Календарь даёт только ориентир. Гораздо интереснее смотреть, как в эти дни меняются энергия, аппетит и желание двигаться.',
+    deep: 'Даже если приложение показывает овуляторное окно, это не диагноз и не точный биомаркер. Но это полезная точка для наблюдения: отличается ли сейчас аппетит, социальность, тренировки или переносимость длинного окна.',
+    note: 'Сравни не теорию, а своё реальное состояние в эти дни.',
+    phases: ['ovulation']
+  },
+  {
+    id: 'cycle_luteal_hunger',
+    label: 'Цикл · лютеиновая',
+    title: 'Перед менструацией аппетит может меняться не из-за слабости',
+    short: 'Если длинное окно переносится тяжелее, это не обязательно про дисциплину. Иногда тело просто в другой фазе и просит другую тактику.',
+    deep: 'В лютеиновой фазе многим сложнее выдерживать те же правила, которые легко шли раньше. В такие дни особенно полезен режим без стыда: больше белка, понятные приёмы пищи, меньше борьбы с собой и больше наблюдения за самочувствием.',
+    note: 'Иногда лучший ход здесь не ужесточать правила, а чуть адаптировать их.',
+    phases: ['luteal']
+  },
+  {
+    id: 'research_small_steps',
+    label: 'Research note',
+    title: 'Самые полезные изменения часто выглядят скучно',
+    short: 'Ровные окна, более стабильный сон, немного движения и меньше хаотичных поздних перекусов обычно дают больше, чем редкие экстремальные дни.',
+    deep: 'В health-привычках мозг любит яркие обещания и резкие схемы. Но на дистанции тело почти всегда лучше отвечает на понятный повторяемый ритм. Именно поэтому tracking без стыда и с контекстом реально работает.',
+    note: 'Если хочется прогресса, ищи не подвиг дня, а повторяемый паттерн.'
+  }
+];
+
 var S = {
   startTs: Date.now(),
   checks: {},
   weekDays: {},
   measurements: {},
+  cycleLogs: [],
   lastCheckDate: '',
   // Timer data
   timerState: 'idle', // idle | fasting | eating
@@ -719,7 +1354,10 @@ var S = {
   eatStartTs: null,
   // History: array of {date, fastHours, checksCount}
   dailyLog: [],
-  weeklyReportShown: ''
+  weeklyReportShown: '',
+  insightOffset: 0,
+  insightDate: '',
+  cycleLength: 28
 };
 
 var timerInterval = null;
@@ -737,9 +1375,321 @@ function getCurrentPhase() {
   return { name: '16/8', fast: 16, eat: 8 };
 }
 
+function getInsightIndex() {
+  var today = getLogicalDate();
+  if (S.insightDate !== today) {
+    S.insightDate = today;
+    S.insightOffset = 0;
+  }
+  var base = Math.floor(new Date(today + 'T00:00:00').getTime() / 86400000);
+  var pool = getInsightPool();
+  var idx = (Math.abs(base) + (S.insightOffset || 0)) % pool.length;
+  return idx;
+}
+
+function renderDailyInsight() {
+  var pool = getInsightPool();
+  var item = pool[getInsightIndex()];
+  var tag = document.getElementById('dailyInsightTag');
+  var title = document.getElementById('dailyInsightTitle');
+  var text = document.getElementById('dailyInsightText');
+  if (!tag || !title || !text) return;
+  tag.textContent = item.label;
+  title.textContent = item.title;
+  text.textContent = item.short;
+}
+
+function renderInsightsFeed() {
+  var wrap = document.getElementById('insightsFeed');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  var phaseKey = getCyclePhaseKey();
+  var todayItem = getInsightPool()[getInsightIndex()];
+  var ordered = INSIGHTS.slice().sort(function(a, b) {
+    var aScore = a.id === todayItem.id ? 0 : (a.phases && a.phases.indexOf(phaseKey) !== -1 ? 1 : 2);
+    var bScore = b.id === todayItem.id ? 0 : (b.phases && b.phases.indexOf(phaseKey) !== -1 ? 1 : 2);
+    return aScore - bScore;
+  });
+  ordered.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'knowledge-card';
+    card.innerHTML =
+      '<div class="knowledge-head"><div><div class="knowledge-label">' + item.label + '</div><div class="knowledge-title">' + item.title + '</div></div>' +
+      (item.id === todayItem.id ? '<div class="insight-tag">сегодня</div>' : ((item.phases && item.phases.indexOf(phaseKey) !== -1) ? '<div class="insight-tag">по циклу</div>' : '')) + '</div>' +
+      '<div class="knowledge-copy">' + item.deep + '</div>' +
+      '<div class="knowledge-note">' + item.note + '</div>';
+    wrap.appendChild(card);
+  });
+}
+
+function cycleInsight() {
+  S.insightOffset = (S.insightOffset + 1) % getInsightPool().length;
+  renderDailyInsight();
+  renderInsightsFeed();
+  save();
+}
+
+function openInsightsTab() {
+  var btns = document.querySelectorAll('.tab');
+  var targetBtn = null;
+  btns.forEach(function(btn) { if (btn.textContent === 'Инсайты') targetBtn = btn; });
+  if (targetBtn) showTab('insights', targetBtn);
+}
+
+function daysBetween(startStr, endStr) {
+  var start = new Date(startStr + 'T00:00:00');
+  var end = new Date(endStr + 'T00:00:00');
+  return Math.round((end.getTime() - start.getTime()) / 86400000);
+}
+
+function getSortedCycleLogs() {
+  return (S.cycleLogs || []).slice().sort(function(a, b) {
+    return new Date(b.start).getTime() - new Date(a.start).getTime();
+  });
+}
+
+function getCyclePhaseKey() {
+  var logs = getSortedCycleLogs();
+  if (!logs.length) return 'unknown';
+
+  var today = getLogicalDate();
+  var todayDate = new Date(today + 'T00:00:00');
+  var latest = logs[0];
+  var latestStart = new Date(latest.start + 'T00:00:00');
+  var latestEnd = new Date(latest.end + 'T00:00:00');
+
+  if (todayDate >= latestStart && todayDate <= latestEnd) return 'menstruation';
+
+  var cycleDay = daysBetween(latest.start, today) + 1;
+  if (cycleDay < 1 || cycleDay > 45) return 'unknown';
+  if (cycleDay <= 13) return 'follicular';
+  if (cycleDay <= 16) return 'ovulation';
+  return 'luteal';
+}
+
+function getInsightPool() {
+  var phaseKey = getCyclePhaseKey();
+  var phaseItems = INSIGHTS.filter(function(item) {
+    return item.phases && item.phases.indexOf(phaseKey) !== -1;
+  });
+  return phaseItems.length ? phaseItems.concat(INSIGHTS.filter(function(item) {
+    return !item.phases || item.phases.indexOf(phaseKey) === -1;
+  })) : INSIGHTS;
+}
+
+function getCycleInfo() {
+  var logs = getSortedCycleLogs();
+  if (!logs.length) {
+    return {
+      key: 'unknown',
+      badge: 'Цикл не указан',
+      title: 'Добавь дни менструации',
+      text: 'После этого приложение сможет показывать примерную фазу цикла и делать контент немного точнее.',
+      day: '—',
+      last: '—'
+    };
+  }
+
+  var today = getLogicalDate();
+  var todayDate = new Date(today + 'T00:00:00');
+  var latest = logs[0];
+  var latestStart = new Date(latest.start + 'T00:00:00');
+  var latestEnd = new Date(latest.end + 'T00:00:00');
+
+  if (todayDate >= latestStart && todayDate <= latestEnd) {
+    return {
+      key: 'menstruation',
+      badge: 'Менструация',
+      title: 'Сейчас менструальная фаза',
+      text: 'Если сегодня хочется больше мягкости и меньше жёсткости, это нормально. В такие дни полезнее наблюдать за состоянием, чем форсировать режим.',
+      day: String(daysBetween(latest.start, today) + 1),
+      last: latest.start + ' - ' + latest.end
+    };
+  }
+
+  var cycleDay = daysBetween(latest.start, today) + 1;
+  if (cycleDay < 1 || cycleDay > 45) {
+    return {
+      key: 'unknown',
+      badge: 'Фаза неясна',
+      title: 'Нужны новые дни менструации',
+      text: 'Последняя запись слишком далеко, поэтому фазу лучше не угадывать. Просто добавь новую менструацию, когда начнётся.',
+      day: '—',
+      last: latest.start + ' - ' + latest.end
+    };
+  }
+
+  if (cycleDay <= 13) {
+    return {
+      key: 'follicular',
+      badge: 'Фолликулярная',
+      title: 'Сейчас примерно фолликулярная фаза',
+      text: 'У многих тел в этой фазе больше ощущения ресурса и легче переносится структура. Это не правило для всех, но частый паттерн.',
+      day: String(cycleDay),
+      last: latest.start + ' - ' + latest.end
+    };
+  }
+  if (cycleDay <= 16) {
+    return {
+      key: 'ovulation',
+      badge: 'Овуляция',
+      title: 'Сейчас примерно овуляторное окно',
+      text: 'Это ориентир, а не медицинская точность. Полезно смотреть не только на календарь, но и на своё реальное самочувствие.',
+      day: String(cycleDay),
+      last: latest.start + ' - ' + latest.end
+    };
+  }
+
+  return {
+    key: 'luteal',
+    badge: 'Лютеиновая',
+    title: 'Сейчас примерно лютеиновая фаза',
+    text: 'Если голодание переносится тяжелее или тяга к еде сильнее, это может быть связано не с силой воли, а с фазой цикла.',
+    day: String(cycleDay),
+    last: latest.start + ' - ' + latest.end
+  };
+}
+
+function getWeeklyCycleContext(weekDates) {
+  var logs = getSortedCycleLogs();
+  if (!logs.length || !weekDates || !weekDates.length) return null;
+
+  var hasMenstruationDays = logs.some(function(item) {
+    return weekDates.some(function(date) {
+      return date >= item.start && date <= item.end;
+    });
+  });
+
+  if (hasMenstruationDays) {
+    return {
+      label: 'Менструальные дни',
+      verdict: 'Неделя пришлась на менструальные дни, так что переносимость режима могла меняться просто из-за физиологии.',
+      text: 'Это не значит, что под тебя нужен отдельный набор правил. Скорее это мягкое напоминание не сравнивать такую неделю с любой другой один в один.',
+      recommendations: [
+        'Если неделя была мягче обычного, сравнивай её с похожими днями цикла, а не с любой другой неделей подряд.'
+      ]
+    };
+  }
+
+  var phaseKey = getCyclePhaseKey();
+  if (phaseKey === 'follicular') {
+    return {
+      label: 'Фолликулярная фаза',
+      verdict: 'Если режим шёл легче, это мог быть просто более ресурсный отрезок цикла, а не только вопрос дисциплины.',
+      text: 'Такие недели удобно использовать как базу для наблюдений: какие окна, тренировки и питание реально ощущаются устойчивыми именно у тебя.',
+      recommendations: [
+        'Если эта неделя шла легко, отметь что именно помогало: сон, ранний ужин, белок, движение или просто спокойный ритм.'
+      ]
+    };
+  }
+
+  if (phaseKey === 'ovulation') {
+    return {
+      label: 'Овуляторное окно',
+      verdict: 'Если неделя ощущалась бодрой, это можно просто отметить как контекст, а не как новую обязательную норму.',
+      text: 'Овуляторное окно бывает полезно не для выводов, а для наблюдений: меняются ли энергия, аппетит, ритм сна и переносимость длинного окна.',
+      recommendations: [
+        'Не делай далёких выводов по одной бодрой неделе. Лучше замечай повторяющиеся паттерны из месяца в месяц.'
+      ]
+    };
+  }
+
+  if (phaseKey === 'luteal') {
+    return {
+      label: 'Лютеиновая фаза',
+      verdict: 'Если окно ощущалось тяжелее обычного, это не обязательно про мотивацию. Иногда ближе к менструации телу просто нужен чуть более гибкий режим.',
+      text: 'Здесь полезнее не ужесточать правила автоматически, а замечать, помогает ли более ранний ужин, больше белка или чуть меньше борьбы с аппетитом.',
+      recommendations: [
+        'Если ближе к концу недели режим шёл тяжелее, попробуй на следующей неделе оставить цель, но снизить жёсткость в формулировках к себе.'
+      ]
+    };
+  }
+
+  return null;
+}
+
+function renderCycleCard() {
+  var info = getCycleInfo();
+  var badge = document.getElementById('cyclePhaseBadge');
+  var title = document.getElementById('cyclePhaseTitle');
+  var text = document.getElementById('cyclePhaseText');
+  var day = document.getElementById('cycleDayChip');
+  var last = document.getElementById('cycleLastChip');
+  var history = document.getElementById('cycleHistory');
+  if (!badge || !title || !text || !day || !last || !history) return;
+
+  badge.textContent = info.badge;
+  title.textContent = info.title;
+  text.textContent = info.text;
+  day.textContent = 'День цикла: ' + info.day;
+  last.textContent = 'Последняя запись: ' + info.last;
+
+  history.innerHTML = '';
+  getSortedCycleLogs().slice(0, 3).forEach(function(item) {
+    var el = document.createElement('div');
+    el.className = 'cycle-entry';
+    el.innerHTML = '<span>' + item.start + ' - ' + item.end + '</span><small>' + (daysBetween(item.start, item.end) + 1) + ' дн.</small>';
+    history.appendChild(el);
+  });
+}
+
+function showCycleResult(text, ok) {
+  var el = document.getElementById('cycleResult');
+  if (!el) return;
+  el.style.display = 'block';
+  el.textContent = text;
+  if (ok) {
+    el.style.background = 'rgba(168,255,139,0.14)';
+    el.style.color = '#2e6a1a';
+    el.style.border = '1px solid rgba(168,255,139,0.28)';
+  } else {
+    el.style.background = 'rgba(255,124,124,0.12)';
+    el.style.color = '#a22e42';
+    el.style.border = '1px solid rgba(255,124,124,0.20)';
+  }
+}
+
+function prefillCycleToday() {
+  var start = document.getElementById('cycleStartDate');
+  var end = document.getElementById('cycleEndDate');
+  if (!end.value) end.value = getLogicalDate();
+  if (!start.value) {
+    var d = new Date(end.value + 'T00:00:00');
+    d.setDate(d.getDate() - 4);
+    start.value = d.toISOString().slice(0, 10);
+  }
+}
+
+function saveCycleEntry() {
+  var start = document.getElementById('cycleStartDate').value;
+  var end = document.getElementById('cycleEndDate').value;
+  if (!start || !end) {
+    showCycleResult('Нужно указать начало и конец.', false);
+    return;
+  }
+  if (end < start) {
+    showCycleResult('Конец не может быть раньше начала.', false);
+    return;
+  }
+  var duration = daysBetween(start, end) + 1;
+  if (duration > 10) {
+    showCycleResult('Получилось больше 10 дней. Проверь даты.', false);
+    return;
+  }
+
+  S.cycleLogs = (S.cycleLogs || []).filter(function(item) { return item.start !== start; });
+  S.cycleLogs.push({ start: start, end: end });
+  S.cycleLogs = getSortedCycleLogs().slice(0, 24);
+  renderCycleCard();
+  save();
+  showCycleResult('Сохранено: ' + start + ' - ' + end, true);
+}
+
 function updateWindowDisplay() {
   var p = getCurrentPhase();
-  document.getElementById('windowTitle').textContent = 'Окно питания (' + p.name + ') · твой режим совы';
+  document.getElementById('windowTitle').textContent = 'Окно ' + p.name;
+  var phaseChip = document.getElementById('phaseChip');
+  if (phaseChip) phaseChip.textContent = 'Фаза ' + p.name;
   var bar = document.getElementById('windowBar');
   var stats = document.getElementById('windowStats');
   if (p.name === '14/10') {
@@ -795,6 +1745,8 @@ function updateTimerUI() {
   var arc = document.getElementById('timerArc');
   var history = document.getElementById('timerHistory');
   var fastHoursEl = document.getElementById('fastHours');
+  var modeChip = document.getElementById('timerModeChip');
+  var ringLength = 578;
 
   if (S.timerState === 'fasting' && S.fastStartTs) {
     card.className = 'timer-card fasting';
@@ -804,51 +1756,55 @@ function updateTimerUI() {
     var m = Math.floor((elapsed % 3600) / 60);
     display.textContent = pad(h) + ':' + pad(m);
     sub.textContent = 'с ' + formatTime(S.fastStartTs);
-    btn.textContent = 'Начала есть — открыть окно';
+    btn.textContent = 'Открыть окно';
     btn.className = 'timer-btn start-eat';
     arc.style.stroke = '#AFA9EC';
+    if (modeChip) modeChip.textContent = 'До цели';
     // Progress ring: target = current phase fast hours
     var phase = getCurrentPhase();
     var progress = Math.min(1, (elapsed / 3600) / phase.fast);
-    arc.style.strokeDashoffset = 440 - (440 * progress);
+    arc.style.strokeDashoffset = ringLength - (ringLength * progress);
     fastHoursEl.textContent = h + 'ч ' + m + 'м';
   } else if (S.timerState === 'eating' && S.eatStartTs) {
     card.className = 'timer-card eating';
-    status.textContent = 'Окно питания открыто';
+    status.textContent = 'Окно питания';
     var elapsed = (Date.now() - S.eatStartTs) / 1000;
     if (elapsed < 0) elapsed = 0;
     var h = Math.floor(elapsed / 3600);
     var m = Math.floor((elapsed % 3600) / 60);
     display.textContent = pad(h) + ':' + pad(m);
     sub.textContent = 'с ' + formatTime(S.eatStartTs);
-    btn.textContent = 'Закрыла окно — голодаю';
+    btn.textContent = 'Закрыть окно';
     btn.className = 'timer-btn start-fast';
     arc.style.stroke = '#97C459';
+    if (modeChip) modeChip.textContent = 'Окно открыто';
     var phase = getCurrentPhase();
     var progress = Math.min(1, (elapsed / 3600) / phase.eat);
-    arc.style.strokeDashoffset = 440 - (440 * progress);
+    arc.style.strokeDashoffset = ringLength - (ringLength * progress);
     // Show last fast duration
     var todayLog = S.dailyLog.find(function(e) { return e.date === getLogicalDate(); });
     if (todayLog && todayLog.fastHours) fastHoursEl.textContent = todayLog.fastHours + 'ч';
   } else {
     card.className = 'timer-card';
-    status.textContent = 'Таймер не запущен';
-    btn.textContent = 'Закрыла окно — голодаю';
+    status.textContent = 'Таймер';
+    btn.textContent = 'Начать';
     btn.className = 'timer-btn start-fast';
-    arc.style.strokeDashoffset = 440;
+    arc.style.stroke = '#AFA9EC';
+    arc.style.strokeDashoffset = ringLength;
+    if (modeChip) modeChip.textContent = 'Готов';
     // Even when idle, show today's logged fast if exists
     var todayLog = S.dailyLog.find(function(e) { return e.date === getLogicalDate(); });
     if (todayLog && todayLog.fastHours) {
       display.textContent = todayLog.fastHours + 'ч';
-      sub.textContent = 'записано вручную';
+      sub.textContent = 'сохранено';
       fastHoursEl.textContent = todayLog.fastHours + 'ч';
       arc.style.stroke = '#97C459';
       var phase = getCurrentPhase();
       var progress = Math.min(1, todayLog.fastHours / phase.fast);
-      arc.style.strokeDashoffset = 440 - (440 * progress);
+      arc.style.strokeDashoffset = ringLength - (ringLength * progress);
     } else {
       display.textContent = '00:00';
-      sub.textContent = 'нажми кнопку ниже';
+      sub.textContent = 'старт или ручной ввод';
       fastHoursEl.textContent = '—';
     }
   }
@@ -856,9 +1812,9 @@ function updateTimerUI() {
   // Show last fast in history
   var lastFast = S.dailyLog.length > 0 ? S.dailyLog[S.dailyLog.length - 1] : null;
   if (lastFast && lastFast.date !== getLogicalDate()) {
-    history.textContent = 'Прошлое голодание: ' + lastFast.fastHours + ' ч (' + formatDateShort(lastFast.date) + ')';
+    history.textContent = lastFast.fastHours + ' ч · ' + formatDateShort(lastFast.date);
   } else if (lastFast && lastFast.fastHours && (S.timerState === 'eating' || S.timerState === 'idle')) {
-    history.textContent = 'Сегодня: ' + lastFast.fastHours + ' ч голодания';
+    history.textContent = 'Сегодня: ' + lastFast.fastHours + ' ч';
   } else {
     history.textContent = '';
   }
@@ -900,7 +1856,7 @@ function toggleManualInput() {
     document.getElementById('manualResult').style.display = 'none';
   } else {
     panel.style.display = 'none';
-    toggle.textContent = 'Ввести время вручную';
+    toggle.textContent = 'Вручную';
   }
 }
 
@@ -985,7 +1941,7 @@ function saveManualEntry() {
   // Auto-hide panel after 2 seconds
   setTimeout(function() {
     document.getElementById('manualPanel').style.display = 'none';
-    document.getElementById('manualToggle').textContent = 'Ввести время вручную';
+    document.getElementById('manualToggle').textContent = 'Вручную';
   }, 2000);
 }
 
@@ -994,11 +1950,13 @@ function showManualResult(text, type) {
   el.style.display = 'block';
   el.textContent = text;
   if (type === 'good') {
-    el.style.background = '#EAF3DE';
-    el.style.color = '#3B6D11';
+    el.style.background = 'rgba(168,255,139,0.14)';
+    el.style.color = '#d9ffc9';
+    el.style.border = '1px solid rgba(168,255,139,0.24)';
   } else {
-    el.style.background = '#FCEBEB';
-    el.style.color = '#A32D2D';
+    el.style.background = 'rgba(255,124,124,0.12)';
+    el.style.color = '#ffd6d6';
+    el.style.border = '1px solid rgba(255,124,124,0.20)';
   }
 }
 
@@ -1236,6 +2194,11 @@ function showWeeklyReport() {
 
   var phase = getCurrentPhase();
   var weekNum = Math.ceil(Math.max(1, Math.floor((Date.now() - S.startTs) / 86400000) + 1) / 7);
+  var targetDays = weekFasts.filter(function(e) { return e.fastHours >= phase.fast; }).length;
+  var exceededDays = weekFasts.filter(function(e) { return e.fastHours >= phase.fast + 1; }).length;
+  var nearTargetDays = weekFasts.filter(function(e) { return e.fastHours >= phase.fast - 1 && e.fastHours < phase.fast; }).length;
+  var missingFastDays = 7 - weekFasts.length;
+  var cycleContext = getWeeklyCycleContext(weekDates);
 
   // Build report
   var modal = document.getElementById('weeklyModal');
@@ -1254,6 +2217,8 @@ function showWeeklyReport() {
     html += '<div class="modal-stat"><span class="modal-stat-label">Среднее голодание</span><span class="modal-stat-val" style="color:#3C3489;">' + avgFast + ' ч</span></div>';
     html += '<div class="modal-stat"><span class="modal-stat-label">Максимум</span><span class="modal-stat-val" style="color:#639922;">' + maxFast + ' ч</span></div>';
     html += '<div class="modal-stat"><span class="modal-stat-label">Минимум</span><span class="modal-stat-val">' + minFast + ' ч</span></div>';
+    html += '<div class="modal-stat"><span class="modal-stat-label">В цели или выше</span><span class="modal-stat-val" style="color:#639922;">' + targetDays + ' дней</span></div>';
+    if (exceededDays > 0) html += '<div class="modal-stat"><span class="modal-stat-label">Выше цели</span><span class="modal-stat-val" style="color:#AFA9EC;">' + exceededDays + ' дней</span></div>';
   }
 
   // Alcohol stats for the week
@@ -1290,25 +2255,33 @@ function showWeeklyReport() {
 
   if (weekFasts.length === 0) {
     verdictClass = 'ok';
-    verdictText = 'На этой неделе нет записей таймера. Не забывай нажимать кнопку «Закрыла окно» каждый вечер — так ты увидишь реальный прогресс!';
+    verdictText = 'На этой неделе мало данных. Сначала просто записывай окна, а выводы появятся сами.';
   } else if (avgFast >= phase.fast) {
     verdictClass = 'good';
-    verdictText = 'Отличная неделя! Среднее голодание ' + avgFast + ' ч — это ' + (avgFast >= phase.fast + 1 ? 'даже больше' : 'ровно') + ' нормы для ' + phase.name + '. Ты на правильном пути, тело уже привыкает и активно сжигает жир.';
-    if (phase.name !== '16/8' && avgFast >= phase.fast + 1) {
-      verdictText += ' Можешь попробовать перейти к следующей фазе раньше!';
-    }
+    verdictText = 'Сильная неделя: среднее окно ' + avgFast + ' ч, цель ' + phase.name + ' закрыта.';
+    if (exceededDays > 0) verdictText += ' Выше цели: ' + exceededDays + ' дн.';
+    if (missingFastDays > 0) verdictText += ' Пустые дни не считаются против тебя.';
   } else if (avgFast >= phase.fast - 1) {
     verdictClass = 'ok';
-    verdictText = 'Хорошая неделя! Среднее ' + avgFast + ' ч — почти норма для ' + phase.name + ' (' + phase.fast + ' ч). Немного дотянуть утром и будет идеально. Ты уже близко!';
+    verdictText = 'Неделя рядом с целью: ' + avgFast + ' ч при плане ' + phase.fast + ' ч.';
+    if (targetDays > 0) verdictText += ' В цели: ' + targetDays + ' дн.';
+    if (nearTargetDays > 0) verdictText += ' Почти в цели: ' + nearTargetDays + ' дн.';
   } else {
-    verdictClass = 'bad';
-    verdictText = 'Среднее голодание ' + avgFast + ' ч — ниже цели ' + phase.fast + ' ч. Не страшно, это нормальная часть адаптации. Попробуй закрывать окно чуть раньше или терпеть утром на 30 мин дольше.';
+    verdictClass = 'ok';
+    verdictText = 'Среднее окно ниже цели: ' + avgFast + ' ч против ' + phase.fast + ' ч.';
+    if (maxFast >= phase.fast) verdictText += ' Но отдельные сильные дни уже были.';
+    if (missingFastDays > 0) verdictText += ' Часть картины просто не записана.';
   }
 
   if (daysCompleted >= 6) {
-    verdictText += ' Выполнение чеклиста — ' + daysCompleted + '/7, превосходная дисциплина!';
+    verdictText += ' Чеклист: ' + daysCompleted + '/7.';
   } else if (daysCompleted >= 4) {
-    verdictText += ' Чеклист: ' + daysCompleted + '/7 — неплохо, стараемся больше на следующей неделе.';
+    verdictText += ' Чеклист: ' + daysCompleted + '/7.';
+  } else if (daysCompleted > 0) {
+    verdictText += ' Есть база для следующей недели.';
+  }
+  if (cycleContext) {
+    verdictText += ' ' + cycleContext.verdict;
   }
 
   // Comparison with previous week
@@ -1334,6 +2307,12 @@ function showWeeklyReport() {
   }
 
   html += '<div class="modal-verdict ' + verdictClass + '">' + verdictText + '</div>';
+  if (cycleContext) {
+    html += '<div style="margin-top:12px;padding:14px;border-radius:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);">';
+    html += '<div style="font-size:14px;font-weight:500;margin-bottom:6px;color:#fff;">Контекст цикла · ' + cycleContext.label + '</div>';
+    html += '<div style="font-size:12px;color:rgba(255,255,255,0.72);line-height:1.6;">' + cycleContext.text + '</div>';
+    html += '</div>';
+  }
 
   // ===== BODY SCIENCE SECTION =====
   var scienceTitle = '';
@@ -1420,6 +2399,10 @@ function showWeeklyReport() {
     ];
   }
 
+  if (cycleContext && cycleContext.recommendations && cycleContext.recommendations.length) {
+    recommendations = cycleContext.recommendations.concat(recommendations);
+  }
+
   html += '<div style="margin-top:16px;padding-top:14px;border-top:1px solid #f0f0f0;">';
   html += '<div style="font-size:14px;font-weight:500;margin-bottom:12px;">' + scienceTitle + '</div>';
   scienceItems.forEach(function(item) {
@@ -1457,12 +2440,15 @@ async function load() {
       S.checks = p.checks || {};
       S.weekDays = p.weekDays || {};
       S.measurements = p.measurements || {};
+      S.cycleLogs = p.cycleLogs || [];
       S.lastCheckDate = p.lastCheckDate || '';
       S.timerState = p.timerState || 'idle';
       S.fastStartTs = p.fastStartTs || null;
       S.eatStartTs = p.eatStartTs || null;
       S.dailyLog = p.dailyLog || [];
       S.weeklyReportShown = p.weeklyReportShown || '';
+      S.insightOffset = p.insightOffset || 0;
+      S.insightDate = p.insightDate || '';
     }
   } catch (e) {}
 
@@ -1483,11 +2469,14 @@ async function load() {
       S.measurements = resp.data.measurements || {};
       S.lastCheckDate = resp.data.last_check_date || '';
       var extra = resp.data.measurements._timer || {};
+      S.cycleLogs = extra.cycleLogs || [];
       S.timerState = extra.timerState || 'idle';
       S.fastStartTs = extra.fastStartTs || null;
       S.eatStartTs = extra.eatStartTs || null;
       S.dailyLog = extra.dailyLog || [];
       S.weeklyReportShown = extra.weeklyReportShown || '';
+      S.insightOffset = extra.insightOffset || 0;
+      S.insightDate = extra.insightDate || '';
     }
     checkDayReset();
     render();
@@ -1511,12 +2500,15 @@ function saveToLocal() {
       checks: S.checks,
       weekDays: S.weekDays,
       measurements: S.measurements,
+      cycleLogs: S.cycleLogs,
       lastCheckDate: S.lastCheckDate,
       timerState: S.timerState,
       fastStartTs: S.fastStartTs,
       eatStartTs: S.eatStartTs,
       dailyLog: S.dailyLog,
-      weeklyReportShown: S.weeklyReportShown
+      weeklyReportShown: S.weeklyReportShown,
+      insightOffset: S.insightOffset,
+      insightDate: S.insightDate
     }));
   } catch (e) {}
 }
@@ -1532,7 +2524,10 @@ async function save() {
     fastStartTs: S.fastStartTs,
     eatStartTs: S.eatStartTs,
     dailyLog: S.dailyLog,
-    weeklyReportShown: S.weeklyReportShown
+    weeklyReportShown: S.weeklyReportShown,
+    cycleLogs: S.cycleLogs,
+    insightOffset: S.insightOffset,
+    insightDate: S.insightDate
   };
   try {
     var resp = await sb.from('tracker_data').upsert({
@@ -1579,6 +2574,9 @@ function render() {
   var days = Math.max(1, Math.floor((Date.now() - S.startTs) / 86400000) + 1);
   document.getElementById('dayCnt').textContent = days;
   updateWindowDisplay();
+  renderDailyInsight();
+  renderInsightsFeed();
+  renderCycleCard();
   var ids = ['wam','win','bfst','lnch','wkt','din','nolate','wtot','noalc'];
   var done = 0;
   ids.forEach(function(id) {

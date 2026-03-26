@@ -1,5 +1,5 @@
-const CACHE = 'if-tracker-v4';
-const ASSETS = ['./', './index.html', './manifest.json'];
+const CACHE = 'if-tracker-v5';
+const ASSETS = ['./', './index.html', './manifest.json', './icon.png'];
 
 self.addEventListener('install', function(e) {
   e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(ASSETS); }));
