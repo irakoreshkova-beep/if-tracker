@@ -73,6 +73,7 @@
     margin-bottom: 1rem;
     backdrop-filter: blur(24px);
     box-shadow: 0 22px 48px rgba(0, 0, 0, 0.18);
+    color: #18151f;
   }
   .phase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1rem; }
   .phase-card { border-radius: 8px; padding: 1rem; text-align: center; }
@@ -98,7 +99,7 @@
   .checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #ccc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; transition: all 0.15s; }
   .checkbox.checked { background: #639922; border-color: #639922; }
   .checkbox.checked::after { content: ''; display: block; width: 5px; height: 8px; border: 1.5px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
-  .check-text { font-size: 14px; line-height: 1.5; }
+  .check-text { font-size: 14px; line-height: 1.5; color: #2f2a39; }
   .check-text.done { text-decoration: line-through; color: #aaa; }
   .progress-bar-wrap { background: #f0f0f0; border-radius: 100px; height: 8px; margin: 8px 0; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 100px; background: #639922; transition: width 0.4s ease; }
@@ -161,11 +162,12 @@
   .sync-dot.pend { background: #EF9F27; }
   .sync-dot.err { background: #E24B4A; }
   .week-labels { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .wl-day-label { font-size: 10px; color: rgba(255,255,255,0.42); text-align: center; margin-bottom: 4px; }
+  .wl-day-label { font-size: 10px; color: #8b8597; text-align: center; margin-bottom: 4px; }
   .week-log { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .wl-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.42); transition: all 0.15s; }
-  .wl-day.done { background: rgba(168,255,139,0.18); border-color: rgba(168,255,139,0.34); color: #c7ffb7; }
-  .wl-day.today { border-color: rgba(178,144,255,0.8); color: #d7c4ff; font-weight: 700; box-shadow: 0 0 0 1px rgba(178,144,255,0.24) inset; }
+  .wl-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid rgba(23,23,34,0.08); background: rgba(17,17,26,0.04); color: #797286; transition: all 0.15s; }
+  .wl-day.done { background: rgba(168,255,139,0.22); border-color: rgba(118,187,85,0.28); color: #35651d; }
+  .wl-day.partial { background: rgba(255,226,122,0.22); border-color: rgba(207,173,73,0.28); color: #74560b; }
+  .wl-day.today { border-color: rgba(116,87,208,0.34); color: #4f4188; font-weight: 700; box-shadow: 0 0 0 1px rgba(116,87,208,0.14) inset; }
   .sleep-phase { border-left: 3px solid #6366f1; padding: 10px 12px; margin-bottom: 10px; background: #f5f4ff; border-radius: 0 8px 8px 0; }
   .sleep-phase .sp-title { font-size: 12px; font-weight: 500; color: #4338ca; margin-bottom: 3px; }
   .sleep-phase .sp-body { font-size: 13px; color: #444; line-height: 1.5; }
@@ -583,6 +585,30 @@
     font-size: 13px;
     line-height: 1.6;
   }
+  .knowledge-note strong { color: #1b1624; }
+  .knowledge-meta {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .knowledge-meta-item {
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: rgba(17,17,26,0.04);
+    border: 1px solid rgba(17,17,26,0.05);
+  }
+  .knowledge-meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #8c8598;
+    margin-bottom: 6px;
+  }
+  .knowledge-meta-value {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #2d2838;
+  }
 
   .today-summary .ts-card:nth-child(1) {
     background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(245,232,255,0.82));
@@ -623,16 +649,10 @@
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="showTab('today',this)">Сегодня</button>
-    <button class="tab" onclick="showTab('insights',this)">Инсайты</button>
-    <button class="tab" onclick="showTab('plan',this)">План</button>
-    <button class="tab" onclick="showTab('menu',this)">Меню</button>
-    <button class="tab" onclick="showTab('workout',this)">Тренировки</button>
-    <button class="tab" onclick="showTab('results',this)">Результаты</button>
-    <button class="tab" onclick="showTab('body',this)">Организм</button>
-    <button class="tab" onclick="showTab('sleep',this)">Сон</button>
-    <button class="tab" onclick="showTab('alcohol',this)">Алкоголь</button>
-    <button class="tab" onclick="showTab('tips',this)">Не сорваться</button>
+    <button class="tab active" id="tabToday" onclick="showTab('today',this)">Сегодня</button>
+    <button class="tab" id="tabStages" onclick="showTab('body',this)">Стадии</button>
+    <button class="tab" id="tabHormones" onclick="showTab('hormones',this)">Гормоны</button>
+    <button class="tab" id="tabGlossary" onclick="showTab('glossary',this)">Словарь</button>
   </div>
 
   <div id="today" class="section active">
@@ -685,17 +705,17 @@
     </div>
 
     <div class="today-summary">
-      <div class="ts-card"><div class="ts-num" id="dayCnt">1</div><div class="ts-label">стрик</div></div>
+      <div class="ts-card"><div class="ts-num" id="dayCnt">1</div><div class="ts-label">день</div></div>
       <div class="ts-card"><div class="ts-num" style="color:#639922" id="fastHours">—</div><div class="ts-label">сегодня</div></div>
-      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0</div><div class="ts-label">чеклист</div></div>
+      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0</div><div class="ts-label">в ритме</div></div>
     </div>
 
     <div class="card insight-hero">
       <div class="insight-row">
         <div>
           <div class="insight-tag" id="dailyInsightTag">Инсайт дня</div>
-          <div class="insight-title" id="dailyInsightTitle">Сегодняшний insight</div>
-          <div class="insight-text" id="dailyInsightText">Короткий, но цепляющий блок про гормоны, сон, стресс, цикл или питание.</div>
+          <div class="insight-title" id="dailyInsightTitle">Сегодня про гормоны и тело</div>
+          <div class="insight-text" id="dailyInsightText">Короткий блок про гормоны, сон, аппетит, энергию и ритм дня, чтобы было легче вставать, работать, гулять и не ругать себя.</div>
           <div class="insight-actions">
             <button class="mini-btn primary" type="button" onclick="cycleInsight()">Другой инсайт</button>
             <button class="mini-btn" type="button" onclick="openInsightsTab()">Читать глубже</button>
@@ -708,8 +728,8 @@
       <div class="cycle-grid">
         <div>
           <div class="cycle-phase" id="cyclePhaseBadge">Цикл не указан</div>
-          <div class="cycle-title" id="cyclePhaseTitle">Добавь дни менструации</div>
-          <div class="cycle-copy" id="cyclePhaseText">Приложение сможет показывать примерную текущую фазу и лучше подстраивать полезный контент под твой цикл.</div>
+          <div class="cycle-title" id="cyclePhaseTitle">Цикл как дополнительный контекст</div>
+          <div class="cycle-copy" id="cyclePhaseText">Это необязательный слой. Основной фокус приложения остаётся на гормонах, сне, аппетите, энергии и том, как тело реально работает в течение дня.</div>
           <div class="cycle-meta">
             <div class="cycle-chip" id="cycleDayChip">День цикла: —</div>
             <div class="cycle-chip" id="cycleLastChip">Последняя запись: —</div>
@@ -751,70 +771,21 @@
         <div class="stat-row"><span class="stat-label">Досидеть с утра</span><span class="stat-val">1–2 ч</span></div>
       </div>
     </div>
-    <div class="card">
-      <div class="sec-title">Чек-лист на день</div>
-      <ul class="checklist">
-        <li class="check-item" onclick="toggle(this,'wam')"><div class="checkbox" id="cb-wam"></div><span class="check-text">Проснулась — сразу стакан воды или чай без сахара</span></li>
-        <li class="check-item" onclick="toggle(this,'win')"><div class="checkbox" id="cb-win"></div><span class="check-text">Открыла окно питания вовремя (не раньше)</span></li>
-        <li class="check-item" onclick="toggle(this,'bfst')"><div class="checkbox" id="cb-bfst"></div><span class="check-text">Завтрак: белок + жиры, не сахар и каши</span></li>
-        <li class="check-item" onclick="toggle(this,'lnch')"><div class="checkbox" id="cb-lnch"></div><span class="check-text">Обед — основной приём, не пропустила</span></li>
-        <li class="check-item" onclick="toggle(this,'wkt')"><div class="checkbox" id="cb-wkt"></div><span class="check-text">Тренировка 15–45 мин (пока ребёнок занят/спит)</span></li>
-        <li class="check-item" onclick="toggle(this,'din')"><div class="checkbox" id="cb-din"></div><span class="check-text">Ужин закончила до 20:00</span></li>
-        <li class="check-item" onclick="toggle(this,'nolate')"><div class="checkbox" id="cb-nolate"></div><span class="check-text">После 20:00 — только вода, чай, кофе без молока</span></li>
-        <li class="check-item" onclick="toggle(this,'wtot')"><div class="checkbox" id="cb-wtot"></div><span class="check-text">Выпила 2–2.5 л воды за день</span></li>
-        <li class="check-item" onclick="toggle(this,'noalc')"><div class="checkbox" id="cb-noalc"></div><span class="check-text">Не пила алкоголь сегодня</span></li>
-      </ul>
+  </div>
 
-      <!-- Alcohol tracker -->
-      <div id="alcPanel" style="margin-top:10px;padding:12px;background:#f5f5f0;border-radius:10px;display:none;">
-        <div style="font-size:13px;font-weight:500;margin-bottom:10px;color:#A32D2D;">Выпила сегодня — отметить:</div>
-        <div style="margin-bottom:8px;">
-          <div style="font-size:12px;color:#888;margin-bottom:4px;">Когда:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="alcTimeGroup">
-            <button onclick="setAlcTime('14-17')" class="alc-opt" id="alcT1" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;">14–17</button>
-            <button onclick="setAlcTime('18-20')" class="alc-opt" id="alcT2" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;">18–20</button>
-            <button onclick="setAlcTime('after20')" class="alc-opt" id="alcT3" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;color:#A32D2D;">После 20</button>
-          </div>
-        </div>
-        <div style="margin-bottom:8px;">
-          <div style="font-size:12px;color:#888;margin-bottom:4px;">Сколько:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="alcAmtGroup">
-            <button onclick="setAlcAmount('1')" class="alc-opt" id="alcA1" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;">1 бокал</button>
-            <button onclick="setAlcAmount('2')" class="alc-opt" id="alcA2" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;">2 бокала</button>
-            <button onclick="setAlcAmount('3+')" class="alc-opt" id="alcA3" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;color:#A32D2D;">3+</button>
-          </div>
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="font-size:12px;color:#888;margin-bottom:4px;">Что:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="alcTypeGroup">
-            <button onclick="setAlcType('wine')" class="alc-opt" id="alcTy1" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;">Вино</button>
-            <button onclick="setAlcType('beer')" class="alc-opt" id="alcTy2" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;">Пиво</button>
-            <button onclick="setAlcType('spirit')" class="alc-opt" id="alcTy3" style="padding:6px 12px;border-radius:6px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;">Крепкое</button>
-          </div>
-        </div>
-        <div id="alcImpact" style="display:none;padding:8px 10px;border-radius:6px;margin-bottom:8px;font-size:12px;line-height:1.5;"></div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="saveAlcohol()" style="flex:1;padding:8px;border:none;border-radius:8px;background:#A32D2D;color:#fff;font-size:13px;cursor:pointer;">Сохранить</button>
-          <button onclick="cancelAlcohol()" style="padding:8px 14px;border:1px solid #ccc;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#555;">Отмена</button>
-        </div>
-      </div>
-      <div id="alcSaved" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:12px;line-height:1.4;"></div>
-      <span id="alcToggleLink" onclick="toggleAlcPanel()" style="display:inline-block;margin-top:8px;font-size:12px;color:#A32D2D;cursor:pointer;text-decoration:underline;">Выпила сегодня? Отметить</span>
-      <div style="margin-top:12px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:4px;">
-          <span>Прогресс дня</span><span id="progLabel">0 / 9</span>
-        </div>
-        <div class="progress-bar-wrap"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
-      </div>
+  <div id="hormones" class="section">
+    <div class="card" id="insightsAnchor">
+      <div class="sec-title">Гормоны и тело</div>
+      <div class="sec-sub">Здесь не просто мотивация, а понятная физиология: как гормоны связаны со сном, голодом, энергией, прогулками, работой, тренировками и тем, почему телу иногда трудно, а не “лениво”.</div>
+      <div class="knowledge-layout" id="insightsFeed"></div>
     </div>
+  </div>
+
+  <div id="glossary" class="section">
     <div class="card">
-      <div class="sec-title">Прогресс недели</div>
-      <div class="week-labels">
-        <div class="wl-day-label">Пн</div><div class="wl-day-label">Вт</div><div class="wl-day-label">Ср</div>
-        <div class="wl-day-label">Чт</div><div class="wl-day-label">Пт</div><div class="wl-day-label">Сб</div><div class="wl-day-label">Вс</div>
-      </div>
-      <div class="week-log" id="weekLog"></div>
-      <div style="margin-top:8px;font-size:12px;color:#aaa;">Нажми на день чтобы отметить выполненным</div>
+      <div class="sec-title">Карта гормонов и процессов</div>
+      <div class="sec-sub">Нормальным языком: где это вырабатывается, с чем связано, от чего зависит и почему сон, свет, еда, стресс и движение так заметно меняют самочувствие.</div>
+      <div class="knowledge-layout" id="hormonesFeed"></div>
     </div>
   </div>
 
@@ -877,34 +848,11 @@
       <div class="rp"><div class="rp-header"><span class="badge bt">Нед. 3–4</span><span class="rp-label">Переход (15/9)</span></div><div class="rp-body t">Что почувствуешь: голод утром уменьшается, тело привыкает к новому режиму за 2–3 дня.<br>Что проверять: концентрацию, уровень энергии на тренировках.<br>Что измерять: вес (ожидай −1–2 кг), объёмы талии, фото.</div></div>
       <div class="rp"><div class="rp-header"><span class="badge bp">Нед. 5–6</span><span class="rp-label">Цель (16/8)</span></div><div class="rp-body p">Что почувствуешь: утреннее голодание стало привычным, тело активно сжигает жир.<br>Что проверять: настроение, состояние кожи, силовые показатели.<br>Что измерять: финальный вес + объёмы + фото. Реалистичный итог: −2–4 кг, −2–4 см талия.</div></div>
     </div>
-    <div class="card">
-      <div class="sec-title">Таблица замеров</div>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;font-size:13px;border-collapse:collapse;">
-          <thead><tr style="border-bottom:1px solid #e5e5e5;"><th style="text-align:left;padding:6px 4px;color:#888;font-weight:500;">Период</th><th style="text-align:center;padding:6px 4px;color:#888;font-weight:500;">Вес</th><th style="text-align:center;padding:6px 4px;color:#888;font-weight:500;">Талия</th><th style="text-align:center;padding:6px 4px;color:#888;font-weight:500;">Энергия</th></tr></thead>
-          <tbody>
-            <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px 4px;">Старт</td><td style="text-align:center;"><input type="text" placeholder="— кг" id="m0w" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="— см" id="m0t" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="/10" id="m0e" style="width:44px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td></tr>
-            <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px 4px;">Нед. 2</td><td style="text-align:center;"><input type="text" placeholder="— кг" id="m2w" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="— см" id="m2t" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="/10" id="m2e" style="width:44px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td></tr>
-            <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:8px 4px;">Нед. 4</td><td style="text-align:center;"><input type="text" placeholder="— кг" id="m4w" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="— см" id="m4t" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="/10" id="m4e" style="width:44px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td></tr>
-            <tr><td style="padding:8px 4px;">Нед. 6</td><td style="text-align:center;"><input type="text" placeholder="— кг" id="m6w" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="— см" id="m6t" style="width:58px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td><td style="text-align:center;"><input type="text" placeholder="/10" id="m6e" style="width:44px;text-align:center;font-size:12px;border:1px solid #e5e5e5;border-radius:4px;padding:3px;"></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <button id="saveBtn" onclick="saveMeasurements()" style="margin-top:12px;width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;background:transparent;font-size:13px;cursor:pointer;color:#555;">Сохранить замеры</button>
-    </div>
-  </div>
-
-  <div id="insights" class="section">
-    <div class="card">
-      <div class="sec-title">Science feed</div>
-      <div class="sec-sub">Короткий daily hook сверху, а ниже более глубокие карточки про гормоны, физиологию, сон, стресс и женское здоровье.</div>
-      <div class="knowledge-layout" id="insightsFeed"></div>
-    </div>
   </div>
 
   <div id="body" class="section">
     <div class="card">
-      <div class="sec-title">Что происходит с телом по часам голодания</div>
+      <div class="sec-title">Стадии голодания</div>
       <div class="sec-sub">Твой режим: голодание с 20:00. Каждый час без еды — это не «терпение», а конкретные биохимические процессы. Вот что именно делает твоё тело, пока ты просто не ешь.</div>
       <div style="margin-bottom:1rem;display:flex;gap:8px;flex-wrap:wrap;">
         <button onclick="setBodyMode('fasting')" id="btnFasting" style="padding:6px 14px;border-radius:8px;border:1px solid #1a1a1a;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;">По часам голодания</button>
@@ -1263,6 +1211,115 @@ var INSIGHTS = [
     note: 'Наблюдай не только часы, но и энергию утром после длинных окон.'
   },
   {
+    id: 'interval_1410',
+    label: 'Интервалы · 14/10',
+    title: '14/10 это уже рабочий ритм, а не “слишком мало”',
+    short: 'Этот интервал не про героизм, а про устойчивую базу: меньше ночной еды, спокойнее утро, легче держать ритм с ребёнком и работой.',
+    deep: '14/10 часто недооценивают, потому что он выглядит не таким “ярким”, как 16/8. Но именно на нём многие впервые чувствуют, что телу легче просыпаться, вечер становится чище, а режим не требует постоянной борьбы с собой.',
+    note: 'Хорошая цель для 14/10: не подвиг, а повторяемость.',
+    intervals: ['14/10']
+  },
+  {
+    id: 'interval_159',
+    label: 'Интервалы · 15/9',
+    title: '15/9 это уже переход от просто режима к заметным изменениям',
+    short: 'Здесь тело чаще начинает явнее чувствовать разницу между хаотичным питанием и понятным окном.',
+    deep: '15/9 для многих становится точкой, где утреннее ожидание еды уже не так мешает, а наблюдения за энергией, голодом и концентрацией становятся интереснее. Это хороший интервал для внимательного наблюдения, а не для давления на себя.',
+    note: 'Смотри не только на часы, но и на качество утра после таких дней.',
+    intervals: ['15/9']
+  },
+  {
+    id: 'interval_168',
+    label: 'Интервалы · 16/8',
+    title: '16/8 хорош не потому, что “жёстче”, а потому что даёт длиннее окно восстановления',
+    short: 'Этот интервал полезен не как тест силы воли, а как способ дать телу больше времени без постоянной обработки еды.',
+    deep: '16/8 ценен не сам по себе, а тем, что у тела появляется длиннее отрезок на переключение топлива, более ровное утро и запуск процессов восстановления. Но он работает лучше, когда встроен в нормальную жизнь, а не добывается через насилие над собой.',
+    note: 'Если 16/8 идёт через сильное усилие, гибкость всё равно важнее красивой цифры.',
+    intervals: ['16/8']
+  },
+  {
+    id: 'autophagy_basics',
+    label: 'Процессы · аутофагия',
+    title: 'Аутофагия это не магия, а внутренняя уборка клетки',
+    short: 'Когда тело дольше не занято едой, оно получает больше пространства на обслуживание и переработку повреждённых частей клетки.',
+    deep: 'Аутофагию часто подают как сенсацию, хотя полезнее думать о ней как о режиме внутреннего обслуживания. Это не кнопка “омоложение за ночь”, а один из процессов, который включается в более длинных окнах без еды и особенно ценен в контексте сна, восстановления и общего ритма жизни.',
+    note: 'Полезнее интересоваться не только аутофагией, но и тем, как ты реально спишь и восстанавливаешься.',
+    intervals: ['15/9', '16/8']
+  },
+  {
+    id: 'cortisol_morning',
+    label: 'Гормоны · кортизол',
+    title: 'Кортизол утром не враг, а твой встроенный запуск дня',
+    short: 'Утренний свет, вода и даже короткая прогулка помогают кортизолу разбудить тело мягче и чище, чем хаотичный старт в телефоне.',
+    deep: 'Кортизол часто демонизируют, хотя утром он нужен, чтобы включить бодрость, внимание и движение. Когда после пробуждения есть свет, вода и немного активности, телу проще проснуться без ощущения вязкости и без бесконечной тяги к кофе и сладкому.',
+    note: 'Микрошаг: 5 минут света у окна или на улице сразу после пробуждения уже работают.',
+  },
+  {
+    id: 'melatonin_evening',
+    label: 'Гормоны · мелатонин',
+    title: 'Мелатонин любит темноту, тишину и более ранний финал дня',
+    short: 'Если вечером меньше света, меньше еды и меньше суеты, телу проще действительно восстановиться, а не просто “отключиться”.',
+    deep: 'Мелатонин не делает сон волшебным в одиночку, но он задаёт организму понятный сигнал “ночь началась”. Поздняя еда, яркий экран и постоянное подстёгивание мозга мешают этому сигналу, а затем утром становится тяжелее встать и собрать себя.',
+    note: 'Иногда более ранний сон помогает режиму сильнее, чем ещё один идеальный час голодания.',
+  },
+  {
+    id: 'ghrelin_rhythm',
+    label: 'Гормоны · грелин',
+    title: 'Голод часто приходит по расписанию, а не только от дефицита',
+    short: 'Грелин любит привычку. Если тело знает твой ритм, оно меньше паникует и реже требует “срочно поесть прямо сейчас”.',
+    deep: 'Ощущение голода часто оказывается не доказательством того, что “всё идет не так”, а просто привычным сигналом в знакомое время. Когда режим становится более повторяемым, грелин тоже перестраивается, и утро ощущается спокойнее.',
+    note: 'Полезное наблюдение: голод у тебя реальный, ритмический или стрессовый?',
+  },
+  {
+    id: 'leptin_sleep',
+    label: 'Гормоны · лептин',
+    title: 'Недосып ломает сытость сильнее, чем кажется',
+    short: 'После плохой ночи телу обычно труднее чувствовать насыщение и легче тянуться к быстрой еде. Это физиология, а не слабость.',
+    deep: 'Когда сна мало, сигналы сытости и аппетита становятся менее согласованными. Именно поэтому после тяжёлой ночи так трудно и работать, и держать ритм, и не переедать вечером. В такие дни особенно важны мягкость и опора, а не жёсткое давление.',
+    note: 'Если ночь была плохой, делай ставку на белок, воду и более простой день, а не на идеальность.',
+  },
+  {
+    id: 'insulin_walk',
+    label: 'Гормоны · инсулин',
+    title: 'Прогулка после еды часто полезнее, чем ещё одна попытка всё контролировать',
+    short: 'Небольшое движение после еды помогает телу спокойнее обходиться с глюкозой и делает вечер ровнее.',
+    deep: 'Инсулин не “плохой”, он просто распределяет топливо. Но когда день полностью сидячий и хаотичный, телу сложнее поддерживать ровную энергию. Короткая прогулка после приёма пищи может дать больше пользы, чем поиск идеального плана на бумаге.',
+    note: 'Даже 10 минут ходьбы после еды уже считаются.',
+  },
+  {
+    id: 'thyroid_tempo',
+    label: 'Гормоны · щитовидная железа',
+    title: 'Тиреоидные гормоны больше про темп тела, чем про силу воли',
+    short: 'Они помогают задавать общий ритм обмена и энергии, поэтому ощущение “я никак не разгоняюсь” не всегда стоит объяснять только характером.',
+    deep: 'Когда мы говорим про бодрость, тепло, скорость, выносливость и ощущение, что тело вообще включается в день, в этой картине участвуют и тиреоидные гормоны. Это не означает, что любой тяжёлый день связан со щитовидной железой, но помогает помнить: наш организм гораздо биологичнее, чем кажется.',
+    note: 'Полезный вопрос: я сейчас правда не собралась или у меня банально нет ресурса, сна и нормального ритма?',
+  },
+  {
+    id: 'glucagon_fasting',
+    label: 'Голодание · глюкагон',
+    title: 'Во время паузы без еды работает не только “мало инсулина”, но и глюкагон',
+    short: 'Этот гормон помогает мягко доставать топливо из запасов, когда ты не ешь. Поэтому тело не просто терпит, а реально переключается.',
+    deep: 'При интервалах без еды организм не сидит пассивно и не “страдает без сахара”. Он перестраивает работу: снижается потребность в постоянной подаче еды, а глюкагон помогает поддерживать доступность энергии из запасов. Именно поэтому интервалы интересны физиологически, а не только как способ меньше есть вечером.',
+    note: 'Когда знаешь про глюкагон, голодание ощущается не как пустота, а как другой режим работы тела.',
+    intervals: ['14/10', '15/9', '16/8']
+  },
+  {
+    id: 'oxytocin_stress',
+    label: 'Гормоны · окситоцин',
+    title: 'Тепло, контакт и чувство безопасности тоже биология, а не слабость',
+    short: 'Объятие, смех, контакт с ребёнком, ощущение “я не одна” могут реально смягчать стрессовую нагрузку на нервную систему.',
+    deep: 'Мы часто думаем, что ресурса добавляют только сон, еда и спорт. Но телу важны и сигналы безопасности: близость, поддержка, тёплый контакт, спокойное прикосновение. Это не “лирика”, а часть того, как организм регулирует напряжение и возвращается в более устойчивое состояние.',
+    note: 'Иногда полезный шаг для тела это не поднажать, а сначала почувствовать больше безопасности.',
+  },
+  {
+    id: 'dopamine_small_wins',
+    label: 'Мотивация · дофамин',
+    title: 'Дофамин любит не только большие цели, но и маленькие завершения',
+    short: 'Иногда лучший способ собраться это не ждать вдохновения, а дать мозгу одно простое законченное действие.',
+    deep: 'Когда день разорван между задачами, ребёнком и усталостью, мозг плохо реагирует на абстрактное “надо быть продуктивнее”. Зато он хорошо отвечает на маленькие завершённые циклы: встала, выпила воды, открыла шторы, вышла на 10 минут, сделала один кусок работы.',
+    note: 'Ищи не идеальный день, а следующее маленькое завершение.',
+  },
+  {
     id: 'stress_hunger',
     label: 'Стресс · аппетит',
     title: 'Стресс легко маскируется под голод',
@@ -1341,6 +1398,215 @@ var INSIGHTS = [
   }
 ];
 
+var HORMONE_GLOSSARY = [
+  {
+    kind: 'Гормон',
+    name: 'Кортизол',
+    title: 'Гормон запуска и бодрости',
+    copy: 'Утром помогает проснуться, собраться и начать двигаться. Кортизол нужен не только в стрессовых ситуациях: он участвует в нормальном запуске дня, внимании и мобилизации энергии.',
+    tip: 'Если сложно вставать, начни не с силы воли, а со света, воды и короткого движения.',
+    made: 'Надпочечники',
+    related: 'утреннее пробуждение, стресс-ответ, внимание, уровень энергии',
+    depends: 'свет утром, недосып, хронический стресс, рваный режим дня',
+    fact: 'Самый сильный внешний сигнал для утреннего кортизола это свет, а не кофе.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Инсулин',
+    title: 'Гормон распределения топлива',
+    copy: 'Помогает клеткам принять энергию из еды. Он не “плохой”: без него тело не могло бы нормально распределять топливо и поддерживать уровень глюкозы.',
+    tip: 'Белок в первом приёме пищи и прогулка после еды часто делают день спокойнее.',
+    made: 'Поджелудочная железа',
+    related: 'уровень сахара в крови, чувство сытости после еды, энергия днём',
+    depends: 'состав еды, движение после еды, сон, общий стресс, частые перекусы',
+    fact: 'Более низкий инсулин между приёмами пищи это нормальная часть паузы без еды, а не ошибка организма.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Глюкагон',
+    title: 'Гормон доступа к запасам',
+    copy: 'Работает как функциональная пара к инсулину: когда ты не ешь, он помогает телу доставать топливо из запасов и поддерживать доступность энергии.',
+    tip: 'Полезно помнить, что во время интервала тело не “выключено”, а активно регулирует топливо.',
+    made: 'Поджелудочная железа',
+    related: 'пауза без еды, уровень глюкозы между приёмами пищи, переключение на запасы',
+    depends: 'длина интервала без еды, потребность тела в энергии, общий обмен',
+    fact: 'Именно поэтому интервалы интересны физиологически: в дело включается не только отсутствие еды, но и другой гормональный режим.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Грелин',
+    title: 'Сигнал голода и ритма',
+    copy: 'Часто приходит по привычному расписанию. Когда режим становится понятнее, грелин тоже начинает работать спокойнее.',
+    tip: 'Не каждый голод означает, что ты “сорвалась” или что режим плохой.',
+    made: 'В основном желудок',
+    related: 'ощущение голода, ожидание еды, ритм приёмов пищи',
+    depends: 'привычное время еды, недосып, хаотичный режим, длительные ограничения',
+    fact: 'Грелин умеет расти перед привычным временем еды даже тогда, когда телу не грозит катастрофа.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Лептин',
+    title: 'Сигнал сытости и достаточности',
+    copy: 'Помогает телу чувствовать насыщение, но недосып, перегруз и хаотичное питание делают этот сигнал тише.',
+    tip: 'После плохой ночи ставь на опору, а не на жёсткость.',
+    made: 'Жировая ткань',
+    related: 'ощущение сытости, энергетический баланс, аппетит',
+    depends: 'сон, хронический стресс, общая энергетическая доступность, ритм питания',
+    fact: 'Лептин это не “гормон худых”, а один из способов, которым тело сообщает мозгу, что энергии достаточно.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Мелатонин',
+    title: 'Гормон ночного режима',
+    copy: 'Помогает телу понять, что наступила ночь. Это один из главных химических сигналов циркадного ритма: он не усыпляет силой, а показывает организму, что пора переходить в ночной режим.',
+    tip: 'Поздний свет и поздняя еда часто крадут у тебя не только сон, но и завтрашнее утро.',
+    made: 'Эпифиз (шишковидная железа)',
+    related: 'засыпание, ощущение ночи, циркадный ритм',
+    depends: 'темнота вечером, свет утром, яркость экранов, общий режим сна',
+    fact: 'Яркий вечерний свет реально подавляет вечерний мелатонин, поэтому “я вроде устала, но не засыпаю” часто имеет физиологию.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Гормон роста',
+    title: 'Восстановление и поддержка тканей',
+    copy: 'Сильнее работает на фоне сна и ночного восстановления. Поэтому ранний и более цельный сон важен не меньше, чем само окно голодания.',
+    tip: 'Иногда путь к более лёгкому телу начинается не с еды, а с более нормальной ночи.',
+    made: 'Гипофиз',
+    related: 'рост тканей, восстановление, ночная регенерация',
+    depends: 'глубокий сон, возраст, ритм сна, общий стресс',
+    fact: 'Гормон роста часто романтизируют, но для обычной жизни он интересен прежде всего как часть ночного восстановления, а не как “секрет жиросжигания”.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Тиреоидные гормоны',
+    title: 'Гормоны темпа и обмена',
+    copy: 'Тиреоидные гормоны помогают задавать общий темп обмена веществ. Они не решают всё в одиночку, но сильно влияют на ощущение энергии, тепла и общего “скоростного режима” тела.',
+    tip: 'Если мысль “у меня, наверное, гормоны” приходит слишком часто, лучше не гадать, а обсуждать симптомы и анализы с врачом.',
+    made: 'Щитовидная железа',
+    related: 'темп обмена, чувствительность к холоду, энергия, пульс, общее ощущение бодрости',
+    depends: 'работа щитовидной железы и сигналы от гипофиза',
+    fact: 'Щитовидные гормоны не про мотивацию напрямую, а про базовый темп работы тела.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Эстроген',
+    title: 'Не только про цикл, но и про ткани, мозг и энергию',
+    copy: 'Эстроген влияет не только на репродуктивную систему. Он участвует в работе костной ткани, сосудов, кожи, мозга и помогает многим системам организма работать согласованнее.',
+    tip: 'Полезно помнить, что эстроген это не “женское настроение”, а большой системный игрок.',
+    made: 'В основном яичники; часть синтеза связана и с другими тканями',
+    related: 'цикл, состояние слизистых и кожи, костная ткань, сосуды, настроение, энергия',
+    depends: 'фаза цикла, работа яичников, общий гормональный контекст',
+    fact: 'Эстроген влияет не на один орган, а на многие системы сразу, поэтому и самочувствие может меняться комплексно.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Прогестерон',
+    title: 'Гормон второй половины цикла и внутреннего замедления',
+    copy: 'После овуляции прогестерон становится заметнее и влияет не только на цикл, но и на ощущение тепла, спокойствия, сонливости и общую переносимость нагрузки.',
+    tip: 'Если в некоторые недели хочется больше мягкости и меньше подвигов, это не обязательно про характер.',
+    made: 'В основном яичники после овуляции',
+    related: 'вторая половина цикла, базальная температура, аппетит, сон, ощущение спокойствия',
+    depends: 'произошла ли овуляция, фаза цикла, общий ритм восстановления',
+    fact: 'Именно с прогестероном связано небольшое повышение базальной температуры после овуляции.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Окситоцин',
+    title: 'Гормон близости и сигнала безопасности',
+    copy: 'Связан с доверием, контактом, телесной близостью и кормлением грудью. Он интересен тем, что показывает: ощущение безопасности тоже часть биологии, а не только эмоций.',
+    tip: 'Поддержка, объятие, спокойный телесный контакт и чувство “я не одна” это тоже помощь нервной системе.',
+    made: 'Образуется в гипоталамусе, выделяется через гипофиз',
+    related: 'близость, лактация, социальный контакт, успокоение, связь с ребёнком',
+    depends: 'ощущение безопасности, контакт, прикосновение, доверие, спокойствие',
+    fact: 'Окситоцин часто называют гормоном любви, но по смыслу это скорее гормон связи и безопасности.'
+  },
+  {
+    kind: 'Гормон',
+    name: 'Адреналин и норадреналин',
+    title: 'Гормоны быстрого включения',
+    copy: 'Помогают телу быстро собраться: учащают пульс, повышают готовность к действию, усиливают внимание и физическую мобилизацию.',
+    tip: 'Если система и так перегружена, телу полезнее не ещё одно подстёгивание, а сигнал, что опасность закончилась.',
+    made: 'Надпочечники и нервная система',
+    related: 'быстрая мобилизация, фокус, пульс, реакция на стресс',
+    depends: 'острый стресс, возбуждение, физическая нагрузка, кофеин, недосып',
+    fact: 'Это не “плохие” гормоны, а часть встроенной системы выживания, которая очень полезна в коротком режиме.'
+  },
+  {
+    kind: 'Нейромедиатор',
+    name: 'Дофамин',
+    title: 'Мотивация и ощущение движения вперёд',
+    copy: 'Любит маленькие завершённые шаги. Поэтому мозгу проще включаться через одно действие, а не через идеальный план на весь день.',
+    tip: 'Сделай одно короткое дело, а не жди полного ресурса.',
+    made: 'Несколько зон мозга',
+    related: 'мотивация, интерес, ощущение награды, запуск действий',
+    depends: 'новизна, завершённые шаги, ожидание результата, общий ресурс нервной системы',
+    fact: 'Дофамин связан не столько с “кайфом”, сколько с ожиданием награды и готовностью начать действие.'
+  },
+  {
+    kind: 'Нейромедиатор',
+    name: 'Серотонин',
+    title: 'Стабильность и внутреннее “ровно”',
+    copy: 'Поддерживается ритмом дня, светом, движением и ощущением предсказуемости. Это не про восторг, а про внутреннюю устойчивость.',
+    tip: 'Прогулка днём это не мелочь, а реальный вклад в то, как ты себя чувствуешь.',
+    made: 'В основном кишечник, а также нервная система',
+    related: 'настроение, устойчивость, аппетит, сон, ощущение внутреннего “ровно”',
+    depends: 'свет днём, движение, питание, ритм сна и бодрствования',
+    fact: 'Серотонин часто упрощают до “гормона счастья”, но для тела он гораздо больше про устойчивость и регуляцию.'
+  },
+  {
+    kind: 'Процесс',
+    name: 'Аутофагия',
+    title: 'Внутренняя уборка и переработка',
+    copy: 'Это процесс, в котором клетки разбирают и перерабатывают повреждённые части. Он интересен в более длинных интервалах без еды, но не работает отдельно от сна и восстановления.',
+    tip: 'Полезно помнить: аутофагия это не магическая награда, а часть общего ритма восстановления.',
+    made: 'Внутри клеток',
+    madeLabel: 'Где происходит',
+    related: 'обслуживание клетки, переработка повреждённых элементов, клеточное обновление',
+    relatedLabel: 'С чем связан',
+    depends: 'длина паузы без еды, сон, общий стресс, энергетический контекст',
+    dependsLabel: 'От чего зависит',
+    fact: 'Это один из самых “переоценённых” терминов в wellness, потому что его любят продавать как чудо. На практике важен весь контекст: сон, стресс, еда и устойчивость режима.'
+  },
+  {
+    kind: 'Процесс',
+    name: 'Кетоны',
+    title: 'Альтернативное топливо для мозга и тела',
+    copy: 'Когда окно без еды становится длиннее, тело начинает активнее использовать жирные кислоты и кетоны как источник энергии. Многие ощущают это как более ровную голову утром.',
+    tip: 'Если утро стало яснее и спокойнее, это тоже важный маркер, а не только цифра часов.',
+    made: 'В печени',
+    madeLabel: 'Где образуются',
+    related: 'пауза без еды, переключение топлива, более ровная энергия у части людей',
+    relatedLabel: 'С чем связан',
+    depends: 'длина интервала, общий обмен веществ, доступность запасов',
+    dependsLabel: 'От чего зависит',
+    fact: 'Кетоны интересны не только для похудения, но и как более ровный источник энергии для мозга у части людей.'
+  },
+  {
+    kind: 'Интервал',
+    name: '14/10',
+    title: 'Базовый устойчивый ритм',
+    copy: 'Часто самый удобный формат для реальной жизни: уже меньше ночной еды и больше структуры, но без лишней жёсткости.',
+    tip: 'Хороший режим это тот, который хочется повторить завтра.',
+    related: 'меньше поздней еды, более понятное утро, меньше хаотичных перекусов',
+    relatedLabel: 'Что может менять',
+    depends: 'реалистичное окно питания, нормальный ужин, отсутствие ощущения изнурения',
+    dependsLabel: 'Работает лучше, если',
+    fact: '14/10 часто даёт больше реальной пользы, чем редкие экстремальные дни, потому что его проще удерживать.'
+  },
+  {
+    kind: 'Интервал',
+    name: '16/8',
+    title: 'Более длинное окно восстановления',
+    copy: 'Дает телу больше времени без постоянной обработки еды и чаще делает утро более ровным. Но ценен только если встроен в жизнь, а не добывается через изнурение.',
+    tip: 'Красивый интервал не должен съедать твою жизнь и ресурс.',
+    related: 'длиннее пауза без еды, интереснее переключение топлива, более заметное утреннее окно',
+    relatedLabel: 'Что может менять',
+    depends: 'сохранённый сон, достаточная еда в окне, отсутствие перегруза и борьбы с телом',
+    dependsLabel: 'Работает лучше, если',
+    fact: '16/8 хорош не потому, что “строже”, а потому что иногда лучше совпадает с ночным восстановлением и более поздним первым приёмом пищи.'
+  }
+];
+
 var S = {
   startTs: Date.now(),
   checks: {},
@@ -1404,20 +1670,52 @@ function renderInsightsFeed() {
   if (!wrap) return;
   wrap.innerHTML = '';
   var phaseKey = getCyclePhaseKey();
+  var intervalKey = getCurrentPhase().name;
   var todayItem = getInsightPool()[getInsightIndex()];
   var ordered = INSIGHTS.slice().sort(function(a, b) {
-    var aScore = a.id === todayItem.id ? 0 : (a.phases && a.phases.indexOf(phaseKey) !== -1 ? 1 : 2);
-    var bScore = b.id === todayItem.id ? 0 : (b.phases && b.phases.indexOf(phaseKey) !== -1 ? 1 : 2);
+    var aScore = a.id === todayItem.id ? 0 : (a.intervals && a.intervals.indexOf(intervalKey) !== -1 ? 1 : (a.phases && a.phases.indexOf(phaseKey) !== -1 ? 2 : 3));
+    var bScore = b.id === todayItem.id ? 0 : (b.intervals && b.intervals.indexOf(intervalKey) !== -1 ? 1 : (b.phases && b.phases.indexOf(phaseKey) !== -1 ? 2 : 3));
     return aScore - bScore;
   });
   ordered.forEach(function(item) {
+    var badge = '';
+    if (item.id === todayItem.id) badge = 'сегодня';
+    else if (item.intervals && item.intervals.indexOf(intervalKey) !== -1) badge = 'по интервалу';
+    else if (item.phases && item.phases.indexOf(phaseKey) !== -1) badge = 'доп. контекст';
     var card = document.createElement('div');
     card.className = 'knowledge-card';
     card.innerHTML =
       '<div class="knowledge-head"><div><div class="knowledge-label">' + item.label + '</div><div class="knowledge-title">' + item.title + '</div></div>' +
-      (item.id === todayItem.id ? '<div class="insight-tag">сегодня</div>' : ((item.phases && item.phases.indexOf(phaseKey) !== -1) ? '<div class="insight-tag">по циклу</div>' : '')) + '</div>' +
+      (badge ? '<div class="insight-tag">' + badge + '</div>' : '') + '</div>' +
       '<div class="knowledge-copy">' + item.deep + '</div>' +
       '<div class="knowledge-note">' + item.note + '</div>';
+    wrap.appendChild(card);
+  });
+}
+
+function renderHormoneGlossary() {
+  var wrap = document.getElementById('hormonesFeed');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  HORMONE_GLOSSARY.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'knowledge-card';
+    var metaItems = [];
+    if (item.made) metaItems.push({ label: item.madeLabel || 'Где вырабатывается', value: item.made });
+    if (item.related) metaItems.push({ label: item.relatedLabel || 'Связан с', value: item.related });
+    if (item.depends) metaItems.push({ label: item.dependsLabel || 'От чего зависит', value: item.depends });
+    var meta = metaItems.length
+      ? '<div class="knowledge-meta">' + metaItems.map(function(metaItem) {
+          return '<div class="knowledge-meta-item"><div class="knowledge-meta-label">' + metaItem.label + '</div><div class="knowledge-meta-value">' + metaItem.value + '</div></div>';
+        }).join('') + '</div>'
+      : '';
+    var extra = '';
+    if (item.tip) extra += '<div class="knowledge-note"><strong>Что помогает:</strong> ' + item.tip + '</div>';
+    if (item.fact) extra += '<div class="knowledge-note"><strong>Интересно:</strong> ' + item.fact + '</div>';
+    card.innerHTML =
+      '<div class="knowledge-head"><div><div class="knowledge-label">' + (item.kind || 'Гормон') + '</div><div class="knowledge-title">' + item.name + '</div></div><div class="insight-tag">словарь</div></div>' +
+      '<div class="knowledge-copy"><strong>' + item.title + '.</strong> ' + item.copy + '</div>' +
+      meta + extra;
     wrap.appendChild(card);
   });
 }
@@ -1430,10 +1728,8 @@ function cycleInsight() {
 }
 
 function openInsightsTab() {
-  var btns = document.querySelectorAll('.tab');
-  var targetBtn = null;
-  btns.forEach(function(btn) { if (btn.textContent === 'Инсайты') targetBtn = btn; });
-  if (targetBtn) showTab('insights', targetBtn);
+  var btn = document.getElementById('tabHormones');
+  if (btn) showTab('hormones', btn);
 }
 
 function daysBetween(startStr, endStr) {
@@ -1468,13 +1764,21 @@ function getCyclePhaseKey() {
 }
 
 function getInsightPool() {
+  var intervalKey = getCurrentPhase().name;
   var phaseKey = getCyclePhaseKey();
+  var generalItems = INSIGHTS.filter(function(item) {
+    return !item.phases && !item.intervals;
+  });
+  var intervalItems = INSIGHTS.filter(function(item) {
+    return item.intervals && item.intervals.indexOf(intervalKey) !== -1;
+  });
   var phaseItems = INSIGHTS.filter(function(item) {
     return item.phases && item.phases.indexOf(phaseKey) !== -1;
   });
-  return phaseItems.length ? phaseItems.concat(INSIGHTS.filter(function(item) {
-    return !item.phases || item.phases.indexOf(phaseKey) === -1;
-  })) : INSIGHTS;
+  if (intervalItems.length || phaseItems.length) {
+    return generalItems.concat(intervalItems).concat(phaseItems);
+  }
+  return INSIGHTS;
 }
 
 function getCycleInfo() {
@@ -2132,11 +2436,13 @@ function showAlcSaved(entry) {
 }
 
 function renderAlcToday() {
+  var toggleLink = document.getElementById('alcToggleLink');
+  if (!toggleLink) return;
   var today = getLogicalDate();
   var todayLog = S.dailyLog.find(function(e) { return e.date === today; });
   if (todayLog && todayLog.alcohol) {
     showAlcSaved(todayLog.alcohol);
-    document.getElementById('alcToggleLink').textContent = 'Изменить запись об алкоголе';
+    toggleLink.textContent = 'Изменить запись об алкоголе';
   }
 }
 
@@ -2175,10 +2481,9 @@ function showWeeklyReport() {
     weekDates.push(d.toISOString().slice(0, 10));
   }
 
-  var daysCompleted = 0;
-  weekDates.forEach(function(k) { if (S.weekDays[k]) daysCompleted++; });
-
   var weekFasts = S.dailyLog.filter(function(e) { return weekDates.indexOf(e.date) >= 0; });
+  var phase = getCurrentPhase();
+  var daysCompleted = weekFasts.filter(function(e) { return e.fastHours >= phase.fast - 1; }).length;
   var avgFast = 0;
   var maxFast = 0;
   var minFast = 99;
@@ -2192,7 +2497,6 @@ function showWeeklyReport() {
     avgFast = Math.round(sum / weekFasts.length * 10) / 10;
   }
 
-  var phase = getCurrentPhase();
   var weekNum = Math.ceil(Math.max(1, Math.floor((Date.now() - S.startTs) / 86400000) + 1) / 7);
   var targetDays = weekFasts.filter(function(e) { return e.fastHours >= phase.fast; }).length;
   var exceededDays = weekFasts.filter(function(e) { return e.fastHours >= phase.fast + 1; }).length;
@@ -2210,7 +2514,7 @@ function showWeeklyReport() {
   subtitle.textContent = 'Фаза: ' + phase.name + ' · ' + formatDateShort(weekDates[0]) + ' — ' + formatDateShort(weekDates[6]);
 
   var html = '';
-  html += '<div class="modal-stat"><span class="modal-stat-label">Дней выполнено</span><span class="modal-stat-val">' + daysCompleted + ' / 7</span></div>';
+  html += '<div class="modal-stat"><span class="modal-stat-label">Дней в ритме</span><span class="modal-stat-val">' + daysCompleted + ' / 7</span></div>';
   html += '<div class="modal-stat"><span class="modal-stat-label">Записей голодания</span><span class="modal-stat-val">' + weekFasts.length + ' дней</span></div>';
 
   if (weekFasts.length > 0) {
@@ -2274,9 +2578,9 @@ function showWeeklyReport() {
   }
 
   if (daysCompleted >= 6) {
-    verdictText += ' Чеклист: ' + daysCompleted + '/7.';
+    verdictText += ' Ритм недели: ' + daysCompleted + '/7.';
   } else if (daysCompleted >= 4) {
-    verdictText += ' Чеклист: ' + daysCompleted + '/7.';
+    verdictText += ' Ритм недели: ' + daysCompleted + '/7.';
   } else if (daysCompleted > 0) {
     verdictText += ' Есть база для следующей недели.';
   }
@@ -2576,37 +2880,45 @@ function render() {
   updateWindowDisplay();
   renderDailyInsight();
   renderInsightsFeed();
+  renderHormoneGlossary();
   renderCycleCard();
-  var ids = ['wam','win','bfst','lnch','wkt','din','nolate','wtot','noalc'];
-  var done = 0;
-  ids.forEach(function(id) {
-    var cb = document.getElementById('cb-' + id);
-    if (!cb) return;
-    var li = cb.closest('.check-item'), txt = li ? li.querySelector('.check-text') : null;
-    if (S.checks[id]) { cb.classList.add('checked'); if (txt) txt.classList.add('done'); done++; }
-  });
-  document.getElementById('checksDone').textContent = done;
-  document.getElementById('progLabel').textContent = done + ' / ' + TOTAL_CHECKS;
-  document.getElementById('progFill').style.width = Math.round(done / TOTAL_CHECKS * 100) + '%';
+  var phase = getCurrentPhase();
+  var now = new Date();
+  var dow = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  var mon = new Date(now);
+  mon.setDate(now.getDate() - dow);
+  mon.setHours(0,0,0,0);
+  var weekDone = 0;
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    var key = d.toISOString().slice(0, 10);
+    var log = S.dailyLog.find(function(entry) { return entry.date === key; });
+    if (log && log.fastHours >= phase.fast - 1) weekDone++;
+  }
+  var weekCounter = document.getElementById('checksDone');
+  if (weekCounter) weekCounter.textContent = weekDone;
   renderWeek();
-  loadMeasurements();
   renderAlcToday();
 }
 
 function renderWeek() {
   var wl = document.getElementById('weekLog'); if (!wl) return;
   wl.innerHTML = '';
+  var phase = getCurrentPhase();
   var now = new Date(), dow = now.getDay() === 0 ? 6 : now.getDay() - 1;
   var mon = new Date(now); mon.setDate(now.getDate() - dow); mon.setHours(0,0,0,0);
   for (var i = 0; i < 7; i++) {
     var d = new Date(mon); d.setDate(mon.getDate() + i);
     var k = d.toISOString().slice(0, 10);
+    var log = S.dailyLog.find(function(entry) { return entry.date === k; });
     var el = document.createElement('div');
     el.className = 'wl-day';
     el.textContent = d.getDate();
-    if (S.weekDays[k]) el.classList.add('done');
+    if (log && log.fastHours >= phase.fast) el.classList.add('done');
+    else if (log && log.fastHours > 0) el.classList.add('partial');
     if (i === dow) el.classList.add('today');
-    (function(key, node) { node.onclick = function() { S.weekDays[key] = !S.weekDays[key]; node.classList.toggle('done', S.weekDays[key]); save(); }; })(k, el);
+    if (log && log.fastHours) el.title = log.fastHours + ' ч';
     wl.appendChild(el);
   }
 }
@@ -2621,29 +2933,6 @@ function toggle(item, id) {
   document.getElementById('progLabel').textContent = done + ' / ' + TOTAL_CHECKS;
   document.getElementById('progFill').style.width = Math.round(done / TOTAL_CHECKS * 100) + '%';
   save();
-}
-
-function loadMeasurements() {
-  ['0','2','4','6'].forEach(function(w) {
-    var m = S.measurements[w] || {};
-    var we = document.getElementById('m'+w+'w'), te = document.getElementById('m'+w+'t'), ee = document.getElementById('m'+w+'e');
-    if (we && m.w) we.value = m.w;
-    if (te && m.t) te.value = m.t;
-    if (ee && m.e) ee.value = m.e;
-  });
-}
-
-function saveMeasurements() {
-  ['0','2','4','6'].forEach(function(w) {
-    if (!S.measurements[w]) S.measurements[w] = {};
-    S.measurements[w].w = (document.getElementById('m'+w+'w') || {}).value || '';
-    S.measurements[w].t = (document.getElementById('m'+w+'t') || {}).value || '';
-    S.measurements[w].e = (document.getElementById('m'+w+'e') || {}).value || '';
-  });
-  save();
-  var btn = document.getElementById('saveBtn');
-  btn.textContent = 'Сохранено ✓'; btn.style.color = '#639922'; btn.style.borderColor = '#97C459';
-  setTimeout(function() { btn.textContent = 'Сохранить замеры'; btn.style.color = '#555'; btn.style.borderColor = '#ccc'; }, 2000);
 }
 
 function setBodyMode(mode) {
