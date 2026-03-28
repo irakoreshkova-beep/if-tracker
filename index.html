@@ -418,6 +418,41 @@
     flex-wrap: wrap;
     margin-top: 16px;
   }
+  .daily-deck {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+    margin-bottom: 1rem;
+  }
+  .daily-mini {
+    padding: 16px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.42);
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
+    box-shadow: 0 16px 32px rgba(0,0,0,0.10);
+  }
+  .daily-mini-title {
+    font-size: 18px;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: #17141f;
+    margin-top: 10px;
+  }
+  .daily-mini-copy {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #534d61;
+  }
+  .daily-mini-note {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(17,17,26,0.08);
+    font-size: 12px;
+    line-height: 1.6;
+    color: #726b82;
+  }
   .cycle-card {
     background:
       radial-gradient(circle at 84% 18%, rgba(178,144,255,0.16), transparent 24%),
@@ -609,6 +644,84 @@
     line-height: 1.6;
     color: #2d2838;
   }
+  .alcohol-status {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #413b4f;
+  }
+  .alc-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .alc-field.span { grid-column: 1 / -1; }
+  .alc-field-label {
+    font-size: 12px;
+    color: #787187;
+    margin-bottom: 6px;
+  }
+  .alc-input, .alc-select, .alc-textarea {
+    width: 100%;
+    border: 1px solid rgba(17,17,26,0.08);
+    border-radius: 16px;
+    background: rgba(17,17,26,0.04);
+    color: #18151f;
+    font-size: 14px;
+    padding: 12px 14px;
+    font-family: inherit;
+  }
+  .alc-textarea {
+    min-height: 92px;
+    resize: vertical;
+    line-height: 1.55;
+  }
+  .alc-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .alc-status-line {
+    display: none;
+    margin-top: 12px;
+    padding: 11px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .alcohol-history {
+    display: grid;
+    gap: 10px;
+  }
+  .alcohol-history-item {
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(17,17,26,0.04);
+    border: 1px solid rgba(17,17,26,0.06);
+  }
+  .alcohol-history-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .alcohol-history-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #18151f;
+  }
+  .alcohol-history-meta {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #6b6579;
+  }
+  .alcohol-empty {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #6f687d;
+  }
 
   .today-summary .ts-card:nth-child(1) {
     background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(245,232,255,0.82));
@@ -631,6 +744,8 @@
     .manual-row { grid-template-columns: 1fr; }
     .cycle-grid { grid-template-columns: 1fr; }
     .insight-row { flex-direction: column; }
+    .daily-deck { grid-template-columns: 1fr; }
+    .alc-form-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -653,6 +768,7 @@
     <button class="tab" id="tabStages" onclick="showTab('body',this)">Стадии</button>
     <button class="tab" id="tabHormones" onclick="showTab('hormones',this)">Гормоны</button>
     <button class="tab" id="tabGlossary" onclick="showTab('glossary',this)">Словарь</button>
+    <button class="tab" id="tabAlcohol" onclick="showTab('alcohol',this)">Алкоголь</button>
   </div>
 
   <div id="today" class="section active">
@@ -706,8 +822,8 @@
 
     <div class="today-summary">
       <div class="ts-card"><div class="ts-num" id="dayCnt">1</div><div class="ts-label">день</div></div>
-      <div class="ts-card"><div class="ts-num" style="color:#639922" id="fastHours">—</div><div class="ts-label">сегодня</div></div>
-      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0</div><div class="ts-label">в ритме</div></div>
+      <div class="ts-card"><div class="ts-num" style="color:#639922" id="fastHours">—</div><div class="ts-label">часов</div></div>
+      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0/7</div><div class="ts-label">цель</div></div>
     </div>
 
     <div class="card insight-hero">
@@ -722,6 +838,39 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="daily-deck">
+      <div class="daily-mini">
+        <div class="insight-tag">Исследование дня</div>
+        <div class="daily-mini-title" id="dailyResearchTitle">Новый research note</div>
+        <div class="daily-mini-copy" id="dailyResearchText">Короткая выжимка из исследования.</div>
+        <div class="daily-mini-note" id="dailyResearchNote">Почему это важно для реальной жизни.</div>
+      </div>
+      <div class="daily-mini">
+        <div class="insight-tag">Миф / правда</div>
+        <div class="daily-mini-title" id="dailyMythTitle">Разбор популярной идеи</div>
+        <div class="daily-mini-copy" id="dailyMythText">Что здесь правда, а что нет.</div>
+        <div class="daily-mini-note" id="dailyMythNote">На что смотреть в жизни.</div>
+      </div>
+      <div class="daily-mini">
+        <div class="insight-tag">Эксперимент дня</div>
+        <div class="daily-mini-title" id="dailyExperimentTitle">Небольшое действие на сегодня</div>
+        <div class="daily-mini-copy" id="dailyExperimentText">Один маленький шаг для проверки на себе.</div>
+        <div class="daily-mini-note" id="dailyExperimentNote">Что наблюдать.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="knowledge-head">
+        <div>
+          <div class="sec-title" style="margin-bottom:4px;">Алкоголь сегодня</div>
+          <div class="sec-sub" style="margin-bottom:0;">Короткая запись без стыда: что, сколько и когда.</div>
+        </div>
+        <button class="mini-btn" type="button" onclick="openAlcoholTab()">Открыть лог</button>
+      </div>
+      <div class="alcohol-status" id="alcTodayStatus">Сегодня записи нет.</div>
+      <div class="knowledge-note" id="alcTodayMeta" style="display:none;"></div>
     </div>
 
     <div class="card cycle-card">
@@ -995,139 +1144,72 @@
 
   <div id="alcohol" class="section">
     <div class="card">
-      <div class="sec-title">Алкоголь и жиросжигание — жёсткая правда</div>
-      <div class="sec-sub">Алкоголь — не просто «пустые калории». Он меняет биохимию тела на 12–36 часов. Вот как именно.</div>
-      <div style="padding:12px;background:#FCEBEB;border-radius:8px;margin-bottom:14px;border-left:3px solid #E24B4A;">
-        <div style="font-size:13px;color:#A32D2D;line-height:1.6;font-weight:500;">Для печени алкоголь — яд, который нужно вывести срочно. Пока печень занята расщеплением этанола, жиросжигание полностью останавливается. Не замедляется — именно останавливается. Тело переходит из режима «сжигаю жир» в режим «спасаю себя от отравления».</div>
-      </div>
-      <div class="stat-row"><span class="stat-label">Полная блокировка жиросжигания</span><span class="stat-val" style="color:#A32D2D;">12–36 часов</span></div>
-      <div class="stat-row"><span class="stat-label">1 бокал вина (150 мл)</span><span class="stat-val">~120 ккал + блокировка</span></div>
-      <div class="stat-row"><span class="stat-label">1 бокал пива (330 мл)</span><span class="stat-val">~150 ккал + блокировка</span></div>
-      <div class="stat-row"><span class="stat-label">Водка 50 мл</span><span class="stat-val">~115 ккал + блокировка</span></div>
-      <div class="stat-row"><span class="stat-label">Блокировка гормона роста</span><span class="stat-val" style="color:#A32D2D;">до 70% в ночь</span></div>
-      <div class="stat-row"><span class="stat-label">Разрушение глубокого сна</span><span class="stat-val" style="color:#A32D2D;">до 80%</span></div>
-      <div class="stat-row"><span class="stat-label">Повышение кортизола</span><span class="stat-val" style="color:#A32D2D;">на 24–48 ч</span></div>
+      <div class="sec-title">Алкоголь без стыда</div>
+      <div class="sec-sub">Этот блок нужен не для наказания, а для наблюдения: когда ты пьёшь, сколько, на фоне чего и как это потом связано со сном, аппетитом, тревогой и ресурсом на следующий день.</div>
+      <div class="knowledge-note">Если алкоголь стал для тебя проблемой, это не “слабость”. Алкоголь правда умеет попадать в цикл `напряжение → короткое облегчение → хуже сон и больше тревоги → снова хочется облегчения`.</div>
     </div>
 
     <div class="card">
-      <div class="sec-title">Что происходит в теле после бокала вина</div>
-      <div class="sec-sub">Детальная хронология — чтобы ты понимала реальную цену.</div>
-      <div style="border-left:3px solid #E24B4A;padding:10px 12px;margin-bottom:10px;background:#fff8f8;border-radius:0 8px 8px 0;">
-        <div style="font-size:12px;font-weight:500;color:#A32D2D;margin-bottom:3px;">Через 10 минут</div>
-        <div style="font-size:13px;color:#444;line-height:1.5;">Алкоголь попадает в кровь. Печень бросает все ресурсы на его расщепление. Жиросжигание — на паузу. Инсулин скачет вверх (особенно от пива и коктейлей с сахаром).</div>
-      </div>
-      <div style="border-left:3px solid #EF9F27;padding:10px 12px;margin-bottom:10px;background:#fffbf5;border-radius:0 8px 8px 0;">
-        <div style="font-size:12px;font-weight:500;color:#854F0B;margin-bottom:3px;">Через 1–2 часа</div>
-        <div style="font-size:13px;color:#444;line-height:1.5;">Ацетальдегид (токсичный метаболит алкоголя) накапливается. Это причина завтрашней головной боли. Тело удерживает воду — утром на весах может быть +1–2 кг.</div>
-      </div>
-      <div style="border-left:3px solid #AFA9EC;padding:10px 12px;margin-bottom:10px;background:#f8f8fe;border-radius:0 8px 8px 0;">
-        <div style="font-size:12px;font-weight:500;color:#534AB7;margin-bottom:3px;">Ночью</div>
-        <div style="font-size:13px;color:#444;line-height:1.5;">Глубокий сон подавлен на 80%. Гормон роста не выделяется. Жиросжигание = ноль. Организм вместо восстановления занят детоксикацией. Ты «спишь», но тело не отдыхает.</div>
-      </div>
-      <div style="border-left:3px solid #97C459;padding:10px 12px;background:#f9fcf5;border-radius:0 8px 8px 0;">
-        <div style="font-size:12px;font-weight:500;color:#639922;margin-bottom:3px;">Следующий день</div>
-        <div style="font-size:13px;color:#444;line-height:1.5;">Кортизол повышен, инсулинорезистентность временно выросла, грелин (голод) на максимуме. Вот почему после алкоголя тянет на жирное и сладкое — тело требует быстрой энергии для восстановления. Жиросжигание постепенно возвращается через 12–36 часов.</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="sec-title">Если решила выпить — стратегия минимального вреда</div>
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#EAF3DE;border-radius:8px;margin-bottom:8px;">
-        <div style="font-size:18px;">✓</div>
+      <div class="knowledge-head">
         <div>
-          <div style="font-size:13px;font-weight:500;color:#3B6D11;">Лучшее время: 14:00–17:00 с едой</div>
-          <div style="font-size:12px;color:#639922;margin-top:2px;line-height:1.5;">В середине окна питания, вместе с полноценным обедом. Еда замедляет всасывание алкоголя на 40–60%. Остаётся 5–8 часов на восстановление до сна — гормон роста меньше пострадает. Максимум 1–2 бокала.</div>
+          <div class="sec-title" style="margin-bottom:4px;">Лог алкоголя</div>
+          <div class="sec-sub" style="margin-bottom:0;">Что, сколько и когда. Просто запись, не приговор.</div>
+        </div>
+        <div class="insight-tag" id="alcWeekSummary">неделя</div>
+      </div>
+      <div class="alc-form-grid">
+        <div class="alc-field">
+          <div class="alc-field-label">Дата</div>
+          <input class="alc-input" type="date" id="alcDateInput" onchange="loadAlcoholForDate()">
+        </div>
+        <div class="alc-field">
+          <div class="alc-field-label">Время</div>
+          <input class="alc-input" type="time" id="alcTimeInput">
+        </div>
+        <div class="alc-field">
+          <div class="alc-field-label">Что пила</div>
+          <select class="alc-select" id="alcTypeInput">
+            <option value="wine">Вино</option>
+            <option value="beer">Пиво</option>
+            <option value="spirit">Крепкий алкоголь</option>
+            <option value="cocktail">Коктейль</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+        <div class="alc-field">
+          <div class="alc-field-label">Сколько</div>
+          <input class="alc-input" type="text" id="alcAmountInput" placeholder="1 бокал / 330 мл / 2 коктейля">
+        </div>
+        <div class="alc-field">
+          <div class="alc-field-label">Контекст</div>
+          <select class="alc-select" id="alcContextInput">
+            <option value="with_food">С едой</option>
+            <option value="without_food">Без еды</option>
+            <option value="mixed">И так, и так / не уверена</option>
+          </select>
+        </div>
+        <div class="alc-field span">
+          <div class="alc-field-label">Заметка</div>
+          <textarea class="alc-textarea" id="alcNotesInput" placeholder="Например: устала, была встреча, хотелось расслабиться, пила медленно, спала потом плохо"></textarea>
         </div>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#FAEEDA;border-radius:8px;margin-bottom:8px;">
-        <div style="font-size:18px;">△</div>
-        <div>
-          <div style="font-size:13px;font-weight:500;color:#854F0B;">Терпимо: 18:00–20:00 с ужином</div>
-          <div style="font-size:12px;color:#BA7517;margin-top:2px;line-height:1.5;">Близко к закрытию окна. Алкоголь гарантированно нарушит сон и заблокирует ночное жиросжигание. Если пьёшь — строго 1 бокал, с полноценной едой. Считай что ночь жиросжигания потеряна.</div>
-        </div>
+      <div class="alc-actions">
+        <button class="mini-btn primary" type="button" onclick="saveAlcoholEntry()">Сохранить запись</button>
+        <button class="mini-btn" type="button" onclick="clearAlcoholEntry()">Удалить запись за день</button>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#FCEBEB;border-radius:8px;">
-        <div style="font-size:18px;">✗</div>
-        <div>
-          <div style="font-size:13px;font-weight:500;color:#A32D2D;">Худшее: после 20:00 или натощак</div>
-          <div style="font-size:12px;color:#E24B4A;margin-top:2px;line-height:1.5;">После закрытия окна — нарушает голодание. Натощак (до первой еды) — удар по слизистой желудка, моментальное опьянение, максимальная нагрузка на печень. Оба варианта = максимальный откат прогресса.</div>
-        </div>
-      </div>
+      <div class="alc-status-line" id="alcFormStatus"></div>
     </div>
 
     <div class="card">
-      <div class="sec-title">Сравнение напитков — что менее вредно</div>
-      <div class="meal-card">
-        <div class="meal-name">Сухое вино (красное/белое)</div>
-        <div class="meal-items">Меньше сахара — меньше инсулиновый всплеск. Красное содержит ресвератрол (антиоксидант), но его количество настолько мало, что ради него пить не стоит. Из всех вариантов — наименее вредный. 1 бокал 150 мл — твой максимум, если решила выпить.</div>
-        <div class="meal-cal" style="color:#854F0B;">~120 ккал · умеренный инсулиновый ответ</div>
-      </div>
-      <div class="meal-card">
-        <div class="meal-name">Пиво (включая безалкогольное!)</div>
-        <div class="meal-items">Много быстрых углеводов из солода — мощный инсулиновый всплеск. Хуже всего для ИГ из-за комбинации «алкоголь + углеводы». Даже безалкогольное пиво содержит 10–15 г углеводов на бокал — оно нарушит голодание! Если любишь пиво — оставь его на особые случаи, не делай привычкой.</div>
-        <div class="meal-cal" style="color:#A32D2D;">~150–200 ккал · высокий инсулиновый ответ</div>
-      </div>
-      <div class="meal-card">
-        <div class="meal-name">Крепкий алкоголь (водка, виски, джин, текила)</div>
-        <div class="meal-items">Ноль углеводов — нет инсулинового всплеска от самого напитка. Парадоксально, но чистый крепкий алкоголь с водой или содовой менее вреден для ИГ, чем пиво или сладкий коктейль. Смешивать с соком, колой или тоником = катастрофа: ты получаешь и алкоголь, и 30 г сахара.</div>
-        <div class="meal-cal" style="color:#854F0B;">~115 ккал · низкий инсулиновый ответ (без миксеров!)</div>
-      </div>
+      <div class="sec-title">Последние записи</div>
+      <div class="sec-sub">Чтобы видеть не один вечер, а общий паттерн.</div>
+      <div class="alcohol-history" id="alcoholHistory"></div>
     </div>
 
     <div class="card">
-      <div class="sec-title">Как восстановиться после алкоголя — пошаговый план</div>
-      <div class="tip" style="border-left-color:#E24B4A;">Не продлевай голодание «чтобы компенсировать». Организм после алкоголя ослаблен, обезвожен и нуждается в питательных веществах. Длинное голодание = дополнительный стресс для уже измученного тела. Держи обычное окно.</div>
-      <div class="tip">Сразу после пробуждения: большой стакан воды (400–500 мл) + электролиты. Самый простой рецепт: щепотка соли + лимон + тёплая вода. Или кокосовая вода. Алкоголь сильно обезвоживает — воду нужно вернуть в первую очередь.</div>
-      <div class="tip">Первая еда: яйца (2–3 шт) + авокадо + овощи. Это не случайный набор: цистеин в яйцах помогает печени расщеплять ацетальдегид (главный виновник похмелья), жиры из авокадо стабилизируют сахар, овощи дают клетчатку для кишечника. Избегай сладкого и мучного — инсулин и так повышен.</div>
-      <div class="tip">Сдвинь окно питания на 1–2 часа раньше если плохо себя чувствуешь — это не срыв, это разумная адаптация. Лучше поесть в 10:00 и закрыть в 18:00, чем мучиться до 12:00 и сорваться на фастфуд.</div>
-      <div class="tip">Тренировку отмени или замени лёгкой растяжкой 10–15 мин. Алкоголь обезвоживает мышцы и повышает риск травм. Силовая нагрузка на обезвоженное тело = дополнительный кортизол и стресс. Один день отдыха лучше, чем травма.</div>
-      <div class="tip">Главное правило: день после алкоголя — просто держи окно питания и пей много воды. Без самобичевания, без «компенсации». Один день не обнулит прогресс. Прогресс обнуляет паттерн — пить каждые выходные.</div>
-    </div>
-
-    <div class="card">
-      <div style="padding:12px;background:#FAEEDA;border-radius:8px;border-left:3px solid #EF9F27;">
-        <div style="font-size:13px;color:#854F0B;line-height:1.6;"><strong>Честная математика:</strong> 1 бокал вина в пятницу вечером = ~120 ккал + блокировка жиросжигания на ~18 часов + потеря глубокого сна в ночь + повышенный голод в субботу. Итого: 1 бокал «стоит» примерно 1.5–2 дня прогресса. Это не приговор — это просто факт, который стоит учитывать при выборе.</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="sec-title">А если всё-таки хочется бокал вина?</div>
-      <div class="sec-sub">Реалистичный взгляд — жизнь не казарма. Вот что реально произойдёт от 1 бокала днём с едой, и почему это не катастрофа.</div>
-
-      <div style="padding:12px;background:#EAF3DE;border-radius:8px;margin-bottom:14px;border-left:3px solid #97C459;">
-        <div style="font-size:14px;font-weight:500;color:#3B6D11;margin-bottom:6px;">1 бокал в 14:00–16:00 с обедом — что произойдёт:</div>
-        <div style="font-size:13px;color:#3B6D11;line-height:1.7;">
-          • Жиросжигание на паузе ~12–18 ч (не 36 — это при большем количестве)<br>
-          • Глубокий сон пострадает меньше — у печени 6–8 ч на переработку до сна<br>
-          • Гормон роста ночью снизится на ~20–30% (а не 70% как при вечернем бокале)<br>
-          • Инсулиновый скачок смягчён едой<br>
-          • Из 7 дней в неделю один будет «на паузе» — остальные 6 работают нормально
-        </div>
-      </div>
-
-      <div style="padding:12px;background:#E1F5EE;border-radius:8px;margin-bottom:14px;border-left:3px solid #5DCAA5;">
-        <div style="font-size:14px;font-weight:500;color:#0F6E56;margin-bottom:6px;">Реальный итог:</div>
-        <div style="font-size:13px;color:#0F6E56;line-height:1.7;">Прогресс будет, просто чуть медленнее. Вместо 4 кг за 6 недель может получиться 3 кг. Если бокал вина раз в неделю помогает тебе чувствовать себя нормально и не срываться — это хорошая сделка. Полный отказ от удовольствий = стресс = кортизол = тоже вредит прогрессу.</div>
-      </div>
-
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#EAF3DE;border-radius:8px;margin-bottom:8px;">
-        <div style="font-size:18px;">✓</div>
-        <div>
-          <div style="font-size:13px;font-weight:500;color:#3B6D11;">Когда это ок</div>
-          <div style="font-size:12px;color:#639922;margin-top:2px;line-height:1.5;">1 раз в неделю, днём (14:00–16:00), с полноценной едой, 1 бокал сухого вина. Это разумный компромисс. Ты не теряешь прогресс — просто немного замедляешь.</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#FCEBEB;border-radius:8px;">
-        <div style="font-size:18px;">✗</div>
-        <div>
-          <div style="font-size:13px;font-weight:500;color:#A32D2D;">Когда это проблема</div>
-          <div style="font-size:12px;color:#E24B4A;margin-top:2px;line-height:1.5;">Если 1 бокал превращается в 2, или «ну ладно, ещё один вечером», или каждую пятницу-субботу. 2–3 дня «на паузе» каждую неделю = результат будет минимальным. Честно спроси себя: это бокал в неделю или паттерн?</div>
-        </div>
-      </div>
-
-      <div style="margin-top:14px;padding:12px;background:#f5f5f0;border-radius:8px;">
-        <div style="font-size:13px;color:#444;line-height:1.6;"><strong>Вердикт:</strong> Раз в неделю днём с обедом — живи спокойно, прогресс не обнулится. Два раза — уже ощутимо. Каждый день — ИГ работает на 30–40% своей мощности. Выбор за тобой, но теперь ты знаешь реальную цену.</div>
-      </div>
+      <div class="sec-title">Что важно знать</div>
+      <div class="sec-sub">Коротко и по делу: что говорят нормальные медицинские источники про алкоголь, сон и здоровье.</div>
+      <div class="knowledge-layout" id="alcoholFactsFeed"></div>
     </div>
   </div>
 
@@ -1342,6 +1424,132 @@ var INSIGHTS = [
     short: 'Когда окно закрывается ближе ко сну, многим сложнее почувствовать легкость ночью и утром. Это не универсальный закон, но паттерн очень частый.',
     deep: 'Иногда разница между «режим идет» и «режим бесит» в том, насколько поздно была последняя еда. Даже без фанатизма полезно отслеживать, как поздний ужин меняет сон, пульс, жажду и аппетит на следующий день.',
     note: 'Посмотри, отличается ли твое утро после ужина пораньше и попозже.'
+  },
+  {
+    id: 'research_tre_metabolic_2024',
+    label: 'Research · 2024',
+    title: 'В 2024 году RCT показал: 8–10-часовое окно может мягко улучшать HbA1c',
+    short: 'В исследовании 2024 года у взрослых с метаболическим синдромом персонализированное окно 8–10 часов дало умеренное улучшение гликемической регуляции без крупных нежелательных эффектов.',
+    deep: 'Это важный момент: интервалы интересны не только как способ “меньше есть”, а как работа с ритмом питания. В этом RCT вместе со стандартными рекомендациями использовали персонализированное окно 8–10 часов и увидели скромное, но реальное улучшение HbA1c. Не магия, а аккуратный метаболический эффект.',
+    note: 'Интересный вывод: окно не обязано быть экстремальным, чтобы быть полезным.',
+    theme: 'research'
+  },
+  {
+    id: 'research_tre_sleep_2024',
+    label: 'Research · сон',
+    title: 'Обзор RCT 2024: интервалы обычно не рушат сон, но и не гарантируют его улучшение',
+    short: 'Систематический обзор 2024 года показал, что short-to-mid term TRE обычно не ухудшает сон, но эффект зависит от человека и контекста.',
+    deep: 'Это как раз взрослая версия науки: не “голодание всегда улучшает сон” и не “всегда мешает”. В обзоре часть исследований не показала заметных изменений, а часть дала локальные сдвиги в качестве сна и эффективности. Значит, важнее отслеживать свой реальный ответ, а не ждать одинакового эффекта у всех.',
+    note: 'Для тебя это повод смотреть не только на часы окна, но и на то, как ты реально спишь.',
+    theme: 'research'
+  },
+  {
+    id: 'research_tre_exercise_2024',
+    label: 'Research · тренировки',
+    title: 'Meta-analysis 2024: интервалы с тренировками чаще лучше для жира, чем тренировки сами по себе',
+    short: 'Систематический обзор и meta-analysis 2024 года показали, что TRE + exercise чаще давали чуть лучшее снижение массы тела и жировой массы, чем exercise без TRE.',
+    deep: 'Это интересный нюанс: не обязательно выбирать “или тренировки, или окно”. В обзоре на 19 RCT комбинация TRE с тренировками чаще была связана с лучшей динамикой веса, жировой массы и некоторых липидных показателей. Не потому что тело любит страдания, а потому что совпали ритм топлива и стимул движения.',
+    note: 'Хорошая связка для жизни: простое окно + обычная ходьба или короткая силовая, а не героизм.',
+    theme: 'research'
+  },
+  {
+    id: 'research_meal_timing_meta_2024',
+    label: 'Research · meal timing',
+    title: 'Meta-analysis 2024: важен не только состав еды, но и когда она происходит',
+    short: 'В JAMA Network Open в 2024 году показали: TRE, меньшая частота еды и более раннее распределение калорий были связаны с небольшим снижением веса.',
+    deep: 'Это не означает, что тайминг важнее качества еды. Но это сильный аргумент против идеи “можно есть как угодно, лишь бы калории сошлись”. В реальности время еды само по себе тоже становится частью метаболической картины, особенно если еда регулярно уходит глубоко в вечер.',
+    note: 'Иногда самый недооценённый шаг это не есть “идеальнее”, а просто раньше заканчивать день.',
+    theme: 'research'
+  },
+  {
+    id: 'research_late_eating_sleep_2024',
+    label: 'Research · поздняя еда',
+    title: 'Исследование 2024: более поздний паттерн еды был связан с худшей sleep efficiency',
+    short: 'У молодых взрослых более позднее питание, особенно со скипом завтрака и ночной едой, ассоциировалось с худшей эффективностью сна.',
+    deep: 'Это интересный сдвиг мышления: иногда проблема “я плохо сплю” начинается не в кровати, а ещё в том, как растянута еда по дню. В исследовании 2024 года поздний eating pattern с breakfast skipping и ночными эпизодами был связан с худшей sleep efficiency по сравнению с более ранним и структурированным режимом.',
+    note: 'Если захочешь мягкий эксперимент, можно проверять не только общий сон, но и был ли поздний ужин.',
+    theme: 'research'
+  },
+  {
+    id: 'research_protein_thermo_2024',
+    label: 'Research · белок',
+    title: 'Meta-analysis 2024: белок действительно самый thermogenic макронутриент',
+    short: 'Обзор 52 исследований в 2024 году подтвердил: более белковые приёмы пищи чаще дают больший thermic effect of food и выше энергозатраты.',
+    deep: 'Это не значит, что белок “сжигает жир сам”. Но это объясняет, почему белковая еда часто ощущается и как более сытая, и как более метаболически “дорогая” для организма. В мета-анализе higher-protein meals and diets чаще поднимали компоненты energy expenditure по сравнению с lower-protein вариантами.',
+    note: 'Поэтому открывать окно белком часто полезно не только для сытости, но и по чистой физиологии.',
+    theme: 'research'
+  },
+  {
+    id: 'research_carbs_sleep_2024',
+    label: 'Research · углеводы и сон',
+    title: 'RCT 2024: не только углеводы сами по себе, но и время их распределения влияет на сон',
+    short: 'В рандомизированном исследовании 2024 года изменение распределения углеводов сопровождалось сдвигами в засыпании, длительности сна и sleep efficiency.',
+    deep: 'Это особенно интересно, потому что обычно углеводы обсуждают только через вес или сахар. Но здесь речь о сне: изменение хроно-нутриционного рисунка дало изменения в sleep onset latency, duration и efficiency. Не вывод “всем есть углеводы так-то”, а напоминание, что еда и сон гораздо теснее связаны, чем кажется.',
+    note: 'Если сон плавает, смотреть иногда стоит не только на кофеин, но и на вечернюю структуру еды.',
+    theme: 'research'
+  },
+  {
+    id: 'research_daylight_attention_2024',
+    label: 'Research · свет',
+    title: 'Систематический обзор 2024: дневной свет может заметно влиять на alertness и working memory',
+    short: 'В обзоре 2024 года alertness и working memory были одними из самых чувствительных к свету показателей.',
+    deep: 'Это красиво соединяет “wellness-совет” и реальную нейробиологию. Свет днём это не просто настроение. В обзоре 62 исследований именно alertness и working memory оказались среди наиболее чувствительных к световым условиям. Поэтому утренний и дневной свет это уже часть когнитивной гигиены, а не только привычка для сна.',
+    note: 'Если сложно включиться в день, сначала свет, потом уже амбициозные планы.',
+    theme: 'research'
+  },
+  {
+    id: 'research_screens_sleep_2024',
+    label: 'Research · экраны',
+    title: 'Систематический обзор 2024: возбуждающий экранный контент перед сном сдвигает засыпание',
+    short: 'В обзоре по video gaming и сну в 2024 году более возбуждающий контент перед сном был связан с более поздним засыпанием и возможными сдвигами структуры сна.',
+    deep: 'Это полезно расширяет разговор об экранах. Проблема не только в синем свете, но и в уровне возбуждения. Один и тот же экран может делать разное: arousing content перед сном сдвигает sleep onset сильнее, чем спокойное использование. То есть “убрать телефон” иногда работает хуже, чем “сделать экран скучным и тихим”.',
+    note: 'Для вечера часто важен не просто screen time, а screen intensity.',
+    theme: 'research'
+  },
+  {
+    id: 'light_morning_start',
+    label: 'Свет · утро',
+    title: 'Утренний свет это одна из самых недооценённых кнопок для мозга',
+    short: 'Свет помогает не только проснуться, но и выровнять внимание, ритм аппетита и ощущение времени суток внутри тела.',
+    deep: 'Если смотреть шире, утренний свет помогает всему суточному рисунку: бодрости, кортизолу, вечернему мелатонину и даже желанию есть ночью. Поэтому “выйти на свет” звучит слишком просто, но на самом деле это один из самых биологичных способов помочь себе проснуться без борьбы.',
+    note: 'Даже 5–10 минут света утром уже лучше, чем начинать день в полутьме и телефоне.',
+    theme: 'light'
+  },
+  {
+    id: 'screens_arousal_evening',
+    label: 'Экраны · вечер',
+    title: 'Вечером мозгу мешает не только свет, но и сюжет',
+    short: 'Лента, переписки, новости, reels и возбуждающие игры держат нервную систему в состоянии “ещё не ночь”, даже если ты уже устала.',
+    deep: 'Иногда кажется, что проблема только в синем свете. Но для мозга важно и то, чем именно экран тебя цепляет. Эмоционально насыщенный, соревновательный или тревожный контент активирует систему бодрствования. Поэтому тихий вечер это не только тёплый фильтр, но и менее возбуждающий контент.',
+    note: 'Хороший вечерний экран это тот, после которого не хочется ещё 40 минут скроллить.',
+    theme: 'light'
+  },
+  {
+    id: 'food_opening_window_protein',
+    label: 'Питание · открытие окна',
+    title: 'Чем открыть окно, часто важнее, чем просто “что-то съесть”',
+    short: 'Белок, жир и более медленная еда обычно дают телу другой старт, чем сладкое, кофе на голодный желудок или случайный перекус.',
+    deep: 'После паузы без еды тело чувствительно к первому сигналу. Если это белок и понятная плотная еда, дальше день чаще идёт ровнее. Если это сладкое или быстрый перекус, то насыщение и энергия могут стать более рваными. Это не морализаторство, а просто механика первого метаболического ответа.',
+    note: 'Открывать окно белком это один из самых практичных способов сделать день спокойнее.',
+    theme: 'food'
+  },
+  {
+    id: 'fasting_stage_switch',
+    label: 'Стадии голодания',
+    title: 'Ощущение ясной головы утром это не всегда “настроение”, а иногда уже другой режим топлива',
+    short: 'Когда окно без еды удлиняется, тело постепенно меньше зависит от постоянного поступления еды и легче переключается между источниками энергии.',
+    deep: 'Именно это делает стадии голодания такими интересными. Смысл не в том, чтобы героически терпеть, а в том, что у организма появляется пространство по-другому обращаться с топливом. Поэтому утро после понятного окна часто ощущается иначе: меньше пищевого шума, ровнее голова, спокойнее аппетит.',
+    note: 'Иногда лучший маркер прогресса это не вес, а более чистое и ровное утро.',
+    theme: 'fasting'
+  },
+  {
+    id: 'movement_after_meal',
+    label: 'Движение · после еды',
+    title: 'Короткая ходьба после еды это почти идеальный микро-ритуал',
+    short: 'Она не требует формы, подготовки или идеальной мотивации, но часто заметно помогает энергии и ощущению тяжести после еды.',
+    deep: 'Это один из лучших примеров “маленькое действие, большой смысл”. После еды телу не всегда нужен новый план жизни. Иногда ему достаточно 8–12 минут обычной ходьбы, чтобы глюкоза распределялась спокойнее, а голова и тело чувствовали себя легче.',
+    note: 'Если времени нет совсем, даже один круг вокруг дома уже считается.',
+    theme: 'movement'
   },
   {
     id: 'female_health_flexibility',
@@ -1607,6 +1815,135 @@ var HORMONE_GLOSSARY = [
   }
 ];
 
+var ALCOHOL_FACTS = [
+  {
+    label: 'WHO',
+    title: 'Для здоровья нет “полезной” дозы алкоголя',
+    copy: 'Современный public health взгляд довольно жёсткий: чем меньше алкоголя, тем ниже риск. Старую идею про “полезный бокал вина” сейчас не используют как совет начинать пить ради здоровья.',
+    note: 'Если ты не пьёшь, причин начинать ради пользы для сердца нет.'
+  },
+  {
+    label: 'Сон',
+    title: 'Алкоголь может усыплять, но не делает сон лучше',
+    copy: 'Частая ловушка: кажется, что с алкоголем засыпается легче. Но позже сон становится более рваным, а восстановление хуже. Поэтому “выпью, чтобы расслабиться и поспать” часто разворачивается против тебя уже этой же ночью.',
+    note: 'Если вечером хочется выключиться, телу обычно нужнее не этанол, а снижение стимуляции и больше чувства безопасности.'
+  },
+  {
+    label: 'Гормоны и аппетит',
+    title: 'После алкоголя телу реально сложнее держать ритм',
+    copy: 'На следующий день часто хуже сонливость, выше жажда, сильнее тяга к быстрым углеводам и труднее выдерживать привычное окно. Это не про слабость, а про то, что организму тяжелее регулировать аппетит и ресурс.',
+    note: 'Именно поэтому лог по дате и времени полезен: он помогает увидеть повторяющийся паттерн.'
+  },
+  {
+    label: 'Меньше вреда',
+    title: 'Если алкоголь уже случается, важны частота, время и контекст',
+    copy: 'Реже, раньше и с едой обычно мягче, чем часто, поздно и натощак. Главное наблюдать паттерн без самообмана: что именно чаще запускает выпивку и что ты чувствуешь потом.',
+    note: 'Лог нужен не чтобы себя стыдить, а чтобы замечать триггеры и точки выбора.'
+  }
+];
+
+var MYTH_TRUTH = [
+  {
+    id: 'myth_breakfast_skip',
+    title: 'Пропуск завтрака всегда вреден',
+    text: 'Не всегда. Для части людей поздний первый приём пищи вписывается в нормальный ритм. Важнее, как это влияет на сон, аппетит, энергию и вечерние доеды.',
+    note: 'Смотри не на правило из интернета, а на качество своего дня.'
+  },
+  {
+    id: 'myth_longer_better',
+    title: 'Чем длиннее голодание, тем оно полезнее',
+    text: 'Не обязательно. Интервал полезен, пока он встроен в жизнь и не ломает сон, настроение, еду и восстановление. Устойчивое 14/10 часто лучше редких героических 18 часов.',
+    note: 'Лучший интервал это тот, который ты реально повторишь.'
+  },
+  {
+    id: 'myth_carbs_evening',
+    title: 'Углеводы вечером всегда зло',
+    text: 'Не так просто. Вечерняя еда иногда реально мешает сну, но значение имеют общий объём, состав ужина, время и твой ритм, а не само слово “углеводы”.',
+    note: 'Смотреть стоит на сон и самочувствие, а не только на идеологию.'
+  },
+  {
+    id: 'myth_blue_light_only',
+    title: 'Экран мешает только из-за синего света',
+    text: 'Не только. Мешает ещё и возбуждение: переписки, лента, новости, игры, работа и ощущение, что мозг всё ещё в дне.',
+    note: 'Для вечера важны и яркость, и сюжет.'
+  },
+  {
+    id: 'myth_protein_muscles_only',
+    title: 'Белок нужен только для мышц',
+    text: 'Нет. Он влияет и на сытость, и на thermic effect of food, и на то, насколько ровно проходит окно питания.',
+    note: 'Белок это не только “спорт”, а и нормальная регуляция аппетита.'
+  },
+  {
+    id: 'myth_wine_healthy',
+    title: 'Бокал вина полезен для здоровья',
+    text: 'Современный public health взгляд скорее в другую сторону: безопасной “полезной дозы” для здоровья не выделяют. Старую идею романтизировали сильнее, чем она того заслуживает.',
+    note: 'Если не пьёшь, начинать ради пользы точно не нужно.'
+  },
+  {
+    id: 'myth_hungry_bad',
+    title: 'Если я голодна, значит всё идёт неправильно',
+    text: 'Не всегда. Иногда это нормальный грелиновый сигнал по привычке. Важно отличать его от стресса, недосыпа и реального истощения.',
+    note: 'Голод это информация, а не всегда авария.'
+  },
+  {
+    id: 'myth_morning_routine_motivation',
+    title: 'Чтобы быть собранной, нужна идеальная утренняя рутина',
+    text: 'Не обязательно. Часто телу хватает света, воды, одного действия и минимального ритма. Мозг любит завершённые маленькие шаги сильнее, чем абстрактные большие планы.',
+    note: 'Сначала один маленький запуск, потом всё остальное.'
+  }
+];
+
+var DAILY_EXPERIMENTS = [
+  {
+    id: 'exp_light_5',
+    title: '5–10 минут света утром',
+    text: 'Сразу после пробуждения подойди к окну или выйди наружу на несколько минут без телефона.',
+    note: 'Понаблюдай, легче ли включается голова и тянет ли меньше в утреннюю вялость.'
+  },
+  {
+    id: 'exp_protein_first_meal',
+    title: 'Открой окно белком',
+    text: 'Сделай первый приём пищи белковым и спокойным: яйца, творог, рыба, мясо, йогурт без сладкого перекуса сверху.',
+    note: 'Сравни, как меняются сытость и вечерняя тяга к еде.'
+  },
+  {
+    id: 'exp_walk_after_food',
+    title: '10 минут ходьбы после еды',
+    text: 'Не тренировка, а обычная прогулка или несколько кругов по улице после основного приёма пищи.',
+    note: 'Проверь, легче ли телу и голове после еды.'
+  },
+  {
+    id: 'exp_screen_soft_evening',
+    title: 'Сделай вечерний экран скучным',
+    text: 'За 30–40 минут до сна убери возбуждающий контент: новости, reels, конфликты, переписки, работу.',
+    note: 'Отследи, изменится ли засыпание и ощущение ночи.'
+  },
+  {
+    id: 'exp_finish_food_earlier',
+    title: 'Закрой еду чуть раньше',
+    text: 'Попробуй сегодня закончить есть хотя бы на 60–90 минут раньше, чем обычно.',
+    note: 'Сравни жажду, тяжесть и качество утра.'
+  },
+  {
+    id: 'exp_stress_check',
+    title: 'Перед едой спроси себя: это голод или перегруз?',
+    text: 'Один раз за день остановись на 20 секунд и проверь, чего телу хочется на самом деле.',
+    note: 'Полезно увидеть, сколько раз еда маскирует усталость.'
+  },
+  {
+    id: 'exp_water_start',
+    title: 'Начни день с воды, а не сразу с кофе',
+    text: 'Сначала вода, потом кофе. Это маленькая вещь, но многим телам так легче входить в утро.',
+    note: 'Понаблюдай за жаждой, голодом и ощущением включения.'
+  },
+  {
+    id: 'exp_evening_protein',
+    title: 'Сделай ужин проще и понятнее',
+    text: 'Не тяжёлый хаотичный ужин, а что-то ясное по составу: белок + овощи + умеренные углеводы, если хочется.',
+    note: 'Сравни, отличается ли ночь после более спокойного ужина.'
+  }
+];
+
 var S = {
   startTs: Date.now(),
   checks: {},
@@ -1641,16 +1978,42 @@ function getCurrentPhase() {
   return { name: '16/8', fast: 16, eat: 8 };
 }
 
+function getInsightSeed() {
+  return Math.floor(new Date(getLogicalDate() + 'T00:00:00').getTime() / 86400000);
+}
+
+function hashInsight(value, seed) {
+  var str = String(value || '') + ':' + String(seed || 0);
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getInsightTheme(item) {
+  if (item.theme) return item.theme;
+  var prefix = ((item.label || '').split('·')[0] || '').trim().toLowerCase();
+  if (prefix.indexOf('research') === 0) return 'research';
+  if (prefix.indexOf('сон') === 0) return 'sleep';
+  if (prefix.indexOf('гормоны') === 0) return 'hormones';
+  if (prefix.indexOf('питание') === 0) return 'food';
+  if (prefix.indexOf('движение') === 0) return 'movement';
+  if (prefix.indexOf('экраны') === 0 || prefix.indexOf('свет') === 0) return 'light';
+  if (prefix.indexOf('интервалы') === 0 || prefix.indexOf('процессы') === 0 || prefix.indexOf('голодание') === 0 || prefix.indexOf('стадии') === 0) return 'fasting';
+  return 'general';
+}
+
 function getInsightIndex() {
   var today = getLogicalDate();
   if (S.insightDate !== today) {
     S.insightDate = today;
     S.insightOffset = 0;
   }
-  var base = Math.floor(new Date(today + 'T00:00:00').getTime() / 86400000);
   var pool = getInsightPool();
-  var idx = (Math.abs(base) + (S.insightOffset || 0)) % pool.length;
-  return idx;
+  if (!pool.length) return 0;
+  return (S.insightOffset || 0) % pool.length;
 }
 
 function renderDailyInsight() {
@@ -1663,6 +2026,42 @@ function renderDailyInsight() {
   tag.textContent = item.label;
   title.textContent = item.title;
   text.textContent = item.short;
+}
+
+function pickDailyItem(list, seed, extraOffset, excludeIds) {
+  var excluded = excludeIds || [];
+  var filtered = list.filter(function(item) { return excluded.indexOf(item.id) === -1; });
+  if (!filtered.length) filtered = list.slice();
+  if (!filtered.length) return null;
+  filtered.sort(function(a, b) {
+    return hashInsight(a.id, seed + extraOffset) - hashInsight(b.id, seed + extraOffset);
+  });
+  return filtered[0];
+}
+
+function renderDailyDeck() {
+  var seed = getInsightSeed();
+  var mainItem = getInsightPool()[getInsightIndex()];
+  var researchItems = INSIGHTS.filter(function(item) { return getInsightTheme(item) === 'research'; });
+  var research = pickDailyItem(researchItems, seed, 11, mainItem ? [mainItem.id] : []);
+  var myth = pickDailyItem(MYTH_TRUTH, seed, 23);
+  var experiment = pickDailyItem(DAILY_EXPERIMENTS, seed, 37);
+
+  if (research) {
+    document.getElementById('dailyResearchTitle').textContent = research.title;
+    document.getElementById('dailyResearchText').textContent = research.short || research.deep;
+    document.getElementById('dailyResearchNote').textContent = research.note;
+  }
+  if (myth) {
+    document.getElementById('dailyMythTitle').textContent = myth.title;
+    document.getElementById('dailyMythText').textContent = myth.text;
+    document.getElementById('dailyMythNote').textContent = myth.note;
+  }
+  if (experiment) {
+    document.getElementById('dailyExperimentTitle').textContent = experiment.title;
+    document.getElementById('dailyExperimentText').textContent = experiment.text;
+    document.getElementById('dailyExperimentNote').textContent = experiment.note;
+  }
 }
 
 function renderInsightsFeed() {
@@ -1723,6 +2122,7 @@ function renderHormoneGlossary() {
 function cycleInsight() {
   S.insightOffset = (S.insightOffset + 1) % getInsightPool().length;
   renderDailyInsight();
+  renderDailyDeck();
   renderInsightsFeed();
   save();
 }
@@ -1766,6 +2166,9 @@ function getCyclePhaseKey() {
 function getInsightPool() {
   var intervalKey = getCurrentPhase().name;
   var phaseKey = getCyclePhaseKey();
+  var seed = getInsightSeed();
+  var themeCycle = ['research', 'sleep', 'hormones', 'food', 'light', 'movement', 'fasting'];
+  var featuredTheme = themeCycle[Math.abs(seed) % themeCycle.length];
   var generalItems = INSIGHTS.filter(function(item) {
     return !item.phases && !item.intervals;
   });
@@ -1775,10 +2178,25 @@ function getInsightPool() {
   var phaseItems = INSIGHTS.filter(function(item) {
     return item.phases && item.phases.indexOf(phaseKey) !== -1;
   });
-  if (intervalItems.length || phaseItems.length) {
-    return generalItems.concat(intervalItems).concat(phaseItems);
-  }
-  return INSIGHTS;
+  var selectedPhaseItems = phaseItems
+    .slice()
+    .sort(function(a, b) { return hashInsight(a.id, seed) - hashInsight(b.id, seed); })
+    .slice(0, 1);
+  var pool = generalItems.concat(intervalItems).concat(selectedPhaseItems);
+  return pool.sort(function(a, b) {
+    function score(item) {
+      var scoreValue = 0;
+      var theme = getInsightTheme(item);
+      if (theme === featuredTheme) scoreValue -= 4;
+      if (theme === 'research') scoreValue -= 2;
+      if (item.intervals && item.intervals.indexOf(intervalKey) !== -1) scoreValue -= 1;
+      if (item.phases && item.phases.indexOf(phaseKey) !== -1) scoreValue += 2;
+      return scoreValue;
+    }
+    var diff = score(a) - score(b);
+    if (diff) return diff;
+    return hashInsight(a.id, seed) - hashInsight(b.id, seed);
+  });
 }
 
 function getCycleInfo() {
@@ -2142,6 +2560,46 @@ function formatDateShort(dateStr) {
   return parts[2] + '.' + parts[1];
 }
 
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getAlcoholEntry(date) {
+  var log = S.dailyLog.find(function(entry) { return entry.date === date; });
+  return log && log.alcohol ? log.alcohol : null;
+}
+
+function getAlcoholTypeLabel(type) {
+  var labels = { wine: 'вино', beer: 'пиво', spirit: 'крепкий алкоголь', cocktail: 'коктейль', other: 'другое' };
+  return labels[type] || 'другое';
+}
+
+function getAlcoholContextLabel(context) {
+  var labels = { with_food: 'с едой', without_food: 'без еды', mixed: 'не уверена / по-разному' };
+  return labels[context] || 'контекст не указан';
+}
+
+function alcoholTimeBucket(time) {
+  if (!time) return 'unknown';
+  var hour = parseInt(String(time).split(':')[0], 10);
+  if (isNaN(hour)) return 'unknown';
+  if (hour < 17) return 'early';
+  if (hour < 20) return 'evening';
+  return 'late';
+}
+
+function alcoholEntrySummary(entry) {
+  if (!entry) return '';
+  var summary = escapeHtml(entry.amount) + ' · ' + escapeHtml(getAlcoholTypeLabel(entry.type));
+  if (entry.time) summary += ' · ' + escapeHtml(entry.time);
+  return summary;
+}
+
 // ===== MANUAL INPUT =====
 function toggleManualInput() {
   var panel = document.getElementById('manualPanel');
@@ -2265,185 +2723,193 @@ function showManualResult(text, type) {
 }
 
 // ===== ALCOHOL TRACKER =====
-var alcSelection = { time: null, amount: null, type: null };
-
-function toggleAlcPanel() {
-  var panel = document.getElementById('alcPanel');
-  var link = document.getElementById('alcToggleLink');
-  if (panel.style.display === 'none') {
-    panel.style.display = 'block';
-    link.style.display = 'none';
-    alcSelection = { time: null, amount: null, type: null };
-    resetAlcButtons();
-    document.getElementById('alcImpact').style.display = 'none';
+function setAlcoholFormStatus(text, tone) {
+  var el = document.getElementById('alcFormStatus');
+  if (!el) return;
+  if (!text) {
+    el.style.display = 'none';
+    el.textContent = '';
+    return;
+  }
+  el.style.display = 'block';
+  el.textContent = text;
+  if (tone === 'good') {
+    el.style.background = 'rgba(168,255,139,0.18)';
+    el.style.color = '#315d1d';
+    el.style.border = '1px solid rgba(118,187,85,0.24)';
+  } else if (tone === 'warn') {
+    el.style.background = 'rgba(255,226,122,0.18)';
+    el.style.color = '#7a5a0f';
+    el.style.border = '1px solid rgba(207,173,73,0.24)';
   } else {
-    cancelAlcohol();
+    el.style.background = 'rgba(255,124,124,0.14)';
+    el.style.color = '#8c2525';
+    el.style.border = '1px solid rgba(226,75,74,0.22)';
   }
 }
 
-function cancelAlcohol() {
-  document.getElementById('alcPanel').style.display = 'none';
-  document.getElementById('alcToggleLink').style.display = 'inline-block';
+function openAlcoholTab() {
+  var btn = document.getElementById('tabAlcohol');
+  if (btn) showTab('alcohol', btn);
 }
 
-function setAlcTime(val) {
-  alcSelection.time = val;
-  selectAlcBtn('alcT1', val === '14-17');
-  selectAlcBtn('alcT2', val === '18-20');
-  selectAlcBtn('alcT3', val === 'after20');
-  updateAlcImpact();
+function loadAlcoholForDate() {
+  var dateInput = document.getElementById('alcDateInput');
+  if (!dateInput) return;
+  var date = dateInput.value || getLogicalDate();
+  var entry = getAlcoholEntry(date);
+  document.getElementById('alcTimeInput').value = entry && entry.time ? entry.time : '';
+  document.getElementById('alcTypeInput').value = entry && entry.type ? entry.type : 'wine';
+  document.getElementById('alcAmountInput').value = entry && entry.amount ? entry.amount : '';
+  document.getElementById('alcContextInput').value = entry && entry.context ? entry.context : 'with_food';
+  document.getElementById('alcNotesInput').value = entry && entry.notes ? entry.notes : '';
+  setAlcoholFormStatus(entry ? 'Запись за ' + formatDateShort(date) + ' загружена.' : 'За этот день записи пока нет.', entry ? 'good' : 'warn');
 }
 
-function setAlcAmount(val) {
-  alcSelection.amount = val;
-  selectAlcBtn('alcA1', val === '1');
-  selectAlcBtn('alcA2', val === '2');
-  selectAlcBtn('alcA3', val === '3+');
-  updateAlcImpact();
-}
+function saveAlcoholEntry() {
+  var date = (document.getElementById('alcDateInput').value || getLogicalDate());
+  var time = document.getElementById('alcTimeInput').value;
+  var type = document.getElementById('alcTypeInput').value;
+  var amount = document.getElementById('alcAmountInput').value.trim();
+  var context = document.getElementById('alcContextInput').value;
+  var notes = document.getElementById('alcNotesInput').value.trim();
 
-function setAlcType(val) {
-  alcSelection.type = val;
-  selectAlcBtn('alcTy1', val === 'wine');
-  selectAlcBtn('alcTy2', val === 'beer');
-  selectAlcBtn('alcTy3', val === 'spirit');
-  updateAlcImpact();
-}
-
-function selectAlcBtn(id, active) {
-  var el = document.getElementById(id);
-  if (active) {
-    el.style.background = '#1a1a1a';
-    el.style.color = '#fff';
-    el.style.borderColor = '#1a1a1a';
-  } else {
-    el.style.background = '#fff';
-    el.style.color = el.id === 'alcT3' || el.id === 'alcA3' ? '#A32D2D' : '#555';
-    el.style.borderColor = '#ccc';
-  }
-}
-
-function resetAlcButtons() {
-  ['alcT1','alcT2','alcT3','alcA1','alcA2','alcA3','alcTy1','alcTy2','alcTy3'].forEach(function(id) {
-    selectAlcBtn(id, false);
-  });
-}
-
-function updateAlcImpact() {
-  if (!alcSelection.time || !alcSelection.amount) return;
-  var impact = document.getElementById('alcImpact');
-  impact.style.display = 'block';
-
-  var blockHours = 12;
-  var sleepDamage = 'минимальный';
-  var severity = 'ok';
-  var calories = 120;
-
-  // Time impact
-  if (alcSelection.time === '14-17') { blockHours = 12; sleepDamage = 'минимальный'; }
-  else if (alcSelection.time === '18-20') { blockHours = 18; sleepDamage = 'заметный (−40% глубокого сна)'; severity = 'warn'; }
-  else { blockHours = 24; sleepDamage = 'сильный (−80% глубокого сна)'; severity = 'bad'; }
-
-  // Amount impact
-  if (alcSelection.amount === '2') { blockHours = Math.round(blockHours * 1.5); severity = severity === 'ok' ? 'warn' : 'bad'; }
-  else if (alcSelection.amount === '3+') { blockHours = Math.round(blockHours * 2); severity = 'bad'; }
-
-  // Type calories
-  if (alcSelection.type === 'beer') { calories = 150; }
-  else if (alcSelection.type === 'spirit') { calories = 115; }
-
-  var totalCal = calories * (alcSelection.amount === '1' ? 1 : alcSelection.amount === '2' ? 2 : 3);
-
-  var colors = {
-    ok: { bg: '#EAF3DE', border: '#97C459', text: '#3B6D11' },
-    warn: { bg: '#FAEEDA', border: '#EF9F27', text: '#854F0B' },
-    bad: { bg: '#FCEBEB', border: '#E24B4A', text: '#A32D2D' }
-  };
-  var c = colors[severity];
-  impact.style.background = c.bg;
-  impact.style.borderLeft = '3px solid ' + c.border;
-  impact.style.color = c.text;
-
-  var lostDays = Math.round(blockHours / 16 * 10) / 10;
-  impact.innerHTML = '<strong>Влияние на прогресс:</strong><br>' +
-    '• Блокировка жиросжигания: ~' + blockHours + ' ч<br>' +
-    '• Удар по сну: ' + sleepDamage + '<br>' +
-    '• Калории: ~' + totalCal + ' ккал<br>' +
-    '• «Стоимость»: ~' + lostDays + ' дня прогресса';
-}
-
-function saveAlcohol() {
-  if (!alcSelection.time || !alcSelection.amount || !alcSelection.type) {
-    var impact = document.getElementById('alcImpact');
-    impact.style.display = 'block';
-    impact.style.background = '#FCEBEB';
-    impact.style.borderLeft = '3px solid #E24B4A';
-    impact.style.color = '#A32D2D';
-    impact.textContent = 'Выбери когда, сколько и что';
+  if (!time || !amount) {
+    setAlcoholFormStatus('Добавь хотя бы время и количество, чтобы запись была полезной.', 'bad');
     return;
   }
 
-  var today = getLogicalDate();
-  var entry = { time: alcSelection.time, amount: alcSelection.amount, type: alcSelection.type };
+  var entry = {
+    time: time,
+    type: type,
+    amount: amount,
+    context: context,
+    notes: notes
+  };
 
-  // Save to dailyLog
-  var existing = S.dailyLog.find(function(e) { return e.date === today; });
+  var existing = S.dailyLog.find(function(item) { return item.date === date; });
   if (existing) {
     existing.alcohol = entry;
   } else {
-    S.dailyLog.push({ date: today, fastHours: 0, checksCount: 0, alcohol: entry });
-  }
-
-  // Uncheck "no alcohol" if it was checked
-  S.checks['noalc'] = false;
-  var noalcCb = document.getElementById('cb-noalc');
-  if (noalcCb) {
-    noalcCb.classList.remove('checked');
-    var txt = noalcCb.closest('.check-item').querySelector('.check-text');
-    if (txt) txt.classList.remove('done');
+    S.dailyLog.push({ date: date, fastHours: 0, checksCount: 0, alcohol: entry });
   }
 
   save();
-  cancelAlcohol();
-  showAlcSaved(entry);
-
-  // Update checklist count
-  var done = Object.values(S.checks).filter(Boolean).length;
-  document.getElementById('checksDone').textContent = done;
-  document.getElementById('progLabel').textContent = done + ' / ' + TOTAL_CHECKS;
-  document.getElementById('progFill').style.width = Math.round(done / TOTAL_CHECKS * 100) + '%';
+  render();
+  setAlcoholFormStatus('Сохранила запись за ' + formatDateShort(date) + '.', 'good');
 }
 
-function showAlcSaved(entry) {
-  var el = document.getElementById('alcSaved');
-  var typeNames = { wine: 'вино', beer: 'пиво', spirit: 'крепкое' };
-  var timeNames = { '14-17': '14–17', '18-20': '18–20', 'after20': 'после 20:00' };
-  var amtNames = { '1': '1 бокал', '2': '2 бокала', '3+': '3+' };
+function clearAlcoholEntry() {
+  var date = (document.getElementById('alcDateInput').value || getLogicalDate());
+  var index = S.dailyLog.findIndex(function(item) { return item.date === date; });
+  if (index === -1 || !S.dailyLog[index].alcohol) {
+    setAlcoholFormStatus('За этот день удалять нечего.', 'warn');
+    return;
+  }
 
-  var severity = entry.time === '14-17' && entry.amount === '1' ? 'ok' : entry.time === 'after20' || entry.amount === '3+' ? 'bad' : 'warn';
-  var colors = {
-    ok: { bg: '#FAEEDA', text: '#854F0B' },
-    warn: { bg: '#FCEBEB', text: '#A32D2D' },
-    bad: { bg: '#FCEBEB', text: '#A32D2D' }
-  };
-  var c = colors[severity];
+  delete S.dailyLog[index].alcohol;
+  if (!S.dailyLog[index].fastHours && !S.dailyLog[index].checksCount) {
+    S.dailyLog.splice(index, 1);
+  }
 
-  el.style.display = 'block';
-  el.style.background = c.bg;
-  el.style.color = c.text;
-  el.innerHTML = 'Записано: ' + amtNames[entry.amount] + ' ' + typeNames[entry.type] + ' в ' + timeNames[entry.time] +
-    (severity === 'ok' ? ' — минимальный урон, норм!' : severity === 'warn' ? ' — заметное влияние на прогресс' : ' — сильный удар по прогрессу');
+  save();
+  render();
+  setAlcoholFormStatus('Запись за ' + formatDateShort(date) + ' удалена.', 'good');
+}
+
+function renderAlcoholFacts() {
+  var wrap = document.getElementById('alcoholFactsFeed');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  ALCOHOL_FACTS.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'knowledge-card';
+    card.innerHTML =
+      '<div class="knowledge-head"><div><div class="knowledge-label">' + escapeHtml(item.label) + '</div><div class="knowledge-title">' + escapeHtml(item.title) + '</div></div><div class="insight-tag">алкоголь</div></div>' +
+      '<div class="knowledge-copy">' + escapeHtml(item.copy) + '</div>' +
+      '<div class="knowledge-note"><strong>Важно:</strong> ' + escapeHtml(item.note) + '</div>';
+    wrap.appendChild(card);
+  });
 }
 
 function renderAlcToday() {
-  var toggleLink = document.getElementById('alcToggleLink');
-  if (!toggleLink) return;
   var today = getLogicalDate();
-  var todayLog = S.dailyLog.find(function(e) { return e.date === today; });
-  if (todayLog && todayLog.alcohol) {
-    showAlcSaved(todayLog.alcohol);
-    toggleLink.textContent = 'Изменить запись об алкоголе';
+  var todayEntry = getAlcoholEntry(today);
+  var status = document.getElementById('alcTodayStatus');
+  var meta = document.getElementById('alcTodayMeta');
+  var weekBadge = document.getElementById('alcWeekSummary');
+  var history = document.getElementById('alcoholHistory');
+  var dateInput = document.getElementById('alcDateInput');
+
+  if (status) {
+    if (todayEntry) {
+      status.innerHTML = '<strong>Сегодня записано:</strong> ' + alcoholEntrySummary(todayEntry) + '.';
+    } else {
+      status.textContent = 'Сегодня записи нет. Можно оставить как есть или записать, если был алкоголь.';
+    }
   }
+  if (meta) {
+    if (todayEntry) {
+      meta.style.display = 'block';
+      var extra = 'Контекст: ' + escapeHtml(getAlcoholContextLabel(todayEntry.context));
+      if (todayEntry.notes) extra += '. Заметка: ' + escapeHtml(todayEntry.notes);
+      meta.innerHTML = extra;
+    } else {
+      meta.style.display = 'none';
+      meta.textContent = '';
+    }
+  }
+
+  var now = new Date();
+  var dow = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  var mon = new Date(now);
+  mon.setDate(now.getDate() - dow);
+  mon.setHours(0,0,0,0);
+  var weekDates = [];
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    weekDates.push(d.toISOString().slice(0, 10));
+  }
+  var weekAlcohol = S.dailyLog.filter(function(entry) { return weekDates.indexOf(entry.date) >= 0 && entry.alcohol; });
+  if (weekBadge) {
+    var lateCount = weekAlcohol.filter(function(entry) { return alcoholTimeBucket(entry.alcohol.time) === 'late'; }).length;
+    weekBadge.textContent = weekAlcohol.length ? (weekAlcohol.length + ' дн. на неделе' + (lateCount ? ' · поздно ' + lateCount : '')) : 'без записей';
+  }
+
+  if (history) {
+    history.innerHTML = '';
+    var entries = S.dailyLog
+      .filter(function(entry) { return entry.alcohol; })
+      .sort(function(a, b) { return b.date.localeCompare(a.date); })
+      .slice(0, 12);
+    if (!entries.length) {
+      history.innerHTML = '<div class="alcohol-empty">Пока записей нет. Как только появятся, здесь будет виден не один день, а общий рисунок.</div>';
+    } else {
+      entries.forEach(function(entry) {
+        var item = document.createElement('div');
+        item.className = 'alcohol-history-item';
+        var note = entry.alcohol.notes ? '<div class="knowledge-note" style="margin-top:10px;">' + escapeHtml(entry.alcohol.notes) + '</div>' : '';
+        item.innerHTML =
+          '<div class="alcohol-history-head"><div><div class="alcohol-history-title">' + formatDateShort(entry.date) + ' · ' + alcoholEntrySummary(entry.alcohol) + '</div><div class="alcohol-history-meta">' + escapeHtml(getAlcoholContextLabel(entry.alcohol.context)) + '</div></div><button class="mini-btn" type="button" onclick="openAlcoholTab();document.getElementById(\'alcDateInput\').value=\'' + entry.date + '\';loadAlcoholForDate();">Открыть</button></div>' +
+          note;
+        history.appendChild(item);
+      });
+    }
+  }
+
+  if (dateInput && !dateInput.value) dateInput.value = today;
+  if (dateInput && document.activeElement !== dateInput) {
+    var selectedDate = dateInput.value || today;
+    var selectedEntry = getAlcoholEntry(selectedDate);
+    document.getElementById('alcTimeInput').value = selectedEntry && selectedEntry.time ? selectedEntry.time : '';
+    document.getElementById('alcTypeInput').value = selectedEntry && selectedEntry.type ? selectedEntry.type : 'wine';
+    document.getElementById('alcAmountInput').value = selectedEntry && selectedEntry.amount ? selectedEntry.amount : '';
+    document.getElementById('alcContextInput').value = selectedEntry && selectedEntry.context ? selectedEntry.context : 'with_food';
+    document.getElementById('alcNotesInput').value = selectedEntry && selectedEntry.notes ? selectedEntry.notes : '';
+  }
+
+  renderAlcoholFacts();
 }
 
 // ===== WEEKLY REPORT =====
@@ -2483,7 +2949,7 @@ function showWeeklyReport() {
 
   var weekFasts = S.dailyLog.filter(function(e) { return weekDates.indexOf(e.date) >= 0; });
   var phase = getCurrentPhase();
-  var daysCompleted = weekFasts.filter(function(e) { return e.fastHours >= phase.fast - 1; }).length;
+  var daysCompleted = weekFasts.filter(function(e) { return e.fastHours >= phase.fast; }).length;
   var avgFast = 0;
   var maxFast = 0;
   var minFast = 99;
@@ -2514,7 +2980,7 @@ function showWeeklyReport() {
   subtitle.textContent = 'Фаза: ' + phase.name + ' · ' + formatDateShort(weekDates[0]) + ' — ' + formatDateShort(weekDates[6]);
 
   var html = '';
-  html += '<div class="modal-stat"><span class="modal-stat-label">Дней в ритме</span><span class="modal-stat-val">' + daysCompleted + ' / 7</span></div>';
+  html += '<div class="modal-stat"><span class="modal-stat-label">Дней в цели</span><span class="modal-stat-val">' + daysCompleted + ' / 7</span></div>';
   html += '<div class="modal-stat"><span class="modal-stat-label">Записей голодания</span><span class="modal-stat-val">' + weekFasts.length + ' дней</span></div>';
 
   if (weekFasts.length > 0) {
@@ -2528,29 +2994,19 @@ function showWeeklyReport() {
   // Alcohol stats for the week
   var weekAlcDays = weekFasts.filter(function(e) { return e.alcohol; });
   if (weekAlcDays.length > 0) {
-    var alcTimeNames = { '14-17': '14–17 (ок)', '18-20': '18–20 (так себе)', 'after20': 'после 20 (плохо)' };
-    var alcTypeNames = { wine: 'вино', beer: 'пиво', spirit: 'крепкое' };
+    var lateAlcoholDays = weekAlcDays.filter(function(entry) { return alcoholTimeBucket(entry.alcohol.time) === 'late'; }).length;
+    var withoutFoodDays = weekAlcDays.filter(function(entry) { return entry.alcohol.context === 'without_food'; }).length;
     html += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0f0f0;">';
-    html += '<div class="modal-stat"><span class="modal-stat-label">Дней с алкоголем</span><span class="modal-stat-val" style="color:#A32D2D;">' + weekAlcDays.length + ' из 7</span></div>';
+    html += '<div class="modal-stat"><span class="modal-stat-label">Дней с алкоголем</span><span class="modal-stat-val" style="color:#854F0B;">' + weekAlcDays.length + ' из 7</span></div>';
+    if (lateAlcoholDays > 0) html += '<div class="modal-stat"><span class="modal-stat-label">Поздно вечером</span><span class="modal-stat-val" style="color:#A32D2D;">' + lateAlcoholDays + ' дн.</span></div>';
+    if (withoutFoodDays > 0) html += '<div class="modal-stat"><span class="modal-stat-label">Без еды</span><span class="modal-stat-val" style="color:#A32D2D;">' + withoutFoodDays + ' дн.</span></div>';
     weekAlcDays.forEach(function(d) {
       var a = d.alcohol;
-      var amtText = a.amount === '1' ? '1 бокал' : a.amount === '2' ? '2 бокала' : '3+';
-      var sev = a.time === '14-17' && a.amount === '1' ? '#854F0B' : '#A32D2D';
-      html += '<div class="modal-stat"><span class="modal-stat-label">' + formatDateShort(d.date) + '</span><span class="modal-stat-val" style="color:' + sev + ';">' + amtText + ' ' + alcTypeNames[a.type] + ' · ' + alcTimeNames[a.time] + '</span></div>';
+      html += '<div class="modal-stat"><span class="modal-stat-label">' + formatDateShort(d.date) + '</span><span class="modal-stat-val">' + alcoholEntrySummary(a) + '</span></div>';
     });
-    // Calculate total impact
-    var totalLostHours = 0;
-    weekAlcDays.forEach(function(d) {
-      var a = d.alcohol;
-      var base = a.time === '14-17' ? 12 : a.time === '18-20' ? 18 : 24;
-      var mult = a.amount === '1' ? 1 : a.amount === '2' ? 1.5 : 2;
-      totalLostHours += Math.round(base * mult);
-    });
-    var totalLostDays = Math.round(totalLostHours / 16 * 10) / 10;
-    html += '<div class="modal-stat"><span class="modal-stat-label">Потеряно прогресса</span><span class="modal-stat-val" style="color:#A32D2D;">~' + totalLostDays + ' дней</span></div>';
     html += '</div>';
   } else {
-    html += '<div class="modal-stat"><span class="modal-stat-label">Алкоголь</span><span class="modal-stat-val" style="color:#639922;">0 дней — отлично!</span></div>';
+    html += '<div class="modal-stat"><span class="modal-stat-label">Алкоголь</span><span class="modal-stat-val" style="color:#639922;">0 дней по записям</span></div>';
   }
 
   // Verdict
@@ -2578,14 +3034,20 @@ function showWeeklyReport() {
   }
 
   if (daysCompleted >= 6) {
-    verdictText += ' Ритм недели: ' + daysCompleted + '/7.';
+    verdictText += ' В цели: ' + daysCompleted + '/7.';
   } else if (daysCompleted >= 4) {
-    verdictText += ' Ритм недели: ' + daysCompleted + '/7.';
+    verdictText += ' В цели: ' + daysCompleted + '/7.';
   } else if (daysCompleted > 0) {
     verdictText += ' Есть база для следующей недели.';
   }
   if (cycleContext) {
     verdictText += ' ' + cycleContext.verdict;
+  }
+  if (weekAlcDays.length > 0) {
+    var lateAlcoholDaysForVerdict = weekAlcDays.filter(function(entry) { return alcoholTimeBucket(entry.alcohol.time) === 'late'; }).length;
+    verdictText += ' Алкоголь на этой неделе был ' + weekAlcDays.length + ' дн.';
+    if (lateAlcoholDaysForVerdict > 0) verdictText += ' Поздние записи чаще всего сильнее бьют по сну и следующему утру.';
+    verdictText += ' Здесь задача не ругать себя, а замечать паттерн и делать следующий шаг чуть мягче.';
   }
 
   // Comparison with previous week
@@ -2879,6 +3341,7 @@ function render() {
   document.getElementById('dayCnt').textContent = days;
   updateWindowDisplay();
   renderDailyInsight();
+  renderDailyDeck();
   renderInsightsFeed();
   renderHormoneGlossary();
   renderCycleCard();
@@ -2894,10 +3357,10 @@ function render() {
     d.setDate(mon.getDate() + i);
     var key = d.toISOString().slice(0, 10);
     var log = S.dailyLog.find(function(entry) { return entry.date === key; });
-    if (log && log.fastHours >= phase.fast - 1) weekDone++;
+    if (log && log.fastHours >= phase.fast) weekDone++;
   }
   var weekCounter = document.getElementById('checksDone');
-  if (weekCounter) weekCounter.textContent = weekDone;
+  if (weekCounter) weekCounter.textContent = weekDone + '/7';
   renderWeek();
   renderAlcToday();
 }
@@ -2929,9 +3392,12 @@ function toggle(item, id) {
   if (S.checks[id]) { cb.classList.add('checked'); txt.classList.add('done'); }
   else { cb.classList.remove('checked'); txt.classList.remove('done'); }
   var done = Object.values(S.checks).filter(Boolean).length;
-  document.getElementById('checksDone').textContent = done;
-  document.getElementById('progLabel').textContent = done + ' / ' + TOTAL_CHECKS;
-  document.getElementById('progFill').style.width = Math.round(done / TOTAL_CHECKS * 100) + '%';
+  var weekCounter = document.getElementById('checksDone');
+  if (weekCounter) weekCounter.textContent = done + '/7';
+  var progLabel = document.getElementById('progLabel');
+  var progFill = document.getElementById('progFill');
+  if (progLabel) progLabel.textContent = done + ' / ' + TOTAL_CHECKS;
+  if (progFill) progFill.style.width = Math.round(done / TOTAL_CHECKS * 100) + '%';
   save();
 }
 
