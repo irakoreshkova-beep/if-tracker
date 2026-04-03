@@ -2161,6 +2161,12 @@ function pickAbstractSentence(work, topic) {
   return neutral ? clipText(neutral, 220) : clipText(candidates[0], 220);
 }
 
+function titleToStudyBlurb(work, topic) {
+  var title = clipText((work && work.display_name) || '', 220);
+  if (!title) return topic.research;
+  return 'О чём работа: ' + title;
+}
+
 function getRemoteTopicConfig(seed, variant) {
   if (!REMOTE_INSIGHT_TOPICS.length) return null;
   var index = Math.abs(seed + (variant || 0)) % REMOTE_INSIGHT_TOPICS.length;
@@ -2270,13 +2276,58 @@ function detectResearchFocus(work, topic) {
   };
 }
 
+function buildResearchTakeaway(work, topic, focus, abstractSentence) {
+  var text = (((work && work.display_name) || '') + ' ' + expandAbstract(work && work.abstract_inverted_index)).toLowerCase();
+
+  if (/meta-analysis|systematic review|umbrella review/.test(text)) {
+    return 'Это обзор многих работ, то есть здесь полезно смотреть не на один эффект, а на общий повторяющийся паттерн.';
+  }
+  if (/randomized|trial|rct/.test(text)) {
+    return 'Это уже ближе к проверке причины и следствия, поэтому такой результат полезно воспринимать серьёзнее, чем обычное наблюдение.';
+  }
+  if (topic.key === 'sleep' && /late|evening|night|meal timing/.test(text)) {
+    return 'Для практики это обычно означает одно: поздний ужин и возбуждающий вечер часто бьют по сну сильнее, чем кажется.';
+  }
+  if (topic.key === 'sleep' && /light|circadian|melatonin/.test(text)) {
+    return 'Практический вывод простой: утренний свет и более тихий вечер помогают телу быстрее поймать нормальный ритм сна.';
+  }
+  if (topic.key === 'hormones' && /cortisol|stress/.test(text)) {
+    return 'Здесь вывод не в том, чтобы “контролировать кортизол”, а в том, что сон, перегруз и восстановление реально меняют гормональный фон дня.';
+  }
+  if (topic.key === 'food' && /protein/.test(text)) {
+    return 'Практически это часто сводится к более простому первому приёму пищи: белок помогает сытости и делает день ровнее.';
+  }
+  if (topic.key === 'food' && /carbohydrate|glucose|glycemic|insulin/.test(text)) {
+    return 'Вывод обычно не про запрет углеводов, а про контекст: время еды, состав блюда и движение после еды меняют эффект сильнее.';
+  }
+  if (topic.key === 'movement') {
+    return 'Для жизни это хороший сигнал не ждать идеальной тренировки: регулярное короткое движение тоже даёт метаболический эффект.';
+  }
+  if (topic.key === 'fasting') {
+    return 'Полезный вывод здесь обычно такой: окно питания работает лучше, когда дружит со сном и реальным режимом недели.';
+  }
+  if (topic.key === 'screens') {
+    return 'Практически это про вечерний шум: меньше яркого и возбуждающего контента обычно означает более спокойное засыпание.';
+  }
+  if (topic.key === 'sex') {
+    return 'Для жизни это важно тем, что сексуальность зависит не только от отношений, но и от сна, стресса, усталости и общего ресурса тела.';
+  }
+  if (abstractSentence) {
+    return 'Главное здесь не само название статьи, а повторяющийся мотив: тело очень чувствительно к ритму сна, света, еды и нагрузки.';
+  }
+
+  return focus.text;
+}
+
 function buildRemoteDeckFromWork(work, topic, seed, variant) {
   var focus = detectResearchFocus(work, topic);
-  var note = 'Источник: ' + getWorkSource(work) + ' · ' + getWorkDate(work) + ' · из интернета';
+  var sourceTitle = clipText((work && work.display_name) || 'Свежая публикация', 180);
+  var note = 'Статья: ' + sourceTitle + ' · ' + getWorkSource(work) + ' · ' + getWorkDate(work) + ' · из интернета';
   var abstractSentence = pickAbstractSentence(work, topic);
-  var researchText = abstractSentence
-    ? topic.research + ' В статье: ' + abstractSentence
-    : topic.research;
+  var studyBlurb = abstractSentence
+    ? 'О чём работа: ' + abstractSentence
+    : titleToStudyBlurb(work, topic);
+  var takeaway = buildResearchTakeaway(work, topic, focus, abstractSentence);
 
   return {
     version: REMOTE_DAILY_VERSION,
@@ -2290,9 +2341,10 @@ function buildRemoteDeckFromWork(work, topic, seed, variant) {
       short: focus.text
     },
     research: {
-      title: clipText((work && work.display_name) || 'Свежая публикация', 140),
-      text: clipText(researchText, 320),
-      note: note,
+      title: focus.title,
+      text: clipText(studyBlurb, 320),
+      note: 'Вывод: ' + takeaway + ' · ' + note,
+      sourceTitle: sourceTitle,
       url: getWorkUrl(work)
     }
   };
