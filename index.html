@@ -3710,9 +3710,6 @@ async function load() {
       S.weeklyReportShown = p.weeklyReportShown || '';
       S.insightOffset = p.insightOffset || 0;
       S.insightDate = p.insightDate || '';
-      S.remoteDailyDeck = p.remoteDailyDeck || null;
-      S.remoteDailyVariant = p.remoteDailyVariant || 0;
-      S.remoteDailyAttemptKey = p.remoteDailyAttemptKey || '';
     }
   } catch (e) {}
 
@@ -3742,9 +3739,6 @@ async function load() {
       S.weeklyReportShown = extra.weeklyReportShown || '';
       S.insightOffset = extra.insightOffset || 0;
       S.insightDate = extra.insightDate || '';
-      S.remoteDailyDeck = extra.remoteDailyDeck || S.remoteDailyDeck || null;
-      S.remoteDailyVariant = extra.remoteDailyVariant || S.remoteDailyVariant || 0;
-      S.remoteDailyAttemptKey = extra.remoteDailyAttemptKey || S.remoteDailyAttemptKey || '';
     }
     checkDayReset();
     render();
@@ -3777,10 +3771,7 @@ function saveToLocal() {
       dailyLog: S.dailyLog,
       weeklyReportShown: S.weeklyReportShown,
       insightOffset: S.insightOffset,
-      insightDate: S.insightDate,
-      remoteDailyDeck: S.remoteDailyDeck,
-      remoteDailyVariant: S.remoteDailyVariant,
-      remoteDailyAttemptKey: S.remoteDailyAttemptKey
+      insightDate: S.insightDate
     }));
   } catch (e) {}
 }
@@ -3799,10 +3790,7 @@ async function save() {
     weeklyReportShown: S.weeklyReportShown,
     cycleLogs: S.cycleLogs,
     insightOffset: S.insightOffset,
-    insightDate: S.insightDate,
-    remoteDailyDeck: S.remoteDailyDeck,
-    remoteDailyVariant: S.remoteDailyVariant,
-    remoteDailyAttemptKey: S.remoteDailyAttemptKey
+    insightDate: S.insightDate
   };
   try {
     var resp = await sb.from('tracker_data').upsert({
