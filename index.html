@@ -3952,16 +3952,61 @@ window.addEventListener('focus', function() {
 
 var deferredPrompt = null;
 var installBanner = null;
+var updateBanner = null;
+var waitingWorker = null;
+
+function showUpdateBanner(worker) {
+  waitingWorker = worker || waitingWorker;
+  if (updateBanner) updateBanner.style.display = 'flex';
+}
+
+function hideUpdateBanner() {
+  if (updateBanner) updateBanner.style.display = 'none';
+}
+
+function applyAppUpdate() {
+  if (!waitingWorker) return;
+  waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+}
+
+function watchServiceWorkerRegistration(reg) {
+  if (!reg) return;
+  if (reg.waiting) showUpdateBanner(reg.waiting);
+
+  reg.addEventListener('updatefound', function() {
+    var newWorker = reg.installing;
+    if (!newWorker) return;
+    newWorker.addEventListener('statechange', function() {
+      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+        showUpdateBanner(newWorker);
+      }
+    });
+  });
+}
+
 window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); deferredPrompt = e; if (installBanner) installBanner.style.display = 'flex'; });
 window.addEventListener('appinstalled', function() { if (installBanner) installBanner.style.display = 'none'; });
 document.addEventListener('DOMContentLoaded', function() {
   installBanner = document.getElementById('installBanner');
+  updateBanner = document.getElementById('updateBanner');
   document.getElementById('installBtn').addEventListener('click', function() {
     if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(function() { deferredPrompt = null; installBanner.style.display = 'none'; }); }
   });
   document.getElementById('installClose').addEventListener('click', function() { installBanner.style.display = 'none'; });
+  document.getElementById('updateBtn').addEventListener('click', applyAppUpdate);
+  document.getElementById('updateClose').addEventListener('click', hideUpdateBanner);
 });
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(function(reg) {
+    watchServiceWorkerRegistration(reg);
+    setInterval(function() {
+      reg.update();
+    }, 60000);
+  });
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    window.location.reload();
+  });
+}
 </script>
 
 <div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e5e5;padding:14px 16px;align-items:center;gap:12px;z-index:999;box-shadow:0 -2px 12px rgba(0,0,0,0.08);">
@@ -3969,6 +4014,12 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
   <div style="flex:1;"><div style="font-size:14px;font-weight:500;">Добавить на главный экран</div><div style="font-size:12px;color:#888;margin-top:2px;">Работает как приложение</div></div>
   <button id="installBtn" style="padding:8px 16px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;">Добавить</button>
   <button id="installClose" style="background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;padding:4px;">×</button>
+</div>
+<div id="updateBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#11131a;border-top:1px solid rgba(255,255,255,0.12);padding:14px 16px;align-items:center;gap:12px;z-index:1000;box-shadow:0 -6px 24px rgba(0,0,0,0.24);">
+  <div style="width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;">↻</div>
+  <div style="flex:1;color:#fff;"><div style="font-size:14px;font-weight:600;">Доступна новая версия</div><div style="font-size:12px;color:rgba(255,255,255,0.72);margin-top:2px;">Нажми обновить, чтобы увидеть последние изменения.</div></div>
+  <button id="updateBtn" style="padding:8px 16px;background:#fff;color:#11131a;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Обновить</button>
+  <button id="updateClose" style="background:none;border:none;font-size:20px;color:rgba(255,255,255,0.7);cursor:pointer;padding:4px;">×</button>
 </div>
 </body>
 </html>

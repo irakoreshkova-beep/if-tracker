@@ -1,5 +1,11 @@
-const CACHE = 'if-tracker-v7';
+const CACHE = 'if-tracker-v8';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.png'];
+
+self.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 self.addEventListener('install', function(e) {
   e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(ASSETS); }));
