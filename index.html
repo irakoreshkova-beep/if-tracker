@@ -1890,6 +1890,18 @@ var MYTH_TRUTH = [
     title: 'Чтобы быть собранной, нужна идеальная утренняя рутина',
     text: 'Не обязательно. Часто телу хватает света, воды, одного действия и минимального ритма. Мозг любит завершённые маленькие шаги сильнее, чем абстрактные большие планы.',
     note: 'Сначала один маленький запуск, потом всё остальное.'
+  },
+  {
+    id: 'myth_libido_relationship_only',
+    title: 'Желание зависит только от отношений',
+    text: 'Не только. На либидо влияют сон, стресс, усталость, алкоголь, ощущение безопасности, лекарства и общий ресурс тела. Отношения важны, но это не единственный слой.',
+    note: 'Если желание меняется, это не всегда про “что-то не так”, иногда это просто биология и перегруз.'
+  },
+  {
+    id: 'myth_libido_testosterone_only',
+    title: 'Либидо это просто тестостерон',
+    text: 'Слишком узко. Желание связано не с одним гормоном, а с системой: дофамин, кортизол, эстроген, тестостерон, сон, стресс и даже то, есть ли у тела ощущение энергии.',
+    note: 'Сексуальность чаще похожа на состояние всей системы, чем на один анализ.'
   }
 ];
 
@@ -1941,8 +1953,96 @@ var DAILY_EXPERIMENTS = [
     title: 'Сделай ужин проще и понятнее',
     text: 'Не тяжёлый хаотичный ужин, а что-то ясное по составу: белок + овощи + умеренные углеводы, если хочется.',
     note: 'Сравни, отличается ли ночь после более спокойного ужина.'
+  },
+  {
+    id: 'exp_libido_context_note',
+    title: 'Отметь, от чего зависит желание',
+    text: 'Сегодня коротко заметь три вещи: сколько ты спала, насколько была в стрессе и было ли место для спокойствия без задач.',
+    note: 'Полезно увидеть, что желание часто связано не с характером, а с ресурсом нервной системы.'
+  },
+  {
+    id: 'exp_no_screen_close_evening',
+    title: '10 минут тишины без экрана',
+    text: 'Оставь небольшой кусок вечера без ленты, задач и переписок: просто душ, тишина, дыхание, телесность или спокойный контакт.',
+    note: 'Понаблюдай, меняется ли ощущение тела и внутреннего переключения из режима “дела” в режим “я живая”.'
   }
 ];
+
+var REMOTE_INSIGHT_TOPICS = [
+  {
+    key: 'sleep',
+    label: 'сон',
+    search: 'sleep circadian rhythm light screen evening meal timing women health',
+    title: 'Сон зависит не только от часов в кровати',
+    text: 'Свежие статьи по сну почти всегда сводятся к одному: свет, экраны, поздняя еда и ритм дня влияют на качество ночи не меньше, чем намерение лечь пораньше.',
+    research: 'Новая публикация помогает смотреть на сон шире: не только как на “легла поздно”, а как на результат света, ритма и тайминга еды.',
+    mythIds: ['myth_blue_light_only', 'myth_breakfast_skip', 'myth_morning_routine_motivation'],
+    experimentIds: ['exp_light_5', 'exp_screen_soft_evening', 'exp_finish_food_earlier']
+  },
+  {
+    key: 'hormones',
+    label: 'гормоны',
+    search: 'cortisol insulin leptin ghrelin women health metabolism appetite sleep',
+    title: 'Гормоны любят ритм, а не хаос',
+    text: 'Свежие работы по гормонам обычно упираются не в одну “волшебную таблетку”, а в базу: сон, свет, стресс, движение и предсказуемый ритм еды.',
+    research: 'Это полезно читать как карту тела: гормоны аппетита, сахара и стресса реагируют на обычные ежедневные вещи, а не только на редкие экстремальные протоколы.',
+    mythIds: ['myth_hungry_bad', 'myth_longer_better', 'myth_morning_routine_motivation'],
+    experimentIds: ['exp_water_start', 'exp_stress_check', 'exp_light_5']
+  },
+  {
+    key: 'food',
+    label: 'питание',
+    search: 'protein satiety carbohydrate meal timing fat women health metabolism',
+    title: 'Сытость строится составом еды, а не только силой воли',
+    text: 'Новые публикации по питанию часто показывают одно и то же: белок, структура приёма пищи и время ужина меняют аппетит заметнее, чем абстрактное обещание “есть меньше”.',
+    research: 'Здесь обычно важен не один продукт, а механика: что было в тарелке, когда это было и насколько ровной была энергия после еды.',
+    mythIds: ['myth_carbs_evening', 'myth_protein_muscles_only', 'myth_breakfast_skip'],
+    experimentIds: ['exp_protein_first_meal', 'exp_evening_protein', 'exp_walk_after_food']
+  },
+  {
+    key: 'movement',
+    label: 'движение',
+    search: 'walking exercise resistance training women health glucose mood sleep',
+    title: 'Движение работает даже в коротких дозах',
+    text: 'Свежие исследования по движению регулярно напоминают: телу полезны не только долгие тренировки, но и короткая ходьба, шаги после еды и обычная регулярность.',
+    research: 'Это хороший антидот к идее “или серьёзная тренировка, или ничего”: метаболизм и настроение реагируют и на маленькие дозы движения.',
+    mythIds: ['myth_morning_routine_motivation', 'myth_hungry_bad'],
+    experimentIds: ['exp_walk_after_food', 'exp_light_5', 'exp_stress_check']
+  },
+  {
+    key: 'fasting',
+    label: 'голодание',
+    search: 'time restricted eating intermittent fasting circadian meal timing women metabolism sleep',
+    title: 'Интервалы работают вместе с сутками, а не отдельно от них',
+    text: 'Новые статьи про интервальное питание всё чаще смотрят не только на длину окна, но и на то, в какой части дня это окно стоит и как оно связано со сном.',
+    research: 'Для практики это полезный сдвиг: важны не только часы голодания, но и то, помогает ли режим жить ровнее, спать лучше и не сорваться вечером.',
+    mythIds: ['myth_longer_better', 'myth_breakfast_skip', 'myth_hungry_bad'],
+    experimentIds: ['exp_finish_food_earlier', 'exp_protein_first_meal', 'exp_walk_after_food']
+  },
+  {
+    key: 'screens',
+    label: 'экраны',
+    search: 'screen time blue light melatonin attention sleep women health',
+    title: 'Экраны меняют не только глаза, но и состояние нервной системы',
+    text: 'Свежие работы про экраны и сон обычно показывают две вещи сразу: имеет значение и свет, и уровень возбуждения от того, что именно ты смотришь вечером.',
+    research: 'То есть проблема вечера — не только в синем свете, но и в том, что мозг остаётся в режиме “ещё один стимул, ещё одна задача”.',
+    mythIds: ['myth_blue_light_only', 'myth_morning_routine_motivation'],
+    experimentIds: ['exp_screen_soft_evening', 'exp_light_5', 'exp_water_start']
+  },
+  {
+    key: 'sex',
+    label: 'секс',
+    search: 'female sexual desire libido intimacy sleep stress hormones women health',
+    title: 'Желание связано с ресурсом всей системы',
+    text: 'Свежие статьи про сексуальное здоровье обычно упираются не в одну “кнопку”, а в сочетание сна, стресса, гормонов, контекста отношений и общего уровня энергии.',
+    research: 'Это полезная рамка: желание может меняться не потому, что с тобой “что-то не так”, а потому что тело перегружено, недоспало или всё время остаётся в режиме задач.',
+    mythIds: ['myth_libido_relationship_only', 'myth_libido_testosterone_only'],
+    experimentIds: ['exp_libido_context_note', 'exp_no_screen_close_evening', 'exp_screen_soft_evening']
+  }
+];
+
+var REMOTE_DAILY_SOURCE = 'openalex';
+var remoteDailyPromise = null;
 
 var S = {
   startTs: Date.now(),
@@ -1960,15 +2060,26 @@ var S = {
   weeklyReportShown: '',
   insightOffset: 0,
   insightDate: '',
-  cycleLength: 28
+  cycleLength: 28,
+  remoteDailyDeck: null,
+  remoteDailyVariant: 0,
+  remoteDailyAttemptKey: ''
 };
 
 var timerInterval = null;
 
+function formatDateKey(date) {
+  if (!(date instanceof Date)) date = new Date(date);
+  var year = date.getFullYear();
+  var month = String(date.getMonth() + 1).padStart(2, '0');
+  var day = String(date.getDate()).padStart(2, '0');
+  return year + '-' + month + '-' + day;
+}
+
 function getLogicalDate() {
   var now = new Date();
   if (now.getHours() < DAY_RESET_HOUR) now.setDate(now.getDate() - 1);
-  return now.toISOString().slice(0, 10);
+  return formatDateKey(now);
 }
 
 function getCurrentPhase() {
@@ -1990,6 +2101,291 @@ function hashInsight(value, seed) {
     hash |= 0;
   }
   return Math.abs(hash);
+}
+
+function clipText(value, max) {
+  var text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!text) return '';
+  if (text.length <= max) return text;
+  return text.slice(0, max - 1).trim() + '…';
+}
+
+function cleanSentence(value) {
+  return String(value || '')
+    .replace(/\[[^\]]+\]/g, '')
+    .replace(/\([^)]*et al[^)]*\)/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function expandAbstract(index) {
+  if (!index) return '';
+  var words = [];
+  Object.keys(index).forEach(function(word) {
+    (index[word] || []).forEach(function(position) {
+      words[position] = word;
+    });
+  });
+  return words.join(' ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function pickAbstractSentence(work, topic) {
+  var abstractText = cleanSentence(expandAbstract(work && work.abstract_inverted_index));
+  if (!abstractText) return '';
+  var candidates = abstractText.split(/(?<=[.!?])\s+/).map(cleanSentence).filter(Boolean);
+  if (!candidates.length) return '';
+
+  var keywordMap = {
+    sleep: /\b(sleep|circadian|melatonin|insomnia|late|night|light)\b/i,
+    hormones: /\b(cortisol|insulin|ghrelin|leptin|hormone|stress|glucose|appetite)\b/i,
+    food: /\b(protein|carbohydrate|meal|satiety|diet|glucose|nutrition)\b/i,
+    movement: /\b(exercise|walking|activity|training|resistance|aerobic|steps)\b/i,
+    fasting: /\b(fasting|time-restricted|meal timing|eating window)\b/i,
+    screens: /\b(screen|digital|blue light|device|smartphone|melatonin)\b/i,
+    sex: /\b(sex|sexual|desire|libido|intimacy|orgasm|satisfaction|arousal)\b/i
+  };
+  var matcher = keywordMap[topic.key];
+  var preferred = candidates.find(function(sentence) {
+    if (!matcher || !matcher.test(sentence)) return false;
+    return sentence.length >= 70 && sentence.length <= 240;
+  });
+  if (preferred) return clipText(preferred, 220);
+
+  var neutral = candidates.find(function(sentence) {
+    return sentence.length >= 70 && sentence.length <= 220;
+  });
+  return neutral ? clipText(neutral, 220) : clipText(candidates[0], 220);
+}
+
+function getRemoteTopicConfig(seed, variant) {
+  if (!REMOTE_INSIGHT_TOPICS.length) return null;
+  var index = Math.abs(seed + (variant || 0)) % REMOTE_INSIGHT_TOPICS.length;
+  return REMOTE_INSIGHT_TOPICS[index];
+}
+
+function getRemoteDailyDeck() {
+  var today = getLogicalDate();
+  if (!S.remoteDailyDeck || S.remoteDailyDeck.date !== today) return null;
+  return S.remoteDailyDeck;
+}
+
+function getWorkUrl(work) {
+  if (work && work.primary_location && work.primary_location.landing_page_url) return work.primary_location.landing_page_url;
+  if (work && work.doi) {
+    if (String(work.doi).indexOf('http') === 0) return work.doi;
+    return 'https://doi.org/' + String(work.doi).replace(/^https?:\/\/doi\.org\//, '');
+  }
+  return work && work.id ? work.id : '';
+}
+
+function getWorkSource(work) {
+  if (work && work.primary_location && work.primary_location.source && work.primary_location.source.display_name) {
+    return work.primary_location.source.display_name;
+  }
+  return 'OpenAlex';
+}
+
+function getWorkDate(work) {
+  return work && work.publication_date ? work.publication_date : (work && work.publication_year ? String(work.publication_year) : 'дата не указана');
+}
+
+function pickMappedDailyItem(list, ids, seed, extraOffset) {
+  var pool = (ids || []).length
+    ? list.filter(function(item) { return ids.indexOf(item.id) !== -1; })
+    : list.slice();
+  return pickDailyItem(pool.length ? pool : list, seed, extraOffset);
+}
+
+function detectResearchFocus(work, topic) {
+  var text = ((work && work.display_name) || '') + ' ' + expandAbstract(work && work.abstract_inverted_index);
+  var lower = text.toLowerCase();
+
+  if (/melatonin|circadian|light/.test(lower)) {
+    return {
+      title: 'Свет, мелатонин и ритм суток реально связаны',
+      text: 'В свежей работе опять всплывает важная идея: утренний свет и более тихий вечер помогают телу понять, когда быть бодрой, а когда готовиться ко сну.'
+    };
+  }
+  if (/screen|smartphone|digital|blue light/.test(lower)) {
+    return {
+      title: 'Вечерние экраны меняют и световой сигнал, и уровень возбуждения',
+      text: 'Здесь фокус не только на синем свете: контент сам по себе может держать мозг в режиме бодрствования, даже если экран уже приглушён.'
+    };
+  }
+  if (/protein|amino acid/.test(lower)) {
+    return {
+      title: 'Белок влияет не только на мышцы, но и на сытость',
+      text: 'Публикации по белку снова напоминают, что первый и основной приём пищи ощущаются совсем по-разному в зависимости от состава тарелки.'
+    };
+  }
+  if (/carbohydrate|glucose|glycemic|insulin/.test(lower)) {
+    return {
+      title: 'Углеводы и сахар в крови — это вопрос контекста, а не морали',
+      text: 'По таким темам обычно видно одно: время еды, состав блюда и движение после еды значат больше, чем простое деление продуктов на “хорошие” и “плохие”.'
+    };
+  }
+  if (/cortisol|stress|adrenal/.test(lower)) {
+    return {
+      title: 'Стресс и кортизол читаются через поведение дня',
+      text: 'Свежие данные по стрессовым сигналам полезны тем, что возвращают разговор к реальности: сон, нагрузка, свет и перегруз заметно влияют на ощущение ресурса.'
+    };
+  }
+  if (/ghrelin|leptin|appetite|satiety|hunger/.test(lower)) {
+    return {
+      title: 'Аппетит — это биология, а не только характер',
+      text: 'Когда в работе всплывают сигналы голода и сытости, это хороший повод помнить: недосып, стресс и хаотичная еда меняют голод сильнее, чем кажется.'
+    };
+  }
+  if (/walking|exercise|training|resistance|physical activity/.test(lower)) {
+    return {
+      title: 'Даже короткое движение заметно меняет физиологию дня',
+      text: 'Свежие статьи по движению убирают крайности: тело реагирует и на прогулку, и на короткую силовую работу, не только на идеальную тренировку.'
+    };
+  }
+  if (/time-restricted|intermittent fasting|meal timing|eating window/.test(lower)) {
+    return {
+      title: 'У окна питания есть смысл только внутри реальной жизни',
+      text: 'Новые работы по интервальному питанию всё чаще смотрят не на рекорд по часам, а на то, как окно сочетается со сном, вечерней едой и обычным ритмом недели.'
+    };
+  }
+  if (/sex|sexual|libido|desire|intimacy|orgasm|satisfaction|arousal/.test(lower)) {
+    return {
+      title: 'Сексуальность зависит от сна, стресса и общего ресурса',
+      text: 'Работы по сексуальному здоровью обычно полезны тем, что выводят разговор из морали в физиологию: желание меняется вместе со сном, тревогой, усталостью и ощущением безопасности.'
+    };
+  }
+
+  return {
+    title: topic.title,
+    text: topic.text
+  };
+}
+
+function buildRemoteDeckFromWork(work, topic, seed, variant) {
+  var focus = detectResearchFocus(work, topic);
+  var myth = pickMappedDailyItem(MYTH_TRUTH, topic.mythIds, seed + variant, 23);
+  var experiment = pickMappedDailyItem(DAILY_EXPERIMENTS, topic.experimentIds, seed + variant, 37);
+  var note = 'Источник: ' + getWorkSource(work) + ' · ' + getWorkDate(work) + ' · из интернета';
+  var abstractSentence = pickAbstractSentence(work, topic);
+  var researchText = abstractSentence
+    ? topic.research + ' В статье: ' + abstractSentence
+    : topic.research;
+
+  return {
+    date: getLogicalDate(),
+    source: REMOTE_DAILY_SOURCE,
+    topic: topic.key,
+    main: {
+      label: 'Свежий факт · ' + topic.label,
+      title: focus.title,
+      short: focus.text
+    },
+    research: {
+      title: clipText((work && work.display_name) || 'Свежая публикация', 140),
+      text: clipText(researchText, 320),
+      note: note,
+      url: getWorkUrl(work)
+    },
+    myth: myth,
+    experiment: experiment
+  };
+}
+
+function isLikelyRelevantWork(item, topic) {
+  if (!item || !item.display_name) return false;
+  var language = item.language || '';
+  if (language && language !== 'en') return false;
+  var sourceType = item.primary_location && item.primary_location.source ? item.primary_location.source.type : '';
+  if (sourceType && sourceType !== 'journal') return false;
+
+  var text = (item.display_name + ' ' + expandAbstract(item.abstract_inverted_index)).toLowerCase();
+  if (/\b(rat|rats|mouse|mice|murine|bird|birds|avian|flycatcher|zebrafish|drosophila|canine|feline|porcine|sheep|monkey|macaque)\b/.test(text)) return false;
+
+  if (topic.key === 'sleep') return /\b(sleep|circadian|melatonin|light|screen|night|insomnia)\b/.test(text);
+  if (topic.key === 'hormones') return /\b(cortisol|insulin|ghrelin|leptin|stress|hormone|glucose|appetite)\b/.test(text);
+  if (topic.key === 'food') return /\b(protein|carbohydrate|meal|satiety|diet|nutrition|glucose)\b/.test(text);
+  if (topic.key === 'movement') return /\b(exercise|walking|steps|training|physical activity|resistance|aerobic)\b/.test(text);
+  if (topic.key === 'fasting') return /\b(time-restricted|intermittent fasting|meal timing|eating window|fasting)\b/.test(text);
+  if (topic.key === 'screens') return /\b(screen|digital|smartphone|blue light|device|melatonin|sleep)\b/.test(text);
+  if (topic.key === 'sex') return /\b(sex|sexual|libido|desire|intimacy|orgasm|satisfaction|arousal|relationship)\b/.test(text);
+  return true;
+}
+
+async function fetchRemoteWork(topic, seed, variant) {
+  var startDate = new Date();
+  startDate.setDate(startDate.getDate() - 540);
+  var url = 'https://api.openalex.org/works?search=' + encodeURIComponent(topic.search) +
+    '&filter=from_publication_date:' + encodeURIComponent(formatDateKey(startDate)) + ',language:en,primary_location.source.type:journal' +
+    '&sort=publication_date:desc&per-page=30&select=id,display_name,publication_date,publication_year,primary_location,doi,abstract_inverted_index,language';
+
+  var resp = await fetch(url, {
+    method: 'GET',
+    cache: 'no-store',
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!resp.ok) throw new Error('OpenAlex request failed: ' + resp.status);
+  var data = await resp.json();
+  var results = (data && data.results ? data.results : []).filter(function(item) {
+    return item && item.display_name;
+  });
+  var filtered = results.filter(function(item) {
+    return isLikelyRelevantWork(item, topic);
+  });
+  if (!filtered.length) {
+    filtered = results.filter(function(item) {
+      return !item.language || item.language === 'en';
+    });
+  }
+  if (!filtered.length) throw new Error('OpenAlex returned no relevant results');
+  var index = Math.abs(hashInsight(topic.key + ':' + variant, seed)) % filtered.length;
+  return filtered[index];
+}
+
+async function ensureRemoteDailyContent(forceRefresh) {
+  var today = getLogicalDate();
+  if (S.remoteDailyDeck && S.remoteDailyDeck.date !== today) {
+    S.remoteDailyDeck = null;
+    S.remoteDailyVariant = 0;
+    S.remoteDailyAttemptKey = '';
+  }
+
+  if (forceRefresh) {
+    S.remoteDailyVariant = (S.remoteDailyVariant || 0) + 1;
+    S.remoteDailyDeck = null;
+  } else if (getRemoteDailyDeck()) {
+    return S.remoteDailyDeck;
+  }
+
+  var variant = S.remoteDailyVariant || 0;
+  var attemptKey = today + ':' + variant;
+  if (!forceRefresh && S.remoteDailyAttemptKey === attemptKey) return null;
+  if (remoteDailyPromise) return remoteDailyPromise;
+
+  var seed = getInsightSeed();
+  var topic = getRemoteTopicConfig(seed, variant);
+  if (!topic) return null;
+  S.remoteDailyAttemptKey = attemptKey;
+
+  remoteDailyPromise = fetchRemoteWork(topic, seed, variant)
+    .then(function(work) {
+      S.remoteDailyDeck = buildRemoteDeckFromWork(work, topic, seed, variant);
+      saveToLocal();
+      renderDailyInsight();
+      renderDailyDeck();
+      return S.remoteDailyDeck;
+    })
+    .catch(function(error) {
+      console.error('Remote daily content error:', error);
+      return null;
+    })
+    .finally(function() {
+      remoteDailyPromise = null;
+    });
+
+  return remoteDailyPromise;
 }
 
 function getInsightTheme(item) {
@@ -2017,12 +2413,19 @@ function getInsightIndex() {
 }
 
 function renderDailyInsight() {
+  var remoteDeck = getRemoteDailyDeck();
   var pool = getInsightPool();
   var item = pool[getInsightIndex()];
   var tag = document.getElementById('dailyInsightTag');
   var title = document.getElementById('dailyInsightTitle');
   var text = document.getElementById('dailyInsightText');
   if (!tag || !title || !text) return;
+  if (remoteDeck && remoteDeck.main) {
+    tag.textContent = remoteDeck.main.label;
+    title.textContent = remoteDeck.main.title;
+    text.textContent = remoteDeck.main.short;
+    return;
+  }
   tag.textContent = item.label;
   title.textContent = item.title;
   text.textContent = item.short;
@@ -2040,6 +2443,25 @@ function pickDailyItem(list, seed, extraOffset, excludeIds) {
 }
 
 function renderDailyDeck() {
+  var remoteDeck = getRemoteDailyDeck();
+  if (remoteDeck) {
+    if (remoteDeck.research) {
+      document.getElementById('dailyResearchTitle').textContent = remoteDeck.research.title;
+      document.getElementById('dailyResearchText').textContent = remoteDeck.research.text;
+      document.getElementById('dailyResearchNote').textContent = remoteDeck.research.note;
+    }
+    if (remoteDeck.myth) {
+      document.getElementById('dailyMythTitle').textContent = remoteDeck.myth.title;
+      document.getElementById('dailyMythText').textContent = remoteDeck.myth.text;
+      document.getElementById('dailyMythNote').textContent = remoteDeck.myth.note;
+    }
+    if (remoteDeck.experiment) {
+      document.getElementById('dailyExperimentTitle').textContent = remoteDeck.experiment.title;
+      document.getElementById('dailyExperimentText').textContent = remoteDeck.experiment.text;
+      document.getElementById('dailyExperimentNote').textContent = remoteDeck.experiment.note;
+    }
+    return;
+  }
   var seed = getInsightSeed();
   var mainItem = getInsightPool()[getInsightIndex()];
   var researchItems = INSIGHTS.filter(function(item) { return getInsightTheme(item) === 'research'; });
@@ -2120,6 +2542,10 @@ function renderHormoneGlossary() {
 }
 
 function cycleInsight() {
+  if (getRemoteDailyDeck()) {
+    ensureRemoteDailyContent(true);
+    return;
+  }
   S.insightOffset = (S.insightOffset + 1) % getInsightPool().length;
   renderDailyInsight();
   renderDailyDeck();
@@ -2378,7 +2804,7 @@ function prefillCycleToday() {
   if (!start.value) {
     var d = new Date(end.value + 'T00:00:00');
     d.setDate(d.getDate() - 4);
-    start.value = d.toISOString().slice(0, 10);
+    start.value = formatDateKey(d);
   }
 }
 
@@ -2611,9 +3037,9 @@ function toggleManualInput() {
     var now = new Date();
     var yesterday = new Date(now);
     yesterday.setDate(yesterday.getDate() - 1);
-    document.getElementById('manualFastDate').value = yesterday.toISOString().slice(0, 10);
+    document.getElementById('manualFastDate').value = formatDateKey(yesterday);
     document.getElementById('manualFastTime').value = '20:00';
-    document.getElementById('manualEatDate').value = now.toISOString().slice(0, 10);
+    document.getElementById('manualEatDate').value = formatDateKey(now);
     document.getElementById('manualEatTime').value = pad(now.getHours()) + ':' + pad(now.getMinutes());
     document.getElementById('manualResult').style.display = 'none';
   } else {
@@ -2657,11 +3083,11 @@ function saveManualEntry() {
   var fastDateObj = new Date(fastTs);
   var logDate;
   if (fastDateObj.getHours() >= DAY_RESET_HOUR) {
-    logDate = fastDateObj.toISOString().slice(0, 10);
+    logDate = formatDateKey(fastDateObj);
   } else {
     var prev = new Date(fastDateObj);
     prev.setDate(prev.getDate() - 1);
-    logDate = prev.toISOString().slice(0, 10);
+    logDate = formatDateKey(prev);
   }
 
   var existing = S.dailyLog.find(function(e) { return e.date === logDate; });
@@ -2869,7 +3295,7 @@ function renderAlcToday() {
   for (var i = 0; i < 7; i++) {
     var d = new Date(mon);
     d.setDate(mon.getDate() + i);
-    weekDates.push(d.toISOString().slice(0, 10));
+    weekDates.push(formatDateKey(d));
   }
   var weekAlcohol = S.dailyLog.filter(function(entry) { return weekDates.indexOf(entry.date) >= 0 && entry.alcohol; });
   if (weekBadge) {
@@ -2932,7 +3358,7 @@ function getWeekKey() {
   var mon = new Date(now);
   var dow = now.getDay() === 0 ? 6 : now.getDay() - 1;
   mon.setDate(now.getDate() - dow);
-  return mon.toISOString().slice(0, 10);
+  return formatDateKey(mon);
 }
 
 function showWeeklyReport() {
@@ -2944,7 +3370,7 @@ function showWeeklyReport() {
   var weekDates = [];
   for (var i = 0; i < 7; i++) {
     var d = new Date(mon); d.setDate(mon.getDate() + i);
-    weekDates.push(d.toISOString().slice(0, 10));
+    weekDates.push(formatDateKey(d));
   }
 
   var weekFasts = S.dailyLog.filter(function(e) { return weekDates.indexOf(e.date) >= 0; });
@@ -3055,7 +3481,7 @@ function showWeeklyReport() {
   var prevDates = [];
   for (var i = 0; i < 7; i++) {
     var d = new Date(prevWeekMon); d.setDate(prevWeekMon.getDate() + i);
-    prevDates.push(d.toISOString().slice(0, 10));
+    prevDates.push(formatDateKey(d));
   }
   var prevFasts = S.dailyLog.filter(function(e) { return prevDates.indexOf(e.date) >= 0; });
   if (prevFasts.length > 0 && weekFasts.length > 0) {
@@ -3215,11 +3641,15 @@ async function load() {
       S.weeklyReportShown = p.weeklyReportShown || '';
       S.insightOffset = p.insightOffset || 0;
       S.insightDate = p.insightDate || '';
+      S.remoteDailyDeck = p.remoteDailyDeck || null;
+      S.remoteDailyVariant = p.remoteDailyVariant || 0;
+      S.remoteDailyAttemptKey = p.remoteDailyAttemptKey || '';
     }
   } catch (e) {}
 
   checkDayReset();
   render();
+  ensureRemoteDailyContent(false);
   if (S.timerState !== 'idle') startTimerTick();
   else updateTimerUI();
 
@@ -3243,9 +3673,13 @@ async function load() {
       S.weeklyReportShown = extra.weeklyReportShown || '';
       S.insightOffset = extra.insightOffset || 0;
       S.insightDate = extra.insightDate || '';
+      S.remoteDailyDeck = extra.remoteDailyDeck || S.remoteDailyDeck || null;
+      S.remoteDailyVariant = extra.remoteDailyVariant || S.remoteDailyVariant || 0;
+      S.remoteDailyAttemptKey = extra.remoteDailyAttemptKey || S.remoteDailyAttemptKey || '';
     }
     checkDayReset();
     render();
+    ensureRemoteDailyContent(false);
     if (S.timerState !== 'idle') startTimerTick();
     else updateTimerUI();
     // Save to localStorage as backup
@@ -3274,7 +3708,10 @@ function saveToLocal() {
       dailyLog: S.dailyLog,
       weeklyReportShown: S.weeklyReportShown,
       insightOffset: S.insightOffset,
-      insightDate: S.insightDate
+      insightDate: S.insightDate,
+      remoteDailyDeck: S.remoteDailyDeck,
+      remoteDailyVariant: S.remoteDailyVariant,
+      remoteDailyAttemptKey: S.remoteDailyAttemptKey
     }));
   } catch (e) {}
 }
@@ -3293,7 +3730,10 @@ async function save() {
     weeklyReportShown: S.weeklyReportShown,
     cycleLogs: S.cycleLogs,
     insightOffset: S.insightOffset,
-    insightDate: S.insightDate
+    insightDate: S.insightDate,
+    remoteDailyDeck: S.remoteDailyDeck,
+    remoteDailyVariant: S.remoteDailyVariant,
+    remoteDailyAttemptKey: S.remoteDailyAttemptKey
   };
   try {
     var resp = await sb.from('tracker_data').upsert({
@@ -3355,7 +3795,7 @@ function render() {
   for (var i = 0; i < 7; i++) {
     var d = new Date(mon);
     d.setDate(mon.getDate() + i);
-    var key = d.toISOString().slice(0, 10);
+    var key = formatDateKey(d);
     var log = S.dailyLog.find(function(entry) { return entry.date === key; });
     if (log && log.fastHours >= phase.fast) weekDone++;
   }
@@ -3373,7 +3813,7 @@ function renderWeek() {
   var mon = new Date(now); mon.setDate(now.getDate() - dow); mon.setHours(0,0,0,0);
   for (var i = 0; i < 7; i++) {
     var d = new Date(mon); d.setDate(mon.getDate() + i);
-    var k = d.toISOString().slice(0, 10);
+    var k = formatDateKey(d);
     var log = S.dailyLog.find(function(entry) { return entry.date === k; });
     var el = document.createElement('div');
     el.className = 'wl-day';
@@ -3425,6 +3865,21 @@ setInterval(function() {
 }, 60000);
 
 load();
+
+function refreshOnReturn() {
+  checkDayReset();
+  render();
+  ensureRemoteDailyContent(false);
+  if (S.timerState !== 'idle') updateTimerUI();
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) refreshOnReturn();
+});
+
+window.addEventListener('focus', function() {
+  refreshOnReturn();
+});
 
 var deferredPrompt = null;
 var installBanner = null;
