@@ -1,4 +1,4 @@
-const CACHE = 'if-tracker-v5';
+const CACHE = 'if-tracker-v7';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.png'];
 
 self.addEventListener('install', function(e) {
