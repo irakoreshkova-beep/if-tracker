@@ -828,6 +828,66 @@
     background: rgba(168,255,139,0.14);
     color: #d9ffc8;
   }
+  .sleep-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .sleep-field.span { grid-column: 1 / -1; }
+  .sleep-field-label {
+    font-size: 12px;
+    color: #787187;
+    margin-bottom: 6px;
+  }
+  .sleep-input, .sleep-select {
+    width: 100%;
+    border: 1px solid rgba(17,17,26,0.08);
+    border-radius: 16px;
+    background: rgba(17,17,26,0.04);
+    color: #18151f;
+    font-size: 14px;
+    padding: 12px 14px;
+    font-family: inherit;
+  }
+  .sleep-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .sleep-status-line {
+    display: none;
+    margin-top: 12px;
+    padding: 11px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .sleep-mini-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .sleep-mini-stat {
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(17,17,26,0.04);
+    border: 1px solid rgba(17,17,26,0.06);
+  }
+  .sleep-mini-num {
+    font-size: 20px;
+    line-height: 1;
+    color: #18151f;
+    margin-bottom: 6px;
+  }
+  .sleep-mini-label {
+    font-size: 10px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: #80798f;
+  }
   .progress-chart {
     margin-top: 12px;
     padding: 14px;
@@ -894,6 +954,8 @@
     .alc-form-grid { grid-template-columns: 1fr; }
     .progress-grid { grid-template-columns: 1fr; }
     .progress-stats { grid-template-columns: 1fr 1fr; }
+    .sleep-form-grid { grid-template-columns: 1fr; }
+    .sleep-mini-stats { grid-template-columns: 1fr 1fr 1fr; }
   }
 </style>
 </head>
@@ -1107,6 +1169,59 @@
         <div class="progress-title" id="progressPlanTitle">Сначала закрепить базу</div>
         <div class="progress-copy" id="progressPlanCopy">Короткие рекомендации без давления и без лишней теории.</div>
         <div class="progress-list" id="progressPlanList"></div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-kicker">Сон</div>
+        <div class="progress-title" id="sleepHeadline">Ручной трекер сна</div>
+        <div class="progress-copy" id="sleepSummary">Добавь хотя бы несколько ночей, и приложение сможет учитывать сон в прогрессе и рекомендациях.</div>
+        <div class="sleep-mini-stats">
+          <div class="sleep-mini-stat"><div class="sleep-mini-num" id="sleepAvgHours">—</div><div class="sleep-mini-label">средний сон</div></div>
+          <div class="sleep-mini-stat"><div class="sleep-mini-num" id="sleepGoodRate">—</div><div class="sleep-mini-label">хорошие ночи</div></div>
+          <div class="sleep-mini-stat"><div class="sleep-mini-num" id="sleepEnergyRate">—</div><div class="sleep-mini-label">утро ок</div></div>
+        </div>
+        <div class="sleep-form-grid">
+          <div class="sleep-field span">
+            <div class="sleep-field-label">Дата утра</div>
+            <input class="sleep-input" type="date" id="sleepDateInput">
+          </div>
+          <div class="sleep-field">
+            <div class="sleep-field-label">Легла</div>
+            <input class="sleep-input" type="time" id="sleepBedTimeInput">
+          </div>
+          <div class="sleep-field">
+            <div class="sleep-field-label">Встала</div>
+            <input class="sleep-input" type="time" id="sleepWakeTimeInput">
+          </div>
+          <div class="sleep-field">
+            <div class="sleep-field-label">Качество</div>
+            <select class="sleep-select" id="sleepQualityInput">
+              <option value="good">Хорошо</option>
+              <option value="medium">Средне</option>
+              <option value="bad">Плохо</option>
+            </select>
+          </div>
+          <div class="sleep-field">
+            <div class="sleep-field-label">Пробуждения</div>
+            <select class="sleep-select" id="sleepWakeupsInput">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2+</option>
+            </select>
+          </div>
+          <div class="sleep-field span">
+            <div class="sleep-field-label">Энергия утром</div>
+            <select class="sleep-select" id="sleepEnergyInput">
+              <option value="good">Хорошая</option>
+              <option value="medium">Средняя</option>
+              <option value="low">Низкая</option>
+            </select>
+          </div>
+        </div>
+        <div class="sleep-actions">
+          <button class="mini-btn primary" type="button" onclick="saveSleepEntry()">Сохранить сон</button>
+          <button class="mini-btn" type="button" onclick="clearSleepEntry()">Удалить запись</button>
+        </div>
+        <div class="sleep-status-line" id="sleepStatusLine"></div>
       </div>
     </div>
   </div>
@@ -2247,6 +2362,7 @@ var S = {
   eatStartTs: null,
   // History: array of {date, fastHours, checksCount}
   dailyLog: [],
+  sleepLogs: [],
   weeklyReportShown: '',
   insightOffset: 0,
   insightDate: '',
@@ -3911,6 +4027,7 @@ async function load() {
       S.fastStartTs = p.fastStartTs || null;
       S.eatStartTs = p.eatStartTs || null;
       S.dailyLog = p.dailyLog || [];
+      S.sleepLogs = p.sleepLogs || [];
       S.weeklyReportShown = p.weeklyReportShown || '';
       S.insightOffset = p.insightOffset || 0;
       S.insightDate = p.insightDate || '';
@@ -3940,6 +4057,7 @@ async function load() {
       S.fastStartTs = extra.fastStartTs || null;
       S.eatStartTs = extra.eatStartTs || null;
       S.dailyLog = extra.dailyLog || [];
+      S.sleepLogs = extra.sleepLogs || [];
       S.weeklyReportShown = extra.weeklyReportShown || '';
       S.insightOffset = extra.insightOffset || 0;
       S.insightDate = extra.insightDate || '';
@@ -3973,6 +4091,7 @@ function saveToLocal() {
       fastStartTs: S.fastStartTs,
       eatStartTs: S.eatStartTs,
       dailyLog: S.dailyLog,
+      sleepLogs: S.sleepLogs,
       weeklyReportShown: S.weeklyReportShown,
       insightOffset: S.insightOffset,
       insightDate: S.insightDate
@@ -3991,6 +4110,7 @@ async function save() {
     fastStartTs: S.fastStartTs,
     eatStartTs: S.eatStartTs,
     dailyLog: S.dailyLog,
+    sleepLogs: S.sleepLogs,
     weeklyReportShown: S.weeklyReportShown,
     cycleLogs: S.cycleLogs,
     insightOffset: S.insightOffset,
@@ -4049,6 +4169,129 @@ function getRecentDateKeys(days) {
   return list;
 }
 
+function getSleepEntry(date) {
+  return (S.sleepLogs || []).find(function(entry) { return entry.date === date; }) || null;
+}
+
+function calcSleepHours(entry) {
+  if (!entry || !entry.bedTime || !entry.wakeTime) return 0;
+  var bed = entry.bedTime.split(':').map(Number);
+  var wake = entry.wakeTime.split(':').map(Number);
+  if (bed.length < 2 || wake.length < 2 || bed.some(isNaN) || wake.some(isNaN)) return 0;
+  var bedMinutes = bed[0] * 60 + bed[1];
+  var wakeMinutes = wake[0] * 60 + wake[1];
+  if (wakeMinutes <= bedMinutes) wakeMinutes += 24 * 60;
+  return Math.round(((wakeMinutes - bedMinutes) / 60) * 10) / 10;
+}
+
+function formatSleepHours(hours) {
+  if (!hours) return '—';
+  return hours + 'ч';
+}
+
+function showSleepStatus(text, ok) {
+  var el = document.getElementById('sleepStatusLine');
+  if (!el) return;
+  el.style.display = 'block';
+  el.textContent = text;
+  if (ok) {
+    el.style.background = 'rgba(168,255,139,0.14)';
+    el.style.color = '#2e6a1a';
+    el.style.border = '1px solid rgba(168,255,139,0.28)';
+  } else {
+    el.style.background = 'rgba(255,124,124,0.12)';
+    el.style.color = '#a22e42';
+    el.style.border = '1px solid rgba(255,124,124,0.20)';
+  }
+}
+
+function renderSleepTracker() {
+  var dateInput = document.getElementById('sleepDateInput');
+  var bedInput = document.getElementById('sleepBedTimeInput');
+  var wakeInput = document.getElementById('sleepWakeTimeInput');
+  var qualityInput = document.getElementById('sleepQualityInput');
+  var wakeupsInput = document.getElementById('sleepWakeupsInput');
+  var energyInput = document.getElementById('sleepEnergyInput');
+  var summary = document.getElementById('sleepSummary');
+  var headline = document.getElementById('sleepHeadline');
+  var avgEl = document.getElementById('sleepAvgHours');
+  var goodEl = document.getElementById('sleepGoodRate');
+  var energyEl = document.getElementById('sleepEnergyRate');
+  if (!dateInput || !bedInput || !wakeInput || !qualityInput || !wakeupsInput || !energyInput || !summary || !headline || !avgEl || !goodEl || !energyEl) return;
+
+  if (!dateInput.value) dateInput.value = getLogicalDate();
+  var selectedDate = dateInput.value || getLogicalDate();
+  var entry = getSleepEntry(selectedDate);
+  bedInput.value = entry && entry.bedTime ? entry.bedTime : '00:30';
+  wakeInput.value = entry && entry.wakeTime ? entry.wakeTime : '08:30';
+  qualityInput.value = entry && entry.quality ? entry.quality : 'medium';
+  wakeupsInput.value = entry && entry.wakeups ? String(entry.wakeups) : '0';
+  energyInput.value = entry && entry.energy ? entry.energy : 'medium';
+
+  var recentKeys = getRecentDateKeys(7);
+  var recentSleep = recentKeys.map(getSleepEntry).filter(Boolean);
+  var avgSleep = recentSleep.length
+    ? Math.round((recentSleep.reduce(function(sum, item) { return sum + calcSleepHours(item); }, 0) / recentSleep.length) * 10) / 10
+    : 0;
+  var goodSleep = recentSleep.length
+    ? Math.round((recentSleep.filter(function(item) { return item.quality === 'good'; }).length / recentSleep.length) * 100)
+    : 0;
+  var goodEnergy = recentSleep.length
+    ? Math.round((recentSleep.filter(function(item) { return item.energy === 'good'; }).length / recentSleep.length) * 100)
+    : 0;
+
+  headline.textContent = recentSleep.length ? ('Сон за последние ' + recentSleep.length + ' ночей') : 'Ручной трекер сна';
+  summary.textContent = recentSleep.length
+    ? ('Средний сон ' + avgSleep + ' ч. Хорошее качество: ' + goodSleep + '%. Бодрое утро: ' + goodEnergy + '%.')
+    : 'Добавь хотя бы несколько ночей, и приложение сможет учитывать сон в прогрессе и рекомендациях.';
+  avgEl.textContent = formatSleepHours(avgSleep);
+  goodEl.textContent = recentSleep.length ? (goodSleep + '%') : '—';
+  energyEl.textContent = recentSleep.length ? (goodEnergy + '%') : '—';
+}
+
+function saveSleepEntry() {
+  var date = (document.getElementById('sleepDateInput').value || getLogicalDate());
+  var bedTime = document.getElementById('sleepBedTimeInput').value;
+  var wakeTime = document.getElementById('sleepWakeTimeInput').value;
+  var quality = document.getElementById('sleepQualityInput').value;
+  var wakeups = parseInt(document.getElementById('sleepWakeupsInput').value, 10);
+  var energy = document.getElementById('sleepEnergyInput').value;
+
+  if (!date || !bedTime || !wakeTime) {
+    showSleepStatus('Нужно указать дату, время сна и время подъёма.', false);
+    return;
+  }
+
+  var entry = {
+    date: date,
+    bedTime: bedTime,
+    wakeTime: wakeTime,
+    quality: quality,
+    wakeups: isNaN(wakeups) ? 0 : wakeups,
+    energy: energy
+  };
+
+  S.sleepLogs = (S.sleepLogs || []).filter(function(item) { return item.date !== date; });
+  S.sleepLogs.push(entry);
+  S.sleepLogs = S.sleepLogs.slice().sort(function(a, b) { return a.date.localeCompare(b.date); }).slice(-90);
+  renderProgress();
+  save();
+  showSleepStatus('Сон сохранён за ' + date, true);
+}
+
+function clearSleepEntry() {
+  var date = (document.getElementById('sleepDateInput').value || getLogicalDate());
+  var before = (S.sleepLogs || []).length;
+  S.sleepLogs = (S.sleepLogs || []).filter(function(item) { return item.date !== date; });
+  if (S.sleepLogs.length === before) {
+    showSleepStatus('За эту дату записи сна нет.', false);
+    return;
+  }
+  renderProgress();
+  save();
+  showSleepStatus('Запись сна удалена за ' + date, true);
+}
+
 function getProgressSnapshot() {
   var phase = getCurrentPhase();
   var logs = (S.dailyLog || []).filter(function(entry) {
@@ -4083,6 +4326,18 @@ function getProgressSnapshot() {
   var recentBest = recentLogs.length
     ? Math.max.apply(null, recentLogs.map(function(entry) { return entry.fastHours; }))
     : 0;
+  var sleepKeys = getRecentDateKeys(7);
+  var recentSleep = sleepKeys.map(getSleepEntry).filter(Boolean);
+  var sleepAvg = recentSleep.length
+    ? Math.round((recentSleep.reduce(function(sum, entry) { return sum + calcSleepHours(entry); }, 0) / recentSleep.length) * 10) / 10
+    : 0;
+  var sleepGoodRate = recentSleep.length
+    ? Math.round((recentSleep.filter(function(entry) { return entry.quality === 'good'; }).length / recentSleep.length) * 100)
+    : 0;
+  var sleepEnergyRate = recentSleep.length
+    ? Math.round((recentSleep.filter(function(entry) { return entry.energy === 'good'; }).length / recentSleep.length) * 100)
+    : 0;
+  var sleepLow = recentSleep.length && (sleepAvg < 7 || sleepGoodRate < 40);
 
   return {
     totalDays: totalDays,
@@ -4096,7 +4351,12 @@ function getProgressSnapshot() {
     recentTargetDays: recentTargetDays,
     recentNearDays: recentNearDays,
     recentAvg: recentAvg,
-    recentBest: Math.round(recentBest * 10) / 10
+    recentBest: Math.round(recentBest * 10) / 10,
+    recentSleep: recentSleep,
+    sleepAvg: sleepAvg,
+    sleepGoodRate: sleepGoodRate,
+    sleepEnergyRate: sleepEnergyRate,
+    sleepLow: !!sleepLow
   };
 }
 
@@ -4131,6 +4391,11 @@ function getProgressPlan(snapshot) {
           'Если хочется сдвига, начни не с 18 часов, а с более раннего ужина.',
           'Смотри не только на часы, но и на сон, аппетит и вечернюю тягу к еде.'
         ];
+    if (snapshot.sleepLow) {
+      title = 'Сначала выровнять сон';
+      copy = 'По последним ночам сон выглядит слишком хрупким, чтобы сейчас ужесточать окно. Лучше сначала стабилизировать восстановление.';
+      items.unshift('Сон сейчас важнее следующего часа голодания: если средний сон меньше 7 часов, не форсируй переход.');
+    }
     return { title: title, copy: copy, items: items };
   }
 
@@ -4150,6 +4415,11 @@ function getProgressPlan(snapshot) {
           'Сейчас важнее ровность окна, чем рекорд по длительности.',
           'Если хочешь почувствовать следующий шаг, попробуй один день 16/8 без давления.'
         ];
+    if (snapshot.sleepLow) {
+      title = '15/9 пока оставить базой';
+      copy = 'По сну пока нет запаса. Значит, лучше оставить 15/9 рабочим режимом, а не спешить в более длинные окна.';
+      items.unshift('Сначала собери несколько более ровных ночей, и только потом проверяй 16/8 как новый стандарт.');
+    }
     return { title: title, copy: copy, items: items };
   }
 
@@ -4161,6 +4431,15 @@ function getProgressPlan(snapshot) {
       'Если после 18 часов ухудшается сон или появляется сильный вечерний доед, значит пока рано делать это часто.',
       '24 часа имеет смысл держать только как редкий формат, например раз в месяц, и только если 18 часов прошло спокойно несколько раз.'
     ];
+    if (snapshot.sleepLow) {
+      title = '18 часов пока лучше не трогать';
+      copy = 'По текущему сну цена следующего шага может быть слишком высокой. Лучше сначала сделать сон более предсказуемым.';
+      items = [
+        'Плохой или короткий сон сейчас важнее, чем идея удлинить окно.',
+        'Сохрани 16/8 как базу ещё на 1–2 недели и посмотри, меняется ли утренняя энергия.',
+        'К 18 часам лучше возвращаться только когда сон перестанет выглядеть хрупким.'
+      ];
+    }
     return { title: title, copy: copy, items: items };
   }
 
@@ -4172,6 +4451,15 @@ function getProgressPlan(snapshot) {
       'Перед таким днём важнее нормальный сон и спокойный предыдущий вечер, чем дополнительная жёсткость.',
       'Если 24 часа вызывают сильный откат в сон, настроение или вечерний голод, значит для тебя пользы сейчас меньше, чем цены.'
     ];
+    if (snapshot.sleepLow) {
+      title = '24 часа пока не нужны';
+      copy = 'Сон пока не выглядит настолько устойчивым, чтобы добавлять длинный пост. Здесь лучше не усложнять.';
+      items = [
+        'Пока сон не станет более ровным, 24 часа — лишняя нагрузка.',
+        'Лучший следующий шаг сейчас: оставить базовый режим и понаблюдать, что улучшает ночь.',
+        'У длинных постов есть смысл только тогда, когда они не ломают следующий день.'
+      ];
+    }
     return { title: title, copy: copy, items: items };
   }
 
@@ -4261,13 +4549,14 @@ function renderProgress() {
   document.getElementById('progressBestFast').textContent = snapshot.bestFast ? (snapshot.bestFast + 'ч') : '—';
   document.getElementById('progressGoalRate').textContent = snapshot.goalRate + '%';
   renderProgressChart(snapshot);
+  renderSleepTracker();
 
   if (!snapshot.recentLogs.length) {
     recentTitle.textContent = 'Пока мало данных';
     recentCopy.textContent = 'Когда накопится хотя бы несколько окон, здесь появится более честная картина устойчивости.';
   } else {
     recentTitle.textContent = snapshot.recentTargetDays + ' из 14 дней в цели';
-    recentCopy.textContent = 'Последние 14 дней: среднее окно ' + snapshot.recentAvg + ' ч, почти в цели ' + snapshot.recentNearDays + ' дн., лучший день ' + snapshot.recentBest + ' ч.';
+    recentCopy.textContent = 'Последние 14 дней: среднее окно ' + snapshot.recentAvg + ' ч, почти в цели ' + snapshot.recentNearDays + ' дн., лучший день ' + snapshot.recentBest + ' ч.' + (snapshot.recentSleep.length ? (' Сон за 7 ночей: ' + snapshot.sleepAvg + ' ч в среднем.') : '');
   }
 
   recentList.innerHTML = '';
@@ -4450,6 +4739,12 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('installClose').addEventListener('click', function() { installBanner.style.display = 'none'; });
   document.getElementById('updateBtn').addEventListener('click', applyAppUpdate);
   document.getElementById('updateClose').addEventListener('click', hideUpdateBanner);
+  var sleepDateInput = document.getElementById('sleepDateInput');
+  if (sleepDateInput) {
+    sleepDateInput.addEventListener('change', function() {
+      renderSleepTracker();
+    });
+  }
 });
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').then(function(reg) {
