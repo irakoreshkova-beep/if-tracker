@@ -722,6 +722,152 @@
     line-height: 1.6;
     color: #6f687d;
   }
+  .progress-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .progress-card {
+    padding: 18px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
+    border: 1px solid rgba(255,255,255,0.42);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.10);
+  }
+  .progress-card.dark {
+    background:
+      radial-gradient(circle at 18% 18%, rgba(255,124,200,0.18), transparent 24%),
+      radial-gradient(circle at 82% 22%, rgba(158,255,221,0.16), transparent 22%),
+      linear-gradient(180deg, rgba(12,13,20,0.96), rgba(8,9,14,0.96));
+    border-color: rgba(255,255,255,0.12);
+    color: #fff;
+  }
+  .progress-kicker {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6e6880;
+    margin-bottom: 8px;
+  }
+  .progress-card.dark .progress-kicker { color: rgba(255,255,255,0.54); }
+  .progress-title {
+    font-size: 24px;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    color: #18151f;
+    margin-bottom: 10px;
+  }
+  .progress-card.dark .progress-title { color: #fff; }
+  .progress-copy {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #5d566d;
+  }
+  .progress-card.dark .progress-copy { color: rgba(255,255,255,0.76); }
+  .progress-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .progress-stat {
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(17,17,26,0.04);
+    border: 1px solid rgba(17,17,26,0.06);
+  }
+  .progress-card.dark .progress-stat {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.10);
+  }
+  .progress-num {
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #191520;
+    margin-bottom: 6px;
+  }
+  .progress-card.dark .progress-num { color: #fff; }
+  .progress-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: #7e788d;
+  }
+  .progress-card.dark .progress-label { color: rgba(255,255,255,0.58); }
+  .progress-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .progress-item {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(17,17,26,0.04);
+    border: 1px solid rgba(17,17,26,0.06);
+    font-size: 13px;
+    line-height: 1.6;
+    color: #534d61;
+  }
+  .progress-card.dark .progress-item {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.84);
+  }
+  .progress-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(168,255,139,0.16);
+    color: #315f1d;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+  .progress-card.dark .progress-highlight {
+    background: rgba(168,255,139,0.14);
+    color: #d9ffc8;
+  }
+  .progress-chart {
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(17,17,26,0.04);
+    border: 1px solid rgba(17,17,26,0.06);
+  }
+  .progress-chart-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-chart-title {
+    font-size: 12px;
+    color: #6f687d;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+  }
+  .progress-chart-target {
+    font-size: 12px;
+    color: #534b63;
+  }
+  .progress-chart-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .progress-chart-labels {
+    display: grid;
+    grid-template-columns: repeat(14, minmax(0, 1fr));
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .progress-chart-label {
+    text-align: center;
+    font-size: 10px;
+    color: #8b8499;
+  }
 
   .today-summary .ts-card:nth-child(1) {
     background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(245,232,255,0.82));
@@ -746,6 +892,8 @@
     .insight-row { flex-direction: column; }
     .daily-deck { grid-template-columns: 1fr; }
     .alc-form-grid { grid-template-columns: 1fr; }
+    .progress-grid { grid-template-columns: 1fr; }
+    .progress-stats { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -765,6 +913,7 @@
 
   <div class="tabs">
     <button class="tab active" id="tabToday" onclick="showTab('today',this)">Сегодня</button>
+    <button class="tab" id="tabProgress" onclick="showTab('progress',this)">Прогресс</button>
     <button class="tab" id="tabStages" onclick="showTab('body',this)">Стадии</button>
     <button class="tab" id="tabHormones" onclick="showTab('hormones',this)">Гормоны</button>
     <button class="tab" id="tabGlossary" onclick="showTab('glossary',this)">Словарь</button>
@@ -918,6 +1067,46 @@
         <div class="stat-row"><span class="stat-label">Последняя еда</span><span class="stat-val">до 20:00</span></div>
         <div class="stat-row"><span class="stat-label">Голодание во сне</span><span class="stat-val">~8–9 ч</span></div>
         <div class="stat-row"><span class="stat-label">Досидеть с утра</span><span class="stat-val">1–2 ч</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="progress" class="section">
+    <div class="progress-grid">
+      <div class="progress-card dark">
+        <div class="progress-kicker">Прогресс</div>
+        <div class="progress-title" id="progressHeadline">1 день в приложении</div>
+        <div class="progress-copy" id="progressSummary">Здесь будет короткий срез по окнам, устойчивости и следующему шагу.</div>
+        <div class="progress-highlight" id="progressHighlight">Фаза 14/10</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-kicker">За всё время</div>
+        <div class="progress-stats">
+          <div class="progress-stat"><div class="progress-num" id="progressDaysLogged">0</div><div class="progress-label">дней с логом</div></div>
+          <div class="progress-stat"><div class="progress-num" id="progressAvgFast">0ч</div><div class="progress-label">среднее окно</div></div>
+          <div class="progress-stat"><div class="progress-num" id="progressBestFast">0ч</div><div class="progress-label">лучший день</div></div>
+          <div class="progress-stat"><div class="progress-num" id="progressGoalRate">0%</div><div class="progress-label">в цели</div></div>
+        </div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-kicker">Последние 14 дней</div>
+        <div class="progress-chart">
+          <div class="progress-chart-head">
+            <div class="progress-chart-title">Окна по дням</div>
+            <div class="progress-chart-target" id="progressChartTarget">Цель 14 ч</div>
+          </div>
+          <svg class="progress-chart-svg" id="progressChart" viewBox="0 0 320 120" preserveAspectRatio="none" aria-label="График последних 14 дней"></svg>
+          <div class="progress-chart-labels" id="progressChartLabels"></div>
+        </div>
+        <div class="progress-title" id="progressRecentTitle">Пока мало данных</div>
+        <div class="progress-copy" id="progressRecentCopy">Когда накопится хотя бы несколько окон, здесь появится более честная картина устойчивости.</div>
+        <div class="progress-list" id="progressRecentList"></div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-kicker">Следующий шаг</div>
+        <div class="progress-title" id="progressPlanTitle">Сначала закрепить базу</div>
+        <div class="progress-copy" id="progressPlanCopy">Короткие рекомендации без давления и без лишней теории.</div>
+        <div class="progress-list" id="progressPlanList"></div>
       </div>
     </div>
   </div>
@@ -2090,8 +2279,14 @@ function getCurrentPhase() {
   return { name: '16/8', fast: 16, eat: 8 };
 }
 
+function getDateSeed(dateKey) {
+  var parts = String(dateKey || '').split('-').map(Number);
+  if (parts.length !== 3 || parts.some(function(part) { return isNaN(part); })) return 0;
+  return Math.floor(Date.UTC(parts[0], parts[1] - 1, parts[2]) / 86400000);
+}
+
 function getInsightSeed() {
-  return Math.floor(new Date(getLogicalDate() + 'T00:00:00').getTime() / 86400000);
+  return getDateSeed(getLogicalDate());
 }
 
 function hashInsight(value, seed) {
@@ -2478,6 +2673,15 @@ function getInsightIndex() {
   var pool = getInsightPool();
   if (!pool.length) return 0;
   return (S.insightOffset || 0) % pool.length;
+}
+
+function resetDailyContentState() {
+  var today = getLogicalDate();
+  S.remoteDailyDeck = null;
+  S.remoteDailyVariant = 0;
+  S.remoteDailyAttemptKey = '';
+  S.insightDate = today;
+  S.insightOffset = 0;
 }
 
 function renderDailyInsight() {
@@ -3829,8 +4033,264 @@ function checkDayReset() {
       S.dailyLog.push({ date: S.lastCheckDate, fastHours: 0, checksCount: checksCount });
     }
     S.checks = {};
+    resetDailyContentState();
   }
   S.lastCheckDate = today;
+}
+
+function getRecentDateKeys(days) {
+  var list = [];
+  var today = new Date(getLogicalDate() + 'T12:00:00');
+  for (var i = 0; i < days; i++) {
+    var d = new Date(today);
+    d.setDate(today.getDate() - i);
+    list.push(formatDateKey(d));
+  }
+  return list;
+}
+
+function getProgressSnapshot() {
+  var phase = getCurrentPhase();
+  var logs = (S.dailyLog || []).filter(function(entry) {
+    return entry && typeof entry.fastHours === 'number' && entry.fastHours > 0;
+  }).slice().sort(function(a, b) {
+    return a.date.localeCompare(b.date);
+  });
+  var totalDays = Math.max(1, Math.floor((Date.now() - S.startTs) / 86400000) + 1);
+  var loggedDays = logs.length;
+  var totalFast = 0;
+  var bestFast = 0;
+  var targetDays = 0;
+  logs.forEach(function(entry) {
+    totalFast += entry.fastHours;
+    if (entry.fastHours > bestFast) bestFast = entry.fastHours;
+    if (entry.fastHours >= phase.fast) targetDays++;
+  });
+  var avgFast = loggedDays ? Math.round((totalFast / loggedDays) * 10) / 10 : 0;
+  var goalRate = loggedDays ? Math.round((targetDays / loggedDays) * 100) : 0;
+
+  var recentKeys = getRecentDateKeys(14);
+  var recentLogs = recentKeys.map(function(date) {
+    return logs.find(function(entry) { return entry.date === date; }) || null;
+  }).filter(Boolean);
+  var recentTargetDays = recentLogs.filter(function(entry) { return entry.fastHours >= phase.fast; }).length;
+  var recentNearDays = recentLogs.filter(function(entry) {
+    return entry.fastHours >= (phase.fast - 1) && entry.fastHours < phase.fast;
+  }).length;
+  var recentAvg = recentLogs.length
+    ? Math.round((recentLogs.reduce(function(sum, entry) { return sum + entry.fastHours; }, 0) / recentLogs.length) * 10) / 10
+    : 0;
+  var recentBest = recentLogs.length
+    ? Math.max.apply(null, recentLogs.map(function(entry) { return entry.fastHours; }))
+    : 0;
+
+  return {
+    totalDays: totalDays,
+    phase: phase,
+    loggedDays: loggedDays,
+    avgFast: avgFast,
+    bestFast: Math.round(bestFast * 10) / 10,
+    targetDays: targetDays,
+    goalRate: goalRate,
+    recentLogs: recentLogs,
+    recentTargetDays: recentTargetDays,
+    recentNearDays: recentNearDays,
+    recentAvg: recentAvg,
+    recentBest: Math.round(recentBest * 10) / 10
+  };
+}
+
+function getProgressPlan(snapshot) {
+  var phase = snapshot.phase;
+  var items = [];
+  var title = 'Сначала закрепить базу';
+  var copy = 'Смысл не в жёсткости, а в том, чтобы следующий шаг ощущался устойчивым.';
+
+  if (snapshot.loggedDays < 5) {
+    items = [
+      'Ещё 5–7 дней просто записывай окна, чтобы появилась реальная картина.',
+      'Не думай пока про 18 часов: сначала нужно почувствовать свой базовый ритм.',
+      'Сделай цель простой: стабильный ранний ужин и одно и то же окно несколько дней подряд.'
+    ];
+    return { title: title, copy: copy, items: items };
+  }
+
+  if (phase.name === '14/10') {
+    title = snapshot.recentTargetDays >= 5 ? 'Можно мягко пробовать 15/9' : 'Закрепить 14/10 ещё немного';
+    copy = snapshot.recentTargetDays >= 5
+      ? 'У тебя уже есть база. Не обязательно переходить насовсем, но можно попробовать более длинное окно 1–2 раза на неделе.'
+      : 'Пока лучше не форсировать. Стабильность здесь важнее героических дней.';
+    items = snapshot.recentTargetDays >= 5
+      ? [
+          'Попробуй 15/9 один или два раза на неделе, без обязательства держать так каждый день.',
+          'Если это проходит спокойно, следующим шагом можно собрать 3 дня подряд на 15/9.',
+          'До 18 часов пока рано: сначала хочется увидеть, что 15 часов для тебя ощущаются ровно.'
+        ]
+      : [
+          'Цель на сейчас: 14/10 без качелей ещё 7–10 дней.',
+          'Если хочется сдвига, начни не с 18 часов, а с более раннего ужина.',
+          'Смотри не только на часы, но и на сон, аппетит и вечернюю тягу к еде.'
+        ];
+    return { title: title, copy: copy, items: items };
+  }
+
+  if (phase.name === '15/9') {
+    title = snapshot.recentTargetDays >= 6 ? 'Можно собирать 16/8 как основное окно' : '15/9 пока выглядит как рабочая база';
+    copy = snapshot.recentTargetDays >= 6
+      ? 'Последние две недели уже похожи на устойчивый переход. Следующий шаг — не геройство, а более ровный 16/8.'
+      : 'Если 15 часов ещё местами шатаются, лучше закрепить их и только потом удлинять окно.';
+    items = snapshot.recentTargetDays >= 6
+      ? [
+          'Сделай 16/8 2–3 раза на неделе и посмотри, как это влияет на сон и вечер.',
+          'Если 16/8 идёт спокойно, можно иногда оставить 15/9 как мягкий день, а не считать его откатом.',
+          '18 часов имеет смысл пробовать только после того, как 16/8 станет ощущаться нормой.'
+        ]
+      : [
+          'Ещё неделя на 15/9 даст телу больше предсказуемости.',
+          'Сейчас важнее ровность окна, чем рекорд по длительности.',
+          'Если хочешь почувствовать следующий шаг, попробуй один день 16/8 без давления.'
+        ];
+    return { title: title, copy: copy, items: items };
+  }
+
+  if (snapshot.recentTargetDays >= 8 && snapshot.recentBest >= 17.5) {
+    title = 'Можно пробовать 18 часов иногда';
+    copy = 'Похоже, 16/8 уже не выглядит случайностью. Значит, 18 часов можно тестировать как редкий эксперимент, а не как новую обязательную норму.';
+    items = [
+      'Попробуй 18 часов один раз в неделю, лучше в спокойный день без недосыпа и перегруза.',
+      'Если после 18 часов ухудшается сон или появляется сильный вечерний доед, значит пока рано делать это часто.',
+      '24 часа имеет смысл держать только как редкий формат, например раз в месяц, и только если 18 часов прошло спокойно несколько раз.'
+    ];
+    return { title: title, copy: copy, items: items };
+  }
+
+  if (snapshot.recentTargetDays >= 10 && snapshot.recentBest >= 18) {
+    title = 'Можно думать про редкий 24-часовой пост';
+    copy = 'Это уже не ежедневная история, а редкий эксперимент. Он нужен только если тебе самой это интересно и базовый режим не ломается.';
+    items = [
+      '24 часа лучше пробовать не чаще раза в месяц и не в период недосыпа, стресса или восстановления после болезни.',
+      'Перед таким днём важнее нормальный сон и спокойный предыдущий вечер, чем дополнительная жёсткость.',
+      'Если 24 часа вызывают сильный откат в сон, настроение или вечерний голод, значит для тебя пользы сейчас меньше, чем цены.'
+    ];
+    return { title: title, copy: copy, items: items };
+  }
+
+  title = '16/8 уже похоже на рабочую базу';
+  copy = 'Следующий шаг не обязательно длиннее. Иногда лучшая стратегия — просто закрепить то, что уже работает.';
+  items = [
+    'Собери ещё 1–2 спокойные недели на 16/8, прежде чем думать про 18 часов.',
+    'Если хочется эксперимента, лучше сделать один день 17–18 часов, чем превращать всю неделю в борьбу.',
+    'Главный критерий готовности к следующему шагу: после окна ты не расплачиваешься сном, настроением и сильным перееданием.'
+  ];
+  return { title: title, copy: copy, items: items };
+}
+
+function renderProgressChart(snapshot) {
+  var svg = document.getElementById('progressChart');
+  var labelsWrap = document.getElementById('progressChartLabels');
+  var targetEl = document.getElementById('progressChartTarget');
+  if (!svg || !labelsWrap || !targetEl) return;
+
+  targetEl.textContent = 'Цель ' + snapshot.phase.fast + ' ч';
+
+  var recentKeys = getRecentDateKeys(14).slice().reverse();
+  var byDate = {};
+  snapshot.recentLogs.forEach(function(entry) {
+    byDate[entry.date] = entry;
+  });
+
+  var values = recentKeys.map(function(date) {
+    return byDate[date] ? byDate[date].fastHours : 0;
+  });
+  var maxValue = Math.max(snapshot.phase.fast + 2, Math.max.apply(null, values.concat([0])));
+  var chartWidth = 320;
+  var chartHeight = 120;
+  var topPad = 12;
+  var bottomPad = 18;
+  var leftPad = 2;
+  var rightPad = 2;
+  var innerHeight = chartHeight - topPad - bottomPad;
+  var barGap = 4;
+  var slotWidth = (chartWidth - leftPad - rightPad) / recentKeys.length;
+  var barWidth = Math.max(8, slotWidth - barGap);
+  var targetY = topPad + innerHeight - Math.min(snapshot.phase.fast / maxValue, 1) * innerHeight;
+
+  var html = '';
+  html += '<line x1="0" y1="' + targetY.toFixed(1) + '" x2="' + chartWidth + '" y2="' + targetY.toFixed(1) + '" stroke="#3C3489" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.55"></line>';
+
+  recentKeys.forEach(function(date, index) {
+    var value = values[index];
+    var height = value ? Math.max(6, (value / maxValue) * innerHeight) : 3;
+    var x = leftPad + index * slotWidth + (slotWidth - barWidth) / 2;
+    var y = topPad + innerHeight - height;
+    var color = value >= snapshot.phase.fast ? '#639922' : (value >= snapshot.phase.fast - 1 ? '#EF9F27' : '#C9C2D8');
+    var opacity = value ? 0.95 : 0.4;
+    html += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + barWidth.toFixed(1) + '" height="' + height.toFixed(1) + '" rx="6" fill="' + color + '" opacity="' + opacity + '"></rect>';
+  });
+
+  svg.innerHTML = html;
+
+  labelsWrap.innerHTML = '';
+  recentKeys.forEach(function(date) {
+    var d = new Date(date + 'T12:00:00');
+    var el = document.createElement('div');
+    el.className = 'progress-chart-label';
+    el.textContent = d.getDate();
+    labelsWrap.appendChild(el);
+  });
+}
+
+function renderProgress() {
+  var snapshot = getProgressSnapshot();
+  var plan = getProgressPlan(snapshot);
+  var recentTitle = document.getElementById('progressRecentTitle');
+  var recentCopy = document.getElementById('progressRecentCopy');
+  var recentList = document.getElementById('progressRecentList');
+  var planTitle = document.getElementById('progressPlanTitle');
+  var planCopy = document.getElementById('progressPlanCopy');
+  var planList = document.getElementById('progressPlanList');
+  if (!recentTitle || !recentCopy || !recentList || !planTitle || !planCopy || !planList) return;
+
+  document.getElementById('progressHeadline').textContent = snapshot.totalDays + ' день в приложении';
+  document.getElementById('progressSummary').textContent = snapshot.loggedDays
+    ? 'Есть ' + snapshot.loggedDays + ' записанных окон. Средний интервал ' + snapshot.avgFast + ' ч, лучшая точка ' + snapshot.bestFast + ' ч.'
+    : 'Пока мало записанных окон, поэтому это только стартовая рамка.';
+  document.getElementById('progressHighlight').textContent = 'Фаза ' + snapshot.phase.name + ' · цель ' + snapshot.phase.fast + ' ч';
+  document.getElementById('progressDaysLogged').textContent = snapshot.loggedDays;
+  document.getElementById('progressAvgFast').textContent = snapshot.avgFast ? (snapshot.avgFast + 'ч') : '—';
+  document.getElementById('progressBestFast').textContent = snapshot.bestFast ? (snapshot.bestFast + 'ч') : '—';
+  document.getElementById('progressGoalRate').textContent = snapshot.goalRate + '%';
+  renderProgressChart(snapshot);
+
+  if (!snapshot.recentLogs.length) {
+    recentTitle.textContent = 'Пока мало данных';
+    recentCopy.textContent = 'Когда накопится хотя бы несколько окон, здесь появится более честная картина устойчивости.';
+  } else {
+    recentTitle.textContent = snapshot.recentTargetDays + ' из 14 дней в цели';
+    recentCopy.textContent = 'Последние 14 дней: среднее окно ' + snapshot.recentAvg + ' ч, почти в цели ' + snapshot.recentNearDays + ' дн., лучший день ' + snapshot.recentBest + ' ч.';
+  }
+
+  recentList.innerHTML = '';
+  [
+    'Записанных окон за 14 дней: ' + snapshot.recentLogs.length,
+    'В цели по текущей фазе: ' + snapshot.recentTargetDays + ' дн.',
+    snapshot.recentNearDays ? 'Почти в цели: ' + snapshot.recentNearDays + ' дн.' : 'Почти в цели: пока нет таких дней'
+  ].forEach(function(item) {
+    var el = document.createElement('div');
+    el.className = 'progress-item';
+    el.textContent = item;
+    recentList.appendChild(el);
+  });
+
+  planTitle.textContent = plan.title;
+  planCopy.textContent = plan.copy;
+  planList.innerHTML = '';
+  plan.items.forEach(function(item) {
+    var el = document.createElement('div');
+    el.className = 'progress-item';
+    el.textContent = item;
+    planList.appendChild(el);
+  });
 }
 
 function render() {
@@ -3839,6 +4299,7 @@ function render() {
   updateWindowDisplay();
   renderDailyInsight();
   renderDailyDeck();
+  renderProgress();
   renderInsightsFeed();
   renderHormoneGlossary();
   renderCycleCard();
@@ -3918,12 +4379,18 @@ function showTab(id, btn) {
 
 setInterval(function() {
   var today = getLogicalDate();
-  if (S.lastCheckDate !== today) { checkDayReset(); render(); save(); }
+  if (S.lastCheckDate !== today) {
+    checkDayReset();
+    render();
+    ensureRemoteDailyContent(false);
+    save();
+  }
 }, 60000);
 
 load();
 
 function refreshOnReturn() {
+  if (S.insightDate !== getLogicalDate()) resetDailyContentState();
   checkDayReset();
   render();
   ensureRemoteDailyContent(false);
