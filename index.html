@@ -756,6 +756,49 @@
     line-height: 1.6;
     color: #6f687d;
   }
+  .history-toggle {
+    border-radius: 20px;
+    background: rgba(17,17,26,0.04);
+    border: 1px solid rgba(17,17,26,0.06);
+    overflow: hidden;
+  }
+  .history-toggle summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #241f2d;
+  }
+  .history-toggle summary::-webkit-details-marker {
+    display: none;
+  }
+  .history-toggle-content {
+    padding: 0 14px 14px;
+  }
+  .fab-top {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 1001;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 999px;
+    background: rgba(10,10,16,0.82);
+    color: #fff;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 18px 36px rgba(0,0,0,0.26);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .fab-top.show {
+    display: inline-flex;
+  }
   .progress-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1024,6 +1067,7 @@
     .progress-stats { grid-template-columns: 1fr 1fr; }
     .sleep-form-grid { grid-template-columns: 1fr; }
     .sleep-mini-stats { grid-template-columns: 1fr 1fr 1fr; }
+    .fab-top { right: 14px; bottom: 14px; }
   }
 </style>
 </head>
@@ -1550,7 +1594,12 @@
     <div class="card">
       <div class="sec-title">Последние записи</div>
       <div class="sec-sub">Чтобы видеть не один вечер, а общий паттерн.</div>
-      <div class="alcohol-history" id="alcoholHistory"></div>
+      <details class="history-toggle" id="alcoholHistoryDetails">
+        <summary id="alcoholHistorySummary">Пока записей нет</summary>
+        <div class="history-toggle-content">
+          <div class="alcohol-history" id="alcoholHistory"></div>
+        </div>
+      </details>
     </div>
 
     <div class="card">
@@ -3734,6 +3783,8 @@ function renderAlcToday() {
   var meta = document.getElementById('alcTodayMeta');
   var weekBadge = document.getElementById('alcWeekSummary');
   var history = document.getElementById('alcoholHistory');
+  var historySummary = document.getElementById('alcoholHistorySummary');
+  var historyDetails = document.getElementById('alcoholHistoryDetails');
   var dateInput = document.getElementById('alcDateInput');
 
   if (status) {
@@ -3778,6 +3829,12 @@ function renderAlcToday() {
       .filter(function(entry) { return entry.alcohol; })
       .sort(function(a, b) { return b.date.localeCompare(a.date); })
       .slice(0, 12);
+    if (historySummary) {
+      historySummary.textContent = entries.length ? ('Последние записи · ' + entries.length) : 'Пока записей нет';
+    }
+    if (historyDetails) {
+      historyDetails.open = entries.length > 0 && entries.length <= 3;
+    }
     if (!entries.length) {
       history.innerHTML = '<div class="alcohol-empty">Пока записей нет. Как только появятся, здесь будет виден не один день, а общий рисунок.</div>';
     } else {
@@ -4744,6 +4801,21 @@ function showTab(id, btn) {
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
+  scrollToTopMenu(false);
+}
+
+function scrollToTopMenu(smooth) {
+  window.scrollTo({
+    top: 0,
+    behavior: smooth === false ? 'auto' : 'smooth'
+  });
+}
+
+function updateScrollTopButton() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (!btn) return;
+  if (window.scrollY > 480) btn.classList.add('show');
+  else btn.classList.remove('show');
 }
 
 setInterval(function() {
@@ -4828,6 +4900,7 @@ document.addEventListener('DOMContentLoaded', function() {
   installBanner = document.getElementById('installBanner');
   updateBanner = document.getElementById('updateBanner');
   renderAppVersionMeta();
+  updateScrollTopButton();
   document.getElementById('installBtn').addEventListener('click', function() {
     if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(function() { deferredPrompt = null; installBanner.style.display = 'none'; }); }
   });
@@ -4841,6 +4914,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+window.addEventListener('scroll', updateScrollTopButton, { passive: true });
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').then(function(reg) {
     watchServiceWorkerRegistration(reg);
@@ -4870,5 +4944,6 @@ if ('serviceWorker' in navigator) {
   <button id="updateBtn" style="padding:8px 16px;background:#fff;color:#11131a;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Обновить</button>
   <button id="updateClose" style="background:none;border:none;font-size:20px;color:rgba(255,255,255,0.7);cursor:pointer;padding:4px;">×</button>
 </div>
+<button id="scrollTopBtn" class="fab-top" type="button" onclick="scrollToTopMenu()">↑ Наверх</button>
 </body>
 </html>
