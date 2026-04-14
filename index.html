@@ -420,7 +420,7 @@
   }
   .daily-deck {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin-top: 12px;
     margin-bottom: 1rem;
@@ -537,6 +537,40 @@
     margin-top: 12px;
     display: grid;
     gap: 8px;
+  }
+  .cycle-notes {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .cycle-note {
+    padding: 11px 12px;
+    border-radius: 16px;
+    background: rgba(17,17,26,0.05);
+    color: #383343;
+    font-size: 13px;
+    line-height: 1.55;
+    border: 1px solid rgba(17,17,26,0.06);
+  }
+  .cycle-manage {
+    border-radius: 20px;
+    background: rgba(17,17,26,0.05);
+    border: 1px solid rgba(17,17,26,0.06);
+    overflow: hidden;
+  }
+  .cycle-manage summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #241f2d;
+  }
+  .cycle-manage summary::-webkit-details-marker {
+    display: none;
+  }
+  .cycle-manage-content {
+    padding: 0 14px 14px;
   }
   .cycle-entry {
     display: flex;
@@ -928,6 +962,40 @@
     font-size: 10px;
     color: #8b8499;
   }
+  .update-banner-copy {
+    flex: 1;
+    color: #fff;
+  }
+  .update-banner-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .update-banner-version {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.86);
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .update-banner-subtitle {
+    margin-top: 4px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.72);
+  }
+  .update-banner-list {
+    margin-top: 8px;
+    display: grid;
+    gap: 4px;
+  }
+  .update-banner-item {
+    font-size: 12px;
+    color: rgba(255,255,255,0.84);
+    line-height: 1.45;
+  }
 
   .today-summary .ts-card:nth-child(1) {
     background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(245,232,255,0.82));
@@ -969,6 +1037,7 @@
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
       <div class="header-chip" id="phaseChip">Фаза 14/10</div>
+      <div class="header-chip" id="versionChip">v12</div>
       <div class="sync-bar"><div class="sync-dot" id="syncDot"></div><span id="syncStatus">...</span></div>
     </div>
   </div>
@@ -1037,32 +1106,12 @@
       <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0/7</div><div class="ts-label">цель</div></div>
     </div>
 
-    <div class="card insight-hero">
-      <div class="insight-row">
-        <div>
-          <div class="insight-tag" id="dailyInsightTag">Инсайт дня</div>
-          <div class="insight-title" id="dailyInsightTitle">Сегодня про гормоны и тело</div>
-          <div class="insight-text" id="dailyInsightText">Короткий блок про гормоны, сон, аппетит, энергию и ритм дня, чтобы было легче вставать, работать, гулять и не ругать себя.</div>
-          <div class="insight-actions">
-            <button class="mini-btn primary" type="button" onclick="cycleInsight()">Другой инсайт</button>
-            <button class="mini-btn" type="button" onclick="openInsightsTab()">Читать глубже</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="daily-deck">
       <div class="daily-mini">
         <div class="insight-tag">Исследование дня</div>
         <div class="daily-mini-title" id="dailyResearchTitle">Новый research note</div>
         <div class="daily-mini-copy" id="dailyResearchText">Короткая выжимка из исследования.</div>
         <div class="daily-mini-note" id="dailyResearchNote">Почему это важно для реальной жизни.</div>
-      </div>
-      <div class="daily-mini">
-        <div class="insight-tag">Миф / правда</div>
-        <div class="daily-mini-title" id="dailyMythTitle">Разбор популярной идеи</div>
-        <div class="daily-mini-copy" id="dailyMythText">Что здесь правда, а что нет.</div>
-        <div class="daily-mini-note" id="dailyMythNote">На что смотреть в жизни.</div>
       </div>
       <div class="daily-mini">
         <div class="insight-tag">Эксперимент дня</div>
@@ -1072,45 +1121,39 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="knowledge-head">
-        <div>
-          <div class="sec-title" style="margin-bottom:4px;">Алкоголь сегодня</div>
-          <div class="sec-sub" style="margin-bottom:0;">Короткая запись без стыда: что, сколько и когда.</div>
-        </div>
-        <button class="mini-btn" type="button" onclick="openAlcoholTab()">Открыть лог</button>
-      </div>
-      <div class="alcohol-status" id="alcTodayStatus">Сегодня записи нет.</div>
-      <div class="knowledge-note" id="alcTodayMeta" style="display:none;"></div>
-    </div>
-
     <div class="card cycle-card">
       <div class="cycle-grid">
         <div>
           <div class="cycle-phase" id="cyclePhaseBadge">Цикл не указан</div>
-          <div class="cycle-title" id="cyclePhaseTitle">Цикл как дополнительный контекст</div>
-          <div class="cycle-copy" id="cyclePhaseText">Это необязательный слой. Основной фокус приложения остаётся на гормонах, сне, аппетите, энергии и том, как тело реально работает в течение дня.</div>
+          <div class="cycle-title" id="cyclePhaseTitle">Фаза как контекст дня</div>
+          <div class="cycle-copy" id="cyclePhaseText">Здесь будет короткая подсказка по фазе цикла: что сейчас часто происходит с аппетитом, энергией и переносимостью окна.</div>
           <div class="cycle-meta">
             <div class="cycle-chip" id="cycleDayChip">День цикла: —</div>
             <div class="cycle-chip" id="cycleLastChip">Последняя запись: —</div>
           </div>
-          <div class="cycle-history" id="cycleHistory"></div>
+          <div class="cycle-notes" id="cycleAdviceList"></div>
         </div>
-        <div class="cycle-form">
-          <div>
-            <div class="cycle-label">Начало менструации</div>
-            <input type="date" id="cycleStartDate">
+        <details class="cycle-manage">
+          <summary>Даты цикла</summary>
+          <div class="cycle-manage-content">
+            <div class="cycle-history" id="cycleHistory"></div>
+            <div class="cycle-form">
+              <div>
+                <div class="cycle-label">Начало менструации</div>
+                <input type="date" id="cycleStartDate">
+              </div>
+              <div>
+                <div class="cycle-label">Конец менструации</div>
+                <input type="date" id="cycleEndDate">
+              </div>
+              <div class="cycle-form-actions">
+                <button class="mini-btn primary" type="button" onclick="saveCycleEntry()">Сохранить</button>
+                <button class="mini-btn" type="button" onclick="prefillCycleToday()">Закончилась сегодня</button>
+              </div>
+              <div class="cycle-result" id="cycleResult"></div>
+            </div>
           </div>
-          <div>
-            <div class="cycle-label">Конец менструации</div>
-            <input type="date" id="cycleEndDate">
-          </div>
-          <div class="cycle-form-actions">
-            <button class="mini-btn primary" type="button" onclick="saveCycleEntry()">Сохранить</button>
-            <button class="mini-btn" type="button" onclick="prefillCycleToday()">Закончилась сегодня</button>
-          </div>
-          <div class="cycle-result" id="cycleResult"></div>
-        </div>
+        </details>
       </div>
     </div>
 
@@ -2346,7 +2389,13 @@ var REMOTE_INSIGHT_TOPICS = [
 ];
 
 var REMOTE_DAILY_SOURCE = 'openalex';
-var REMOTE_DAILY_VERSION = 2;
+var APP_VERSION = 'v13';
+var APP_WHATS_NEW = [
+  'Главный экран короче: оставлены только исследование дня, эксперимент и цикл.',
+  'Фаза цикла теперь даёт короткие советы по аппетиту, тяге к еде и переносимости окна.',
+  'Ротация daily-контента больше не ходит по простому недельному кругу.'
+];
+var REMOTE_DAILY_VERSION = 3;
 var remoteDailyPromise = null;
 
 var S = {
@@ -2480,7 +2529,7 @@ function titleToStudyBlurb(work, topic) {
 
 function getRemoteTopicConfig(seed, variant) {
   if (!REMOTE_INSIGHT_TOPICS.length) return null;
-  var index = Math.abs(seed + (variant || 0)) % REMOTE_INSIGHT_TOPICS.length;
+  var index = Math.abs(hashInsight('remote-topic:' + String(variant || 0), (seed * 97) + 17)) % REMOTE_INSIGHT_TOPICS.length;
   return REMOTE_INSIGHT_TOPICS[index];
 }
 
@@ -2839,11 +2888,6 @@ function renderDailyDeck() {
       document.getElementById('dailyResearchText').textContent = remoteDeck.research.text;
       document.getElementById('dailyResearchNote').textContent = remoteDeck.research.note;
     }
-    if (companion.myth) {
-      document.getElementById('dailyMythTitle').textContent = companion.myth.title;
-      document.getElementById('dailyMythText').textContent = companion.myth.text;
-      document.getElementById('dailyMythNote').textContent = companion.myth.note;
-    }
     if (companion.experiment) {
       document.getElementById('dailyExperimentTitle').textContent = companion.experiment.title;
       document.getElementById('dailyExperimentText').textContent = companion.experiment.text;
@@ -2855,18 +2899,12 @@ function renderDailyDeck() {
   var mainItem = getInsightPool()[getInsightIndex()];
   var researchItems = INSIGHTS.filter(function(item) { return getInsightTheme(item) === 'research'; });
   var research = pickDailyItem(researchItems, seed, 11, mainItem ? [mainItem.id] : []);
-  var myth = pickDailyItem(MYTH_TRUTH, seed, 23);
   var experiment = pickDailyItem(DAILY_EXPERIMENTS, seed, 37);
 
   if (research) {
     document.getElementById('dailyResearchTitle').textContent = research.title;
     document.getElementById('dailyResearchText').textContent = research.short || research.deep;
     document.getElementById('dailyResearchNote').textContent = research.note;
-  }
-  if (myth) {
-    document.getElementById('dailyMythTitle').textContent = myth.title;
-    document.getElementById('dailyMythText').textContent = myth.text;
-    document.getElementById('dailyMythNote').textContent = myth.note;
   }
   if (experiment) {
     document.getElementById('dailyExperimentTitle').textContent = experiment.title;
@@ -3021,9 +3059,13 @@ function getCycleInfo() {
       key: 'unknown',
       badge: 'Цикл не указан',
       title: 'Добавь дни менструации',
-      text: 'После этого приложение сможет показывать примерную фазу цикла и делать контент немного точнее.',
+      text: 'После этого приложение сможет показывать фазу цикла как контекст для аппетита, энергии и того, насколько жёстко сейчас стоит держать окно.',
       day: '—',
-      last: '—'
+      last: '—',
+      tips: [
+        'Фаза здесь нужна не для контроля, а чтобы лучше понимать, почему в разные недели аппетит и энергия ощущаются по-разному.',
+        'Это будет только ориентир, не медицинская диагностика.'
+      ]
     };
   }
 
@@ -3040,7 +3082,11 @@ function getCycleInfo() {
       title: 'Сейчас менструальная фаза',
       text: 'Если сегодня хочется больше мягкости и меньше жёсткости, это нормально. В такие дни полезнее наблюдать за состоянием, чем форсировать режим.',
       day: String(daysBetween(latest.start, today) + 1),
-      last: latest.start + ' - ' + latest.end
+      last: latest.start + ' - ' + latest.end,
+      tips: [
+        'Если окно даётся тяжелее, задача сейчас не дожать рекорд, а сохранить ритм без лишней борьбы с телом.',
+        'Смотри на тёплую еду, воду и более мягкий вечер, а не только на цифру часов.'
+      ]
     };
   }
 
@@ -3052,7 +3098,11 @@ function getCycleInfo() {
       title: 'Нужны новые дни менструации',
       text: 'Последняя запись слишком далеко, поэтому фазу лучше не угадывать. Просто добавь новую менструацию, когда начнётся.',
       day: '—',
-      last: latest.start + ' - ' + latest.end
+      last: latest.start + ' - ' + latest.end,
+      tips: [
+        'Когда появится новая запись, карточка снова будет давать подсказки по фазе.',
+        'Пока ориентируйся на сон, аппетит и переносимость окна по факту.'
+      ]
     };
   }
 
@@ -3063,7 +3113,11 @@ function getCycleInfo() {
       title: 'Сейчас примерно фолликулярная фаза',
       text: 'У многих тел в этой фазе больше ощущения ресурса и легче переносится структура. Это не правило для всех, но частый паттерн.',
       day: String(cycleDay),
-      last: latest.start + ' - ' + latest.end
+      last: latest.start + ' - ' + latest.end,
+      tips: [
+        'Если окно идёт легко, это хороший момент закреплять стабильные 15–16 часов, а не сразу ужесточать режим.',
+        'Отмечай, помогает ли тебе более ранний ужин и белковый первый приём пищи.'
+      ]
     };
   }
   if (cycleDay <= 16) {
@@ -3073,17 +3127,34 @@ function getCycleInfo() {
       title: 'Сейчас примерно овуляторное окно',
       text: 'Это ориентир, а не медицинская точность. Полезно смотреть не только на календарь, но и на своё реальное самочувствие.',
       day: String(cycleDay),
-      last: latest.start + ' - ' + latest.end
+      last: latest.start + ' - ' + latest.end,
+      tips: [
+        'Если энергии больше обычного, не превращай это сразу в новую жёсткую норму на весь месяц.',
+        'Лучше использовать такие дни как калибровку: какой режим правда feels sustainable.'
+      ]
     };
   }
 
+  var lateLuteal = cycleDay >= 21;
   return {
     key: 'luteal',
     badge: 'Лютеиновая',
-    title: 'Сейчас примерно лютеиновая фаза',
-    text: 'Если голодание переносится тяжелее или тяга к еде сильнее, это может быть связано не с силой воли, а с фазой цикла.',
+    title: lateLuteal ? 'Сейчас поздняя лютеиновая фаза' : 'Сейчас примерно лютеиновая фаза',
+    text: lateLuteal
+      ? 'Ближе к менструации тяга к еде вечером и желание сорваться после закрытия окна часто усиливаются. Это может быть не про слабую волю, а про фазу цикла и более высокий запрос тела на энергию.'
+      : 'Если голодание переносится тяжелее или тяга к еде сильнее, это может быть связано не с силой воли, а с фазой цикла.',
     day: String(cycleDay),
-    last: latest.start + ' - ' + latest.end
+    last: latest.start + ' - ' + latest.end,
+    tips: lateLuteal
+      ? [
+          'Ставь нормальный ужин: белок, жир и обычные углеводы работают лучше, чем слишком лёгкая еда с мыслью «потерплю».',
+          'Если тянет открыть кухню после окна, сначала проверь: был ли нормальный ужин, вода и не слишком жёсткий день по сну и нагрузке.',
+          'В эти дни чаще полезнее сохранить 15–16 часов без героизма, чем пытаться дожимать 18 часов.'
+        ]
+      : [
+          'Во второй половине цикла аппетит может быть громче. Это хороший момент смотреть на состав ужина и общий уровень усталости.',
+          'Если окно ощущается тяжелее, гибкость полезнее, чем попытка победить тело дисциплиной.'
+        ]
   };
 }
 
@@ -3153,13 +3224,22 @@ function renderCycleCard() {
   var day = document.getElementById('cycleDayChip');
   var last = document.getElementById('cycleLastChip');
   var history = document.getElementById('cycleHistory');
-  if (!badge || !title || !text || !day || !last || !history) return;
+  var advice = document.getElementById('cycleAdviceList');
+  if (!badge || !title || !text || !day || !last || !history || !advice) return;
 
   badge.textContent = info.badge;
   title.textContent = info.title;
   text.textContent = info.text;
   day.textContent = 'День цикла: ' + info.day;
   last.textContent = 'Последняя запись: ' + info.last;
+
+  advice.innerHTML = '';
+  (info.tips || []).forEach(function(item) {
+    var el = document.createElement('div');
+    el.className = 'cycle-note';
+    el.textContent = item;
+    advice.appendChild(el);
+  });
 
   history.innerHTML = '';
   getSortedCycleLogs().slice(0, 3).forEach(function(item) {
@@ -4701,6 +4781,7 @@ var waitingWorker = null;
 
 function showUpdateBanner(worker) {
   waitingWorker = worker || waitingWorker;
+  renderAppVersionMeta();
   if (updateBanner) updateBanner.style.display = 'flex';
 }
 
@@ -4711,6 +4792,19 @@ function hideUpdateBanner() {
 function applyAppUpdate() {
   if (!waitingWorker) return;
   waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+}
+
+function renderAppVersionMeta() {
+  var versionChip = document.getElementById('versionChip');
+  var bannerVersion = document.getElementById('updateBannerVersion');
+  var bannerList = document.getElementById('updateBannerList');
+  if (versionChip) versionChip.textContent = APP_VERSION;
+  if (bannerVersion) bannerVersion.textContent = APP_VERSION;
+  if (bannerList) {
+    bannerList.innerHTML = APP_WHATS_NEW.map(function(item) {
+      return '<div class="update-banner-item">• ' + escapeHtml(item) + '</div>';
+    }).join('');
+  }
 }
 
 function watchServiceWorkerRegistration(reg) {
@@ -4733,6 +4827,7 @@ window.addEventListener('appinstalled', function() { if (installBanner) installB
 document.addEventListener('DOMContentLoaded', function() {
   installBanner = document.getElementById('installBanner');
   updateBanner = document.getElementById('updateBanner');
+  renderAppVersionMeta();
   document.getElementById('installBtn').addEventListener('click', function() {
     if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(function() { deferredPrompt = null; installBanner.style.display = 'none'; }); }
   });
@@ -4767,7 +4862,11 @@ if ('serviceWorker' in navigator) {
 </div>
 <div id="updateBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#11131a;border-top:1px solid rgba(255,255,255,0.12);padding:14px 16px;align-items:center;gap:12px;z-index:1000;box-shadow:0 -6px 24px rgba(0,0,0,0.24);">
   <div style="width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;">↻</div>
-  <div style="flex:1;color:#fff;"><div style="font-size:14px;font-weight:600;">Доступна новая версия</div><div style="font-size:12px;color:rgba(255,255,255,0.72);margin-top:2px;">Нажми обновить, чтобы увидеть последние изменения.</div></div>
+  <div class="update-banner-copy">
+    <div class="update-banner-title">Доступна новая версия <span class="update-banner-version" id="updateBannerVersion">v12</span></div>
+    <div class="update-banner-subtitle">Нажми обновить, чтобы забрать свежую сборку и последние изменения.</div>
+    <div class="update-banner-list" id="updateBannerList"></div>
+  </div>
   <button id="updateBtn" style="padding:8px 16px;background:#fff;color:#11131a;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Обновить</button>
   <button id="updateClose" style="background:none;border:none;font-size:20px;color:rgba(255,255,255,0.7);cursor:pointer;padding:4px;">×</button>
 </div>

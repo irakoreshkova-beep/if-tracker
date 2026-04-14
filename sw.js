@@ -1,4 +1,4 @@
-const CACHE = 'if-tracker-v12';
+const CACHE = 'if-tracker-v13';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.png'];
 
 self.addEventListener('message', function(e) {
@@ -19,6 +19,12 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', function(e) {
+  if (e.request.method !== 'GET') return;
+  var url = new URL(e.request.url);
+  if (url.origin !== self.location.origin || url.hostname === 'api.openalex.org') {
+    e.respondWith(fetch(e.request));
+    return;
+  }
   e.respondWith(
     fetch(e.request).then(function(res) {
       return caches.open(CACHE).then(function(c) {
