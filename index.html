@@ -7,37 +7,37 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ИГ Трекер">
-<meta name="theme-color" content="#0d0d14">
+<meta name="theme-color" content="#f4f7f2">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <title>Интервальное голодание</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
-    --bg: #08080d;
-    --bg-soft: #11121a;
+    --bg: #f4f7f2;
+    --bg-soft: #e7ecdf;
     --surface: rgba(255, 255, 255, 0.08);
     --surface-strong: rgba(255, 255, 255, 0.12);
-    --line: rgba(255, 255, 255, 0.12);
-    --text: #f8f7fb;
-    --muted: rgba(244, 241, 250, 0.68);
-    --glow-pink: #ff7cc8;
-    --glow-mint: #9effdd;
-    --glow-blue: #6488ff;
-    --glow-gold: #ffe27a;
-    --glow-violet: #b290ff;
-    --ok: #a8ff8b;
-    --shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+    --line: rgba(16, 18, 15, 0.12);
+    --text: #10120f;
+    --muted: rgba(16, 18, 15, 0.58);
+    --ink: #10120f;
+    --paper: #fbfcf7;
+    --accent-lime: #b8f26d;
+    --accent-blue: #355cff;
+    --accent-coral: #ff6d4d;
+    --accent-yellow: #f6c84f;
+    --ok: #5d8f1f;
+    --shadow: 0 20px 54px rgba(34, 40, 28, 0.16);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: "Avenir Next", "SF Pro Display", "Segoe UI", sans-serif;
     background:
-      radial-gradient(circle at 22% 16%, rgba(255, 124, 200, 0.28), transparent 20%),
-      radial-gradient(circle at 82% 12%, rgba(158, 255, 221, 0.22), transparent 18%),
-      radial-gradient(circle at 52% 70%, rgba(100, 136, 255, 0.22), transparent 24%),
-      linear-gradient(180deg, #05050a 0%, #0c0d14 46%, #040408 100%);
+      linear-gradient(135deg, rgba(184,242,109,0.22) 0%, transparent 32%),
+      linear-gradient(225deg, rgba(53,92,255,0.12) 0%, transparent 34%),
+      linear-gradient(180deg, #f7faf2 0%, #eef3e8 48%, #f8f4ec 100%);
     color: var(--text);
     padding: 1.25rem;
     min-height: 100vh;
@@ -46,29 +46,28 @@
   .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
   .tab {
     padding: 10px 16px;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 999px;
+    border: 1px solid rgba(16,18,15,0.10);
+    border-radius: 14px;
     font-size: 13px;
     cursor: pointer;
-    background: rgba(10,10,16,0.48);
-    color: rgba(255,255,255,0.82);
+    background: rgba(255,255,255,0.64);
+    color: #30342c;
     transition: all 0.2s ease;
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(12px);
   }
   .tab.active {
-    background: rgba(255,255,255,0.94);
+    background: #10120f;
     color: #fff;
-    color: #11111a;
-    border-color: rgba(255,255,255,0.55);
-    box-shadow: 0 12px 26px rgba(0,0,0,0.22);
+    border-color: #10120f;
+    box-shadow: 0 12px 26px rgba(16,18,15,0.18);
   }
-  .tab:hover:not(.active) { background: rgba(255,255,255,0.12); color: #fff; }
+  .tab:hover:not(.active) { background: rgba(255,255,255,0.92); color: #10120f; }
   .section { display: none; }
   .section.active { display: block; }
   .card {
     background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.88));
     border: 1px solid rgba(255,255,255,0.42);
-    border-radius: 28px;
+    border-radius: 18px;
     padding: 1.15rem 1.25rem;
     margin-bottom: 1rem;
     backdrop-filter: blur(24px);
@@ -177,29 +176,18 @@
     position: relative;
     overflow: hidden;
     background:
-      radial-gradient(circle at 18% 24%, rgba(255,124,200,0.34), transparent 22%),
-      radial-gradient(circle at 82% 26%, rgba(158,255,221,0.22), transparent 20%),
-      radial-gradient(circle at 50% 82%, rgba(100,136,255,0.28), transparent 24%),
-      linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)),
-      #04050a;
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 34px;
+      linear-gradient(135deg, rgba(184,242,109,0.18), transparent 38%),
+      linear-gradient(180deg, #151812 0%, #090b08 100%);
+    border: 1px solid rgba(16,18,15,0.88);
+    border-radius: 22px;
     padding: 1.35rem;
     margin-bottom: 1rem;
     text-align: left;
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(26px);
+    box-shadow: 0 24px 56px rgba(16,18,15,0.24);
+    backdrop-filter: blur(18px);
   }
-  .timer-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.06), transparent 28%),
-      linear-gradient(180deg, rgba(5,5,10,0.18), rgba(5,5,10,0.12));
-    pointer-events: none;
-  }
-  .timer-card.fasting { border-color: rgba(178,144,255,0.32); }
+  .timer-card::before { content: none; }
+  .timer-card.fasting { border-color: rgba(184,242,109,0.46); }
   .timer-card.eating { border-color: rgba(168,255,139,0.24); }
   .timer-shell { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 14px; align-items: center; }
   .timer-copy { position: relative; z-index: 1; }
@@ -210,14 +198,14 @@
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    border-radius: 999px;
+    border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.10);
     background: rgba(8,8,14,0.58);
     color: rgba(255,255,255,0.94);
     font-size: 12px;
     backdrop-filter: blur(14px);
   }
-  .timer-status { font-size: 34px; font-weight: 500; letter-spacing: -0.05em; margin-bottom: 8px; color: #fff; text-transform: none; }
+  .timer-status { font-size: 34px; font-weight: 500; letter-spacing: 0; margin-bottom: 8px; color: #fff; text-transform: none; }
   .timer-card.fasting .timer-status { color: #f3e9ff; }
   .timer-card.eating .timer-status { color: #efffe6; }
   .timer-support { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 18px; max-width: 320px; }
@@ -226,7 +214,7 @@
   .timer-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
   .timer-btn {
     padding: 14px 20px;
-    border-radius: 18px;
+    border-radius: 14px;
     border: none;
     font-size: 14px;
     font-weight: 600;
@@ -234,13 +222,13 @@
     transition: all 0.15s;
     box-shadow: 0 18px 34px rgba(0,0,0,0.22);
   }
-  .timer-btn.start-fast { background: linear-gradient(135deg, #a486ff, #6488ff); color: #fff; }
-  .timer-btn.start-fast:active { background: linear-gradient(135deg, #8f70ef, #5779e5); }
-  .timer-btn.start-eat { background: linear-gradient(135deg, #a8ff8b, #61d199); color: #0d2411; }
-  .timer-btn.start-eat:active { background: linear-gradient(135deg, #90ef72, #57c188); }
+  .timer-btn.start-fast { background: var(--accent-lime); color: #10120f; }
+  .timer-btn.start-fast:active { background: #a4df55; }
+  .timer-btn.start-eat { background: #fff; color: #10120f; }
+  .timer-btn.start-eat:active { background: #ecf0e6; }
   .manual-toggle-btn {
     padding: 14px 18px;
-    border-radius: 18px;
+    border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(8,8,14,0.54);
     color: rgba(255,255,255,0.96);
@@ -264,9 +252,8 @@
     inset: 20px;
     border-radius: 50%;
     background:
-      radial-gradient(circle at 35% 30%, rgba(255,255,255,0.22), transparent 32%),
-      radial-gradient(circle at 70% 75%, rgba(255,124,200,0.18), transparent 30%),
-      rgba(5,5,11,0.82);
+      linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+      rgba(5,5,7,0.88);
     box-shadow:
       inset 0 0 0 1px rgba(255,255,255,0.08),
       0 0 40px rgba(0,0,0,0.24);
@@ -278,7 +265,7 @@
     margin-top: 14px;
     padding: 16px;
     background: rgba(6,7,12,0.72);
-    border-radius: 22px;
+    border-radius: 18px;
     border: 1px solid rgba(255,255,255,0.14);
     text-align: left;
     backdrop-filter: blur(16px);
@@ -337,25 +324,25 @@
     align-items: center;
     gap: 8px;
     padding: 7px 12px;
-    border-radius: 999px;
-    background: rgba(7,7,12,0.54);
-    border: 1px solid rgba(255,255,255,0.16);
-    color: rgba(255,255,255,0.88);
+    border-radius: 12px;
+    background: rgba(16,18,15,0.06);
+    border: 1px solid rgba(16,18,15,0.10);
+    color: rgba(16,18,15,0.78);
     font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     margin-bottom: 10px;
   }
-  .app-title { font-size: 34px; font-weight: 500; line-height: 1; letter-spacing: -0.05em; margin-bottom: 6px; }
-  .app-subtitle { font-size: 13px; color: rgba(255,255,255,0.62); max-width: 420px; line-height: 1.5; }
+  .app-title { font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: 0; margin-bottom: 6px; color: #10120f; }
+  .app-subtitle { font-size: 13px; color: rgba(16,18,15,0.58); max-width: 420px; line-height: 1.5; }
   .header-chip {
     display: inline-flex;
     align-items: center;
     padding: 9px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(7,7,12,0.54);
-    color: rgba(255,255,255,0.88);
+    border-radius: 12px;
+    border: 1px solid rgba(16,18,15,0.10);
+    background: rgba(255,255,255,0.72);
+    color: rgba(16,18,15,0.86);
     font-size: 12px;
     backdrop-filter: blur(12px);
   }
@@ -420,22 +407,30 @@
   }
   .daily-deck {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
     margin-top: 12px;
     margin-bottom: 1rem;
   }
   .daily-mini {
     padding: 16px;
-    border-radius: 24px;
-    border: 1px solid rgba(255,255,255,0.42);
-    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
-    box-shadow: 0 16px 32px rgba(0,0,0,0.10);
+    border-radius: 18px;
+    border: 1px solid rgba(16,18,15,0.10);
+    background: rgba(255,255,255,0.78);
+    box-shadow: 0 16px 32px rgba(34,40,28,0.10);
   }
+  .daily-mini:nth-child(1) { background: #10120f; color: #fff; }
+  .daily-mini:nth-child(1) .insight-tag { background: rgba(184,242,109,0.16); color: #e8ffd0; }
+  .daily-mini:nth-child(1) .daily-mini-title,
+  .daily-mini:nth-child(1) .daily-mini-copy,
+  .daily-mini:nth-child(1) .daily-mini-note { color: rgba(255,255,255,0.92); }
+  .daily-mini:nth-child(2) { background: #f5ffd9; }
+  .daily-mini:nth-child(3) { background: #eef1ff; }
+  .daily-mini:nth-child(4) { background: #fff3df; }
   .daily-mini-title {
     font-size: 18px;
     line-height: 1.15;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
     color: #17141f;
     margin-top: 10px;
   }
@@ -451,7 +446,7 @@
     border-top: 1px solid rgba(17,17,26,0.08);
     font-size: 12px;
     line-height: 1.6;
-    color: #726b82;
+    color: #5f635b;
   }
   .cycle-card {
     background:
@@ -1075,9 +1070,9 @@
 <div class="app">
   <div class="topbar">
     <div>
-      <div class="app-kicker">if flow</div>
-      <div class="app-title">Твой fasting flow</div>
-      <div class="app-subtitle">Таймер. Окно. Аналитика.</div>
+      <div class="app-kicker">fasting log</div>
+      <div class="app-title">Fasting practice</div>
+      <div class="app-subtitle">Таймер, прогресс и один новый повод не бросать сегодня.</div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
       <div class="header-chip" id="phaseChip">Фаза 14/10</div>
@@ -1152,6 +1147,12 @@
 
     <div class="daily-deck">
       <div class="daily-mini">
+        <div class="insight-tag">Новость дня</div>
+        <div class="daily-mini-title" id="dailyNewsTitle">Новый сигнал</div>
+        <div class="daily-mini-copy" id="dailyNewsText">Короткая новость про тело, еду, сон или движение.</div>
+        <div class="daily-mini-note" id="dailyNewsNote">Обновляется каждый день.</div>
+      </div>
+      <div class="daily-mini">
         <div class="insight-tag">Исследование дня</div>
         <div class="daily-mini-title" id="dailyResearchTitle">Новый research note</div>
         <div class="daily-mini-copy" id="dailyResearchText">Короткая выжимка из исследования.</div>
@@ -1162,6 +1163,12 @@
         <div class="daily-mini-title" id="dailyExperimentTitle">Небольшое действие на сегодня</div>
         <div class="daily-mini-copy" id="dailyExperimentText">Один маленький шаг для проверки на себе.</div>
         <div class="daily-mini-note" id="dailyExperimentNote">Что наблюдать.</div>
+      </div>
+      <div class="daily-mini">
+        <div class="insight-tag">История дня</div>
+        <div class="daily-mini-title" id="dailyStoryTitle">Короткий пример</div>
+        <div class="daily-mini-copy" id="dailyStoryText">История про дисциплину без идеальности.</div>
+        <div class="daily-mini-note" id="dailyStoryNote">Для контекста, не для сравнения.</div>
       </div>
     </div>
 
@@ -1903,6 +1910,42 @@ var INSIGHTS = [
     theme: 'research'
   },
   {
+    id: 'research_vitamin_d_2025',
+    label: 'Research · витамин D',
+    title: 'Обзоры 2025: витамин D полезнее проверять по контексту, а не пить “на всякий случай”',
+    short: 'В свежих обзорах по vitamin D повторяется взрослая мысль: дефицит важно исправлять, но у здоровых взрослых без дефицита профилактический эффект часто скромный или неясный.',
+    deep: 'Это хороший пример биохакинга без магии. Витамин D важен для костей, мышц, иммунной регуляции и общего здоровья, но логика “чем больше, тем лучше” не работает. Интереснее смотреть на анализы, сезон, солнце, питание, риски дефицита и дозу, а не превращать добавку в амулет.',
+    note: 'Вывод дня: сначала понять, есть ли дефицит и зачем добавка, потом уже выбирать дозу.',
+    theme: 'research'
+  },
+  {
+    id: 'research_creatine_2025',
+    label: 'Research · креатин',
+    title: 'Креатин уже не только про мышцы, но когнитивные обещания пока не магия',
+    short: 'Свежие обзоры всё чаще смотрят на креатин через силу, восстановление, возраст и мозг. Для мышц доказательств больше, для когниции картина интересная, но не финальная.',
+    deep: 'Креатин хорошо изучен как спортивная добавка: он связан с быстрым энергетическим обменом в мышцах. Сейчас его активно обсуждают и для мозга, особенно при возрасте, усталости или недосыпе. Но это не “таблетка продуктивности”: эффект зависит от контекста, питания, тренировок, сна и конкретного человека.',
+    note: 'Биохакинг-вывод: сильная база плюс добавка обычно интереснее, чем добавка вместо базы.',
+    theme: 'research'
+  },
+  {
+    id: 'research_glp1_2025',
+    label: 'Research · GLP-1',
+    title: 'GLP-1 — это не модный пептид из wellness-чата, а серьёзная медицина',
+    short: 'Новые мета-анализы по GLP-1 показывают реальные эффекты для веса и кардиометаболического риска, но это рецептурные препараты с побочками и врачебным контекстом.',
+    deep: 'GLP-1-агонисты интересны потому, что они работают не только через “меньше есть”, а через сигналы насыщения, желудочно-кишечную систему, глюкозу и мозг. Но именно поэтому это не casual biohack. Их нельзя ставить в один ряд с “витамином дня”: это медицинская терапия, где важны показания, противопоказания, дозировка и наблюдение.',
+    note: 'Если тема цепляет, правильный вопрос не “попробовать?”, а “какие есть показания и риски?”.',
+    theme: 'research'
+  },
+  {
+    id: 'research_nad_2025',
+    label: 'Research · NAD+',
+    title: 'NAD+ и NMN звучат футуристично, но human evidence пока приземляет хайп',
+    short: 'Обзоры 2025 по NAD+ precursors описывают интересную биологию старения, но клинические эффекты у людей пока ограничены и зависят от ткани, дозы и задачи.',
+    deep: 'Это ровно тот случай, где биохакинг выглядит красиво: митохондрии, энергия, старение, NAD+. Но между “молекула участвует в важных процессах” и “добавка заметно улучшает здоровье” есть большая дистанция. Поэтому эту тему стоит читать как науку о механизмах, а не как готовый рецепт вечной молодости.',
+    note: 'Хороший фильтр: повышает ли добавка маркер или реально меняет важный исход?',
+    theme: 'research'
+  },
+  {
     id: 'light_morning_start',
     label: 'Свет · утро',
     title: 'Утренний свет это одна из самых недооценённых кнопок для мозга',
@@ -2298,6 +2341,18 @@ var MYTH_TRUTH = [
     title: 'Либидо это просто тестостерон',
     text: 'Слишком узко. Желание связано не с одним гормоном, а с системой: дофамин, кортизол, эстроген, тестостерон, сон, стресс и даже то, есть ли у тела ощущение энергии.',
     note: 'Сексуальность чаще похожа на состояние всей системы, чем на один анализ.'
+  },
+  {
+    id: 'myth_supplements_more_better',
+    title: 'Больше добавок — значит больше здоровья',
+    text: 'Нет. Добавка полезна, когда закрывает конкретный дефицит, риск или задачу. Без контекста она может быть просто дорогой привычкой, а иногда мешать анализам, лекарствам или желудку.',
+    note: 'Биохакинг начинается не с банки, а с вопроса “зачем?”.'
+  },
+  {
+    id: 'myth_peptides_shortcut',
+    title: 'Пептиды — короткий путь к форме и молодости',
+    text: 'Слишком опасное упрощение. Часть пептидных препаратов — серьёзная медицина, часть wellness-обещаний держится на слабых данных. Между “интересный механизм” и “безопасно для меня” большая дистанция.',
+    note: 'Если это влияет на гормоны, аппетит или обмен, это уже не игрушка.'
   }
 ];
 
@@ -2361,6 +2416,168 @@ var DAILY_EXPERIMENTS = [
     title: '10 минут тишины без экрана',
     text: 'Оставь небольшой кусок вечера без ленты, задач и переписок: просто душ, тишина, дыхание, телесность или спокойный контакт.',
     note: 'Понаблюдай, меняется ли ощущение тела и внутреннего переключения из режима “дела” в режим “я живая”.'
+  },
+  {
+    id: 'exp_supplement_audit',
+    title: 'Аудит добавок без покупки',
+    text: 'Запиши одну добавку, которую ты принимаешь или хочешь купить: зачем она, какая доза, есть ли анализ или симптом, по которому ты поймёшь, что она нужна.',
+    note: 'Цель не запретить добавки, а отделить осознанный выбор от рекламы.'
+  },
+  {
+    id: 'exp_food_before_supplement',
+    title: 'Один nutrient-first шаг',
+    text: 'Сегодня выбери не новую банку, а еду под задачу: белок в первый приём, рыба/яйца/творог, зелень, бобовые или минералка вместо хаотичного перекуса.',
+    note: 'Добавки интереснее, когда база не разваливается.'
+  }
+];
+
+var DAILY_NEWS = [
+  {
+    id: 'news_maintenance_phase',
+    title: 'После 70–100 дней привычка перестаёт быть “приключением”',
+    text: 'Это нормальный этап: новизна ушла, а поведение осталось. На этой стадии задача не вдохновляться каждый день, а сделать режим достаточно удобным, чтобы он не требовал постоянного энтузиазма.',
+    note: 'Смысл дня: скучно не значит бесполезно.'
+  },
+  {
+    id: 'news_16_baseline',
+    title: '16 часов стали твоей новой базой',
+    text: 'Если раньше 14 часов были сложными, а сейчас 16 стали обычным режимом, это уже не “попытка”. Это адаптация системы: расписание, голод и ожидания тела перестроились.',
+    note: 'Сравни себя не с идеалом, а с первой неделей.'
+  },
+  {
+    id: 'news_evening_craving',
+    title: 'Вечерняя тяга часто говорит не про голод, а про смену состояния',
+    text: 'После 22:00 тело может просить не столько еду, сколько завершение дня, награду, тишину или выход из перегруза. Иногда маленький поздний эпизод не ломает прогресс, а показывает, что вечер был слишком длинным.',
+    note: 'Сегодня без компенсации: просто вернуться к обычному окну.'
+  },
+  {
+    id: 'news_flexible_consistency',
+    title: 'Гибкость лучше, чем режим “или идеально, или всё пропало”',
+    text: 'Устойчивые системы держатся не на идеальности, а на возврате. Один поздний кусок еды хуже выглядит в голове, чем влияет на 78 дней практики.',
+    note: 'Сильная метрика: не отсутствие срывов, а скорость возврата.'
+  },
+  {
+    id: 'news_social_life',
+    title: 'Тусовки и алкоголь не исчезают из жизни только потому, что есть таймер',
+    text: 'Режим должен выдерживать реальную жизнь: встречи, прогулки, усталость, ребёнка, спонтанность. Если приложение не умеет жить рядом с этим, оно превращается в скучный контроль.',
+    note: 'Сегодня важен не запрет, а следующий нормальный выбор.'
+  },
+  {
+    id: 'news_protein_evening',
+    title: 'Вечерний ужин решает больше, чем сила воли после него',
+    text: 'Если ужин был слишком лёгким, хаотичным или сладким, после закрытия окна тянуть к еде будет сильнее. Иногда “срыв” начинается не в 22:00, а за ужином.',
+    note: 'Рабочая формула: белок + жир + нормальная порция.'
+  },
+  {
+    id: 'news_low_dopamine',
+    title: 'Когда всё надоело, мозг ищет новизну',
+    text: 'Скука от приложения может быть не провалом мотивации, а нормальным запросом мозга на обновление. Поэтому дизайн и контент должны периодически меняться, иначе даже полезная привычка ощущается мёртвой.',
+    note: 'Режим остаётся, интерфейс можно менять.'
+  },
+  {
+    id: 'news_sleep_and_hunger',
+    title: 'Голод после плохой ночи почти всегда громче',
+    text: 'Когда сон слабый, телу труднее регулировать аппетит и держать длинное окно без внутреннего шума. В такие дни 16 часов могут быть достаточной победой.',
+    note: 'Не каждый день создан для 18 часов.'
+  },
+  {
+    id: 'news_walk_metabolism',
+    title: 'Прогулка после еды — маленькая вещь с большим эффектом',
+    text: 'Короткое движение после основного приёма пищи помогает телу мягче обращаться с глюкозой и часто делает вечер спокойнее. Это не тренировка, а физиологическая помощь.',
+    note: '10 минут считаются.'
+  },
+  {
+    id: 'news_autopilot',
+    title: 'Автоматизм — это не потеря смысла, а следующий уровень привычки',
+    text: 'Когда ты просто включаешь и выключаешь таймер, часть работы уже стала встроенной. Вопрос теперь не “как начать”, а “как не дать привычке стать серой и раздражающей”.',
+    note: 'Таймер может быть скучным. Прогресс — нет.'
+  },
+  {
+    id: 'news_vitamin_d_context',
+    title: 'Витамин D — не “энергия в каплях”, а вопрос дефицита и контекста',
+    text: 'В новых обзорах по vitamin D всё меньше романтики и больше практики: если есть дефицит или риск, это важно. Если дефицита нет, “пить побольше для здоровья” часто не даёт той магии, которую обещают wellness-посты.',
+    note: 'Биохакинг дня: анализы и доза важнее красивой банки.'
+  },
+  {
+    id: 'news_creatine_brain',
+    title: 'Креатин снова обсуждают не только для мышц, но и для мозга',
+    text: 'Это одна из редких добавок, где база доказательств для спорта сильная, а новые вопросы про мозг правда интересные. Но для продуктивности он не заменяет сон: скорее может быть деталью системы, а не кнопкой “стать собранной”.',
+    note: 'Если база слабая, добавка не обязана спасать.'
+  },
+  {
+    id: 'news_glp1_medicine',
+    title: 'GLP-1 — главная тема metabolic medicine, но это не бытовой лайфхак',
+    text: 'Препараты GLP-1 меняют аппетит, вес и кардиометаболические риски у подходящих пациентов. Именно поэтому это медицинская история: показания, побочные эффекты и врач важнее, чем хайп вокруг “пептидов”.',
+    note: 'Серьёзный эффект требует серьёзного отношения.'
+  },
+  {
+    id: 'news_nad_hype',
+    title: 'NAD+, NMN и longevity-добавки: интересная биология, но не вечная молодость',
+    text: 'NAD+ участвует в энергетическом обмене и старении клеток, поэтому тема звучит очень заманчиво. Но свежие обзоры по людям осторожнее рекламы: поднять маркер проще, чем доказать заметное улучшение здоровья.',
+    note: 'Вопрос дня: это влияет на исход или только на красивый показатель?'
+  },
+  {
+    id: 'news_magnesium_sleep',
+    title: 'Магний и сон: популярно, но не универсально',
+    text: 'Магний часто обсуждают как “сонную” добавку, но эффект зависит от дефицита, формы, дозы, питания, стресса и причин бессонницы. Иногда он помогает, иногда главная проблема вообще не в магнии, а в позднем свете, алкоголе или перегрузе.',
+    note: 'Добавка не должна прятать настоящую причину плохой ночи.'
+  },
+  {
+    id: 'news_omega3_food_first',
+    title: 'Омега-3 лучше читать не как “капсулы для всех”, а как тему питания и риска',
+    text: 'Омега-3 важны для мембран, воспалительных путей и сердечно-сосудистой темы, но эффект добавок зависит от исходного питания, дозы и риска. Рыба в рационе и медицинский контекст часто честнее, чем автоматическая капсула.',
+    note: 'Food-first не скучно, а часто просто надёжнее.'
+  }
+];
+
+var DAILY_STORIES = [
+  {
+    id: 'story_athlete_basics',
+    title: 'Спортсмены часто выигрывают не за счёт подвигов, а за счёт базы',
+    text: 'Самые скучные вещи — сон, повторяемый режим, простая еда, ходьба, восстановление — дают больше, чем редкий героический день. Это не драматично, зато работает.',
+    note: 'История дня: база сильнее вспышки мотивации.'
+  },
+  {
+    id: 'story_comeback',
+    title: 'Сильный человек не тот, кто не сбивается',
+    text: 'В реальной жизни сбиваются все: поездки, гости, усталость, поздняя еда, алкоголь. Разница обычно в том, возвращаешься ли ты на следующий день без самонаказания.',
+    note: 'Возврат — это навык, а не моральный экзамен.'
+  },
+  {
+    id: 'story_parent_mode',
+    title: 'Режим с маленьким ребёнком — это другой уровень сложности',
+    text: 'Когда дома двухлетний ребёнок, “идеальная дисциплина” часто невозможна технически. Поэтому устойчивость здесь выглядит не как контроль всего, а как минимум, который выжил в реальном дне.',
+    note: '16 часов в такой жизни — это уже серьёзная система.'
+  },
+  {
+    id: 'story_training_not_perfect',
+    title: 'Тренировки тоже не обязаны быть кинематографичными',
+    text: 'Иногда лучшая физическая форма строится через короткие куски: прогулка, лестница, 15 минут дома, перенос ребёнка, один подход. Тело считает стимулы, а не красивость плана.',
+    note: 'Движение не обязано выглядеть как спортзал.'
+  },
+  {
+    id: 'story_long_game',
+    title: 'Длинная игра почти всегда скучнее старта',
+    text: 'Первые недели дают азарт. Потом начинается настоящая часть: не бросить только потому, что больше нет фейерверка. Именно там привычка становится частью личности.',
+    note: 'Скучная неделя тоже засчитывается.'
+  },
+  {
+    id: 'story_future_self',
+    title: 'Будущая ты выигрывает от сегодняшнего обычного действия',
+    text: 'Не надо верить в идеальный мир или вечную мотивацию. Достаточно сделать одну вещь, которая через месяц будет выглядеть как “хорошо, что я не бросила”.',
+    note: 'Сегодня нужен не смысл жизни, а один нормальный следующий шаг.'
+  },
+  {
+    id: 'story_elite_recovery',
+    title: 'У сильных людей восстановление — часть работы',
+    text: 'Внешне кажется, что дисциплина это всё время давить. На практике чем выше нагрузка, тем важнее сон, паузы, еда и умение не ломать себя лишним героизмом.',
+    note: 'Восстановление — не слабое место, а инфраструктура.'
+  },
+  {
+    id: 'story_identity',
+    title: 'Ты уже не “пытаешься держать интервалы”',
+    text: 'После 78 дней это больше похоже на человека, у которого есть режим. Он может быть гибким, иногда раздражать, иногда ломаться, но это уже часть твоего поведения.',
+    note: 'Факт дня: ты не на старте.'
   }
 ];
 
@@ -2434,17 +2651,27 @@ var REMOTE_INSIGHT_TOPICS = [
     research: 'Это полезная рамка: желание может меняться не потому, что с тобой “что-то не так”, а потому что тело перегружено, недоспало или всё время остаётся в режиме задач.',
     mythIds: ['myth_libido_relationship_only', 'myth_libido_testosterone_only'],
     experimentIds: ['exp_libido_context_note', 'exp_no_screen_close_evening', 'exp_screen_soft_evening']
+  },
+  {
+    key: 'biohacking',
+    label: 'биохакинг',
+    search: 'supplements vitamin D creatine magnesium omega-3 GLP-1 peptides NAD NMN longevity metabolism human trial review',
+    title: 'Биохакинг интересен, когда он проверяемый',
+    text: 'Свежие темы про добавки, витамины, пептиды и longevity лучше читать не как инструкции “срочно купить”, а как карту: где есть сильные данные, где гипотеза, а где маркетинг бежит впереди науки.',
+    research: 'Главный фильтр для таких тем: это человеческие данные, обзор/RCT и понятный исход — или просто красивый механизм и обещание из рекламы.',
+    mythIds: ['myth_supplements_more_better', 'myth_peptides_shortcut', 'myth_wine_healthy'],
+    experimentIds: ['exp_supplement_audit', 'exp_food_before_supplement', 'exp_water_start']
   }
 ];
 
 var REMOTE_DAILY_SOURCE = 'openalex';
-var APP_VERSION = 'v14';
+var APP_VERSION = 'v16';
 var APP_WHATS_NEW = [
-  'Исправлен ручной ввод интервала.',
-  'Таймер защищён от битого состояния при перезапуске.',
-  'Исследование и эксперимент дня получили новую ротацию и дату обновления.'
+  'В ежедневный дайджест добавлена тема биохакинга.',
+  'Появились карточки про витамины, добавки, GLP-1, NAD+ и пептиды.',
+  'Исследование дня теперь умеет искать свежие biohacking-публикации через OpenAlex.'
 ];
-var REMOTE_DAILY_VERSION = 4;
+var REMOTE_DAILY_VERSION = 6;
 var remoteDailyPromise = null;
 
 var S = {
@@ -2559,7 +2786,8 @@ function pickAbstractSentence(work, topic) {
     movement: /\b(exercise|walking|activity|training|resistance|aerobic|steps)\b/i,
     fasting: /\b(fasting|time-restricted|meal timing|eating window)\b/i,
     screens: /\b(screen|digital|blue light|device|smartphone|melatonin)\b/i,
-    sex: /\b(sex|sexual|desire|libido|intimacy|orgasm|satisfaction|arousal)\b/i
+    sex: /\b(sex|sexual|desire|libido|intimacy|orgasm|satisfaction|arousal)\b/i,
+    biohacking: /\b(supplement|vitamin|creatine|magnesium|omega-3|omega 3|glp-1|peptide|nad|nmn|longevity|metabolism)\b/i
   };
   var matcher = keywordMap[topic.key];
   var preferred = candidates.find(function(sentence) {
@@ -2682,6 +2910,36 @@ function detectResearchFocus(work, topic) {
       text: 'Работы по сексуальному здоровью обычно полезны тем, что выводят разговор из морали в физиологию: желание меняется вместе со сном, тревогой, усталостью и ощущением безопасности.'
     };
   }
+  if (/glp-1|glucagon-like peptide|semaglutide|tirzepatide/.test(lower)) {
+    return {
+      title: 'GLP-1 — это медицина про аппетит и обмен, а не просто “пептиды”',
+      text: 'Свежие работы по GLP-1 полезны тем, что отделяют реальную metabolic medicine от wellness-хайпа: эффект может быть сильным, но это требует показаний и врачебного контекста.'
+    };
+  }
+  if (/vitamin d|cholecalciferol|25-hydroxyvitamin/.test(lower)) {
+    return {
+      title: 'Витамин D важен, но “больше” не значит “лучше”',
+      text: 'В таких работах главный смысл обычно не в модной добавке, а в контексте: дефицит, сезон, анализы, риски и дозировка важнее автоматического приёма на всякий случай.'
+    };
+  }
+  if (/creatine/.test(lower)) {
+    return {
+      title: 'Креатин — редкий случай добавки с сильной спортивной базой',
+      text: 'Сейчас его всё чаще обсуждают и для мозга, но честная рамка такая: для мышц доказательств больше, для когнитивных эффектов картина интересная, но ещё не финальная.'
+    };
+  }
+  if (/nad|nmn|nicotinamide|riboside/.test(lower)) {
+    return {
+      title: 'NAD+ звучит как будущее, но human evidence пока осторожнее рекламы',
+      text: 'Такие статьи помогают отличать биологический механизм от доказанного результата: поднять маркер легче, чем показать понятное улучшение здоровья у людей.'
+    };
+  }
+  if (/magnesium|omega-3|omega 3|supplement|peptide|longevity/.test(lower)) {
+    return {
+      title: 'Добавки становятся интересными только после вопроса “зачем?”',
+      text: 'Хороший biohacking-подход не в том, чтобы пробовать всё подряд, а в том, чтобы понимать механизм, качество данных, дозу, риск и что именно ты хочешь изменить.'
+    };
+  }
 
   return {
     title: topic.title,
@@ -2724,6 +2982,21 @@ function buildResearchTakeaway(work, topic, focus, abstractSentence) {
   }
   if (topic.key === 'sex') {
     return 'Для жизни это важно тем, что сексуальность зависит не только от отношений, но и от сна, стресса, усталости и общего ресурса тела.';
+  }
+  if (topic.key === 'biohacking' && /glp-1|glucagon-like peptide|semaglutide|tirzepatide/.test(text)) {
+    return 'Практический вывод: GLP-1 — не бытовой лайфхак, а медицинская терапия, где нужны показания, риски и наблюдение.';
+  }
+  if (topic.key === 'biohacking' && /vitamin d|cholecalciferol|25-hydroxyvitamin/.test(text)) {
+    return 'Вывод для жизни: витамин D лучше обсуждать через дефицит, анализы, сезон и дозу, а не через идею “побольше для здоровья”.';
+  }
+  if (topic.key === 'biohacking' && /creatine/.test(text)) {
+    return 'Вывод честный: креатин интересен как часть системы тренировок, питания и восстановления, но не как замена сна и базы.';
+  }
+  if (topic.key === 'biohacking' && /nad|nmn|nicotinamide|riboside/.test(text)) {
+    return 'Главный фильтр здесь: отличать изменение биомаркера от доказанного улучшения самочувствия, здоровья или долголетия.';
+  }
+  if (topic.key === 'biohacking') {
+    return 'Практический вывод: любая добавка должна отвечать на три вопроса — зачем, по каким данным и как понять, что она реально нужна.';
   }
   if (abstractSentence) {
     return 'Главное здесь не само название статьи, а повторяющийся мотив: тело очень чувствительно к ритму сна, света, еды и нагрузки.';
@@ -2792,6 +3065,7 @@ function isLikelyRelevantWork(item, topic) {
   if (topic.key === 'fasting') return /\b(time-restricted|intermittent fasting|meal timing|eating window|fasting)\b/.test(text);
   if (topic.key === 'screens') return /\b(screen|digital|smartphone|blue light|device|melatonin|sleep)\b/.test(text);
   if (topic.key === 'sex') return /\b(sex|sexual|libido|desire|intimacy|orgasm|satisfaction|arousal|relationship)\b/.test(text);
+  if (topic.key === 'biohacking') return /\b(supplement|vitamin d|creatine|magnesium|omega-3|omega 3|glp-1|glucagon-like peptide|semaglutide|tirzepatide|peptide|nad|nmn|longevity|metabolism|randomized|trial|review)\b/.test(text);
   return true;
 }
 
@@ -2947,15 +3221,26 @@ function getLocalDailyDeck() {
   var seed = getDailyContentSeed('deck');
   var researchItems = INSIGHTS.filter(function(item) { return getInsightTheme(item) === 'research'; });
   var daySeed = getInsightSeed();
+  var news = DAILY_NEWS.length
+    ? DAILY_NEWS[Math.abs(daySeed + hashInsight(APP_VERSION + ':news', 5)) % DAILY_NEWS.length]
+    : null;
   var research = researchItems.length
     ? researchItems[Math.abs(daySeed + hashInsight(APP_VERSION + ':research', 11)) % researchItems.length]
     : null;
   var experiment = DAILY_EXPERIMENTS.length
     ? DAILY_EXPERIMENTS[Math.abs(daySeed + hashInsight(APP_VERSION + ':experiment', 37)) % DAILY_EXPERIMENTS.length]
     : null;
+  var story = DAILY_STORIES.length
+    ? DAILY_STORIES[Math.abs(daySeed + hashInsight(APP_VERSION + ':story', 53)) % DAILY_STORIES.length]
+    : null;
   var dateNote = 'Обновлено: ' + formatDateShort(getLogicalDate()) + ' · локальная ротация';
 
   return {
+    news: news ? {
+      title: news.title,
+      text: news.text,
+      note: (news.note || 'Короткий сигнал на сегодня.') + ' · ' + dateNote
+    } : null,
     research: research ? {
       title: research.title,
       text: research.short || research.deep,
@@ -2965,18 +3250,32 @@ function getLocalDailyDeck() {
       title: experiment.title,
       text: experiment.text,
       note: (experiment.note || 'Посмотри, как это ощущается сегодня.') + ' · ' + dateNote
+    } : null,
+    story: story ? {
+      title: story.title,
+      text: story.text,
+      note: (story.note || 'Короткая история без сравнения с собой.') + ' · ' + dateNote
     } : null
   };
 }
 
 function renderDailyDeck() {
   var localDeck = getLocalDailyDeck();
+  setDailyCard('dailyNews', localDeck.news);
   setDailyCard('dailyResearch', localDeck.research);
   setDailyCard('dailyExperiment', localDeck.experiment);
+  setDailyCard('dailyStory', localDeck.story);
 
   var remoteDeck = getRemoteDailyDeck();
   if (remoteDeck) {
     var companion = getRemoteCompanionCards(remoteDeck) || {};
+    if (remoteDeck.main) {
+      setDailyCard('dailyNews', {
+        title: remoteDeck.main.title,
+        text: remoteDeck.main.short,
+        note: 'Тема: ' + remoteDeck.main.label.replace('Свежий факт · ', '') + ' · из интернета · Обновлено: ' + formatDateShort(getLogicalDate())
+      });
+    }
     if (remoteDeck.research) {
       setDailyCard('dailyResearch', remoteDeck.research);
     }
