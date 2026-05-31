@@ -1,4 +1,4 @@
-const CACHE = 'if-tracker-v13';
+const CACHE = 'if-tracker-v14';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.png'];
 
 self.addEventListener('message', function(e) {

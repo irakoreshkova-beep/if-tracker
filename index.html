@@ -1147,7 +1147,7 @@
     <div class="today-summary">
       <div class="ts-card"><div class="ts-num" id="dayCnt">1</div><div class="ts-label">день</div></div>
       <div class="ts-card"><div class="ts-num" style="color:#639922" id="fastHours">—</div><div class="ts-label">часов</div></div>
-      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0/7</div><div class="ts-label">цель</div></div>
+      <div class="ts-card"><div class="ts-num" style="color:#3C3489" id="checksDone">0/7</div><div class="ts-label" id="goalLabel">цель 16ч</div></div>
     </div>
 
     <div class="daily-deck">
@@ -2438,13 +2438,13 @@ var REMOTE_INSIGHT_TOPICS = [
 ];
 
 var REMOTE_DAILY_SOURCE = 'openalex';
-var APP_VERSION = 'v13';
+var APP_VERSION = 'v14';
 var APP_WHATS_NEW = [
-  'Главный экран короче: оставлены только исследование дня, эксперимент и цикл.',
-  'Фаза цикла теперь даёт короткие советы по аппетиту, тяге к еде и переносимости окна.',
-  'Ротация daily-контента больше не ходит по простому недельному кругу.'
+  'Исправлен ручной ввод интервала.',
+  'Таймер защищён от битого состояния при перезапуске.',
+  'Исследование и эксперимент дня получили новую ротацию и дату обновления.'
 ];
-var REMOTE_DAILY_VERSION = 3;
+var REMOTE_DAILY_VERSION = 4;
 var remoteDailyPromise = null;
 
 var S = {
@@ -2501,6 +2501,10 @@ function getDateSeed(dateKey) {
 
 function getInsightSeed() {
   return getDateSeed(getLogicalDate());
+}
+
+function getDailyContentSeed(kind) {
+  return hashInsight(String(kind || 'daily') + ':' + APP_VERSION, getInsightSeed() * 131 + 29);
 }
 
 function hashInsight(value, seed) {
@@ -2578,7 +2582,7 @@ function titleToStudyBlurb(work, topic) {
 
 function getRemoteTopicConfig(seed, variant) {
   if (!REMOTE_INSIGHT_TOPICS.length) return null;
-  var index = Math.abs(hashInsight('remote-topic:' + String(variant || 0), (seed * 97) + 17)) % REMOTE_INSIGHT_TOPICS.length;
+  var index = Math.abs(hashInsight('remote-topic:' + APP_VERSION + ':' + String(variant || 0), (seed * 149) + 41)) % REMOTE_INSIGHT_TOPICS.length;
   return REMOTE_INSIGHT_TOPICS[index];
 }
 
@@ -2763,7 +2767,7 @@ function getRemoteCompanionCards(remoteDeck) {
   if (!remoteDeck) return null;
   var topic = getRemoteTopicByKey(remoteDeck.topic);
   if (!topic) return null;
-  var seed = getInsightSeed();
+  var seed = getDailyContentSeed('remote-companion');
   var variant = remoteDeck.variant || 0;
   return {
     myth: pickMappedDailyItem(MYTH_TRUTH, topic.mythIds, seed + variant, 23),
@@ -2928,37 +2932,62 @@ function pickDailyItem(list, seed, extraOffset, excludeIds) {
   return filtered[0];
 }
 
+function setDailyCard(kind, item) {
+  if (!item) return;
+  var title = document.getElementById(kind + 'Title');
+  var text = document.getElementById(kind + 'Text');
+  var note = document.getElementById(kind + 'Note');
+  if (!title || !text || !note) return;
+  title.textContent = item.title || '';
+  text.textContent = item.text || item.short || item.deep || '';
+  note.textContent = item.note || '';
+}
+
+function getLocalDailyDeck() {
+  var seed = getDailyContentSeed('deck');
+  var researchItems = INSIGHTS.filter(function(item) { return getInsightTheme(item) === 'research'; });
+  var daySeed = getInsightSeed();
+  var research = researchItems.length
+    ? researchItems[Math.abs(daySeed + hashInsight(APP_VERSION + ':research', 11)) % researchItems.length]
+    : null;
+  var experiment = DAILY_EXPERIMENTS.length
+    ? DAILY_EXPERIMENTS[Math.abs(daySeed + hashInsight(APP_VERSION + ':experiment', 37)) % DAILY_EXPERIMENTS.length]
+    : null;
+  var dateNote = 'Обновлено: ' + formatDateShort(getLogicalDate()) + ' · локальная ротация';
+
+  return {
+    research: research ? {
+      title: research.title,
+      text: research.short || research.deep,
+      note: (research.note || 'Короткая выжимка для практики.') + ' · ' + dateNote
+    } : null,
+    experiment: experiment ? {
+      title: experiment.title,
+      text: experiment.text,
+      note: (experiment.note || 'Посмотри, как это ощущается сегодня.') + ' · ' + dateNote
+    } : null
+  };
+}
+
 function renderDailyDeck() {
+  var localDeck = getLocalDailyDeck();
+  setDailyCard('dailyResearch', localDeck.research);
+  setDailyCard('dailyExperiment', localDeck.experiment);
+
   var remoteDeck = getRemoteDailyDeck();
   if (remoteDeck) {
     var companion = getRemoteCompanionCards(remoteDeck) || {};
     if (remoteDeck.research) {
-      document.getElementById('dailyResearchTitle').textContent = remoteDeck.research.title;
-      document.getElementById('dailyResearchText').textContent = remoteDeck.research.text;
-      document.getElementById('dailyResearchNote').textContent = remoteDeck.research.note;
+      setDailyCard('dailyResearch', remoteDeck.research);
     }
     if (companion.experiment) {
-      document.getElementById('dailyExperimentTitle').textContent = companion.experiment.title;
-      document.getElementById('dailyExperimentText').textContent = companion.experiment.text;
-      document.getElementById('dailyExperimentNote').textContent = companion.experiment.note;
+      setDailyCard('dailyExperiment', {
+        title: companion.experiment.title,
+        text: companion.experiment.text,
+        note: companion.experiment.note + ' · Обновлено: ' + formatDateShort(getLogicalDate())
+      });
     }
     return;
-  }
-  var seed = getInsightSeed();
-  var mainItem = getInsightPool()[getInsightIndex()];
-  var researchItems = INSIGHTS.filter(function(item) { return getInsightTheme(item) === 'research'; });
-  var research = pickDailyItem(researchItems, seed, 11, mainItem ? [mainItem.id] : []);
-  var experiment = pickDailyItem(DAILY_EXPERIMENTS, seed, 37);
-
-  if (research) {
-    document.getElementById('dailyResearchTitle').textContent = research.title;
-    document.getElementById('dailyResearchText').textContent = research.short || research.deep;
-    document.getElementById('dailyResearchNote').textContent = research.note;
-  }
-  if (experiment) {
-    document.getElementById('dailyExperimentTitle').textContent = experiment.title;
-    document.getElementById('dailyExperimentText').textContent = experiment.text;
-    document.getElementById('dailyExperimentNote').textContent = experiment.note;
   }
 }
 
@@ -3356,6 +3385,8 @@ function updateWindowDisplay() {
   document.getElementById('windowTitle').textContent = 'Окно ' + p.name;
   var phaseChip = document.getElementById('phaseChip');
   if (phaseChip) phaseChip.textContent = 'Фаза ' + p.name;
+  var goalLabel = document.getElementById('goalLabel');
+  if (goalLabel) goalLabel.textContent = 'цель ' + p.fast + 'ч';
   var bar = document.getElementById('windowBar');
   var stats = document.getElementById('windowStats');
   if (p.name === '14/10') {
@@ -3371,10 +3402,39 @@ function updateWindowDisplay() {
 }
 
 // ===== TIMER =====
+function isValidTimerTs(ts) {
+  return typeof ts === 'number' && isFinite(ts) && ts > 946684800000 && ts < Date.now() + 7 * 86400000;
+}
+
+function normalizeTimerState() {
+  if (S.timerState === 'fasting' && !isValidTimerTs(S.fastStartTs)) {
+    S.timerState = 'idle';
+    S.fastStartTs = null;
+  }
+  if (S.timerState === 'eating' && !isValidTimerTs(S.eatStartTs)) {
+    S.timerState = 'idle';
+    S.eatStartTs = null;
+  }
+}
+
+function upsertFastLog(date, fastHours) {
+  var rounded = Math.round(fastHours * 10) / 10;
+  var existing = S.dailyLog.find(function(e) { return e.date === date; });
+  if (existing) {
+    existing.fastHours = rounded;
+    if (typeof existing.checksCount !== 'number') existing.checksCount = 0;
+  } else {
+    S.dailyLog.push({ date: date, fastHours: rounded, checksCount: Object.values(S.checks).filter(Boolean).length });
+  }
+  S.dailyLog.sort(function(a, b) { return a.date.localeCompare(b.date); });
+  return rounded;
+}
+
 function toggleTimer() {
+  normalizeTimerState();
   if (S.timerState === 'idle' || S.timerState === 'eating') {
     // Start fasting
-    if (S.timerState === 'eating' && S.eatStartTs) {
+    if (S.timerState === 'eating' && isValidTimerTs(S.eatStartTs)) {
       // Log eating duration (not needed but mark transition)
     }
     S.timerState = 'fasting';
@@ -3385,15 +3445,27 @@ function toggleTimer() {
     startTimerTick();
   } else if (S.timerState === 'fasting') {
     // Stop fasting, start eating
+    if (!isValidTimerTs(S.fastStartTs)) {
+      S.timerState = 'idle';
+      S.fastStartTs = null;
+      S.eatStartTs = null;
+      save();
+      updateTimerUI();
+      return;
+    }
     var fastHours = (Date.now() - S.fastStartTs) / 3600000;
+    if (!isFinite(fastHours) || fastHours < 0 || fastHours > 72) {
+      showManualResult('Таймер был в некорректном состоянии. Запусти окно заново или сохрани интервал вручную.', 'bad');
+      S.timerState = 'idle';
+      S.fastStartTs = null;
+      S.eatStartTs = null;
+      save();
+      updateTimerUI();
+      return;
+    }
     // Save to daily log
     var today = getLogicalDate();
-    var existing = S.dailyLog.find(function(e) { return e.date === today; });
-    if (existing) {
-      existing.fastHours = Math.round(fastHours * 10) / 10;
-    } else {
-      S.dailyLog.push({ date: today, fastHours: Math.round(fastHours * 10) / 10, checksCount: Object.values(S.checks).filter(Boolean).length });
-    }
+    upsertFastLog(today, fastHours);
     S.timerState = 'eating';
     S.eatStartTs = Date.now();
     save();
@@ -3403,6 +3475,7 @@ function toggleTimer() {
 }
 
 function updateTimerUI() {
+  normalizeTimerState();
   var card = document.getElementById('timerCard');
   var status = document.getElementById('timerStatus');
   var display = document.getElementById('timerDisplay');
@@ -3548,7 +3621,8 @@ function alcoholEntrySummary(entry) {
 function toggleManualInput() {
   var panel = document.getElementById('manualPanel');
   var toggle = document.getElementById('manualToggle');
-  if (panel.style.display === 'none') {
+  var isHidden = getComputedStyle(panel).display === 'none';
+  if (isHidden) {
     panel.style.display = 'block';
     toggle.textContent = 'Скрыть ручной ввод';
     // Prefill with smart defaults
@@ -3608,12 +3682,7 @@ function saveManualEntry() {
     logDate = formatDateKey(prev);
   }
 
-  var existing = S.dailyLog.find(function(e) { return e.date === logDate; });
-  if (existing) {
-    existing.fastHours = fastHours;
-  } else {
-    S.dailyLog.push({ date: logDate, fastHours: fastHours, checksCount: 0 });
-  }
+  upsertFastLog(logDate, fastHours);
 
   // Always update timer to reflect the manual entry
   var now = Date.now();
